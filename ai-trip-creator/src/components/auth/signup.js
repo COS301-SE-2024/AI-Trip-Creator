@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Input, Link, Select } from "@nextui-org/react";
+import { Button, Input, Link, Select, SelectItem } from "@nextui-org/react";
 import axios from "axios";
 
 const Signup = ({ closeSignup, openLogin }) => {
@@ -96,9 +96,9 @@ const Signup = ({ closeSignup, openLogin }) => {
             required
             style={{ marginBottom: "1rem" }}
           >
-            <Select.Option value="male">Male</Select.Option>
-            <Select.Option value="female">Female</Select.Option>
-            <Select.Option value="other">Other</Select.Option>
+            <SelectItem value="male">Male</SelectItem>
+            <SelectItem value="female">Female</SelectItem>
+            <SelectItem value="other">Other</SelectItem>
           </Select>
           <Button type="submit">Signup</Button>
           <p>
