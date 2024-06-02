@@ -37,7 +37,15 @@ const Sidebar = () => {
               Accommodation
             </Link>
           </li>
-          <li style={{ paddingTop: "380px" }}>
+          <li>
+            <Link
+              style={{ color: "grey", paddingLeft: "15px" }}
+              to="/Itinerary"
+            >
+              Itinerary
+            </Link>
+          </li>
+          <li style={{ paddingTop: "350px" }}>
             <Link style={{ color: "grey", paddingLeft: "15px" }} to="/help">
               Help
             </Link>
