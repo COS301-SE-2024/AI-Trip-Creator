@@ -124,24 +124,27 @@ def filter_flight_offers_by_carrier(offers, carrier_code):
 
 from datetime import datetime
 
-def filter_flight_offers_by_date(offers, date):
+def filter_flight_offers_by_time(offers, departure_time, arrival_time):
     """
-    Filters flight offers by departure date.
+    Filters flight offers by departure and arrival times.
 
     :param offers: List of flight offers (as returned by the Amadeus API)
-    :param date: The departure date to filter by (in 'YYYY-MM-DD' format)
+    :param departure_time: The departure time to filter by (in 'HH:MM' format)
+    :param arrival_time: The arrival time to filter by (in 'HH:MM' format)
     :return: A list of filtered flight offers
     """
     filtered_offers = []
     
     for offer in offers:
         try:
-            # Check each segment in each itinerary for the departure date
+            # Check each segment in each itinerary for the departure and arrival times
             for itinerary in offer['itineraries']:
                 for segment in itinerary['segments']:
                     departure_datetime = segment['departure']['at']
-                    departure_date = departure_datetime.split('T')[0]
-                    if departure_date == date:
+                    departure_time_segment = departure_datetime.split('T')[1][:5]  # Extracting time part only
+                    arrival_datetime = segment['arrival']['at']
+                    arrival_time_segment = arrival_datetime.split('T')[1][:5]  # Extracting time part only
+                    if departure_time_segment == departure_time and arrival_time_segment == arrival_time:
                         filtered_offers.append(offer)
                         break  # No need to check further segments/itineraries in this offer
         except KeyError:
@@ -150,6 +153,13 @@ def filter_flight_offers_by_date(offers, date):
     
     return filtered_offers
 
+#offers_data = get_flight_offers('DUR', 'CPT', '2024-06-15', 1, 5)
+#print(offers_data)
+#print("Testing filter by time")
+#filtered_offers_by_time = filter_flight_offers_by_time(offers_data, '18:15', '20:30')
+#print(filtered_offers_by_time)
+
+
 # Example usage:
 # Assuming 'response.data' contains the flight offers data from the Amadeus API
 #filtered_offers_by_date = filter_flight_offers_by_date(response.data, '2024-06-15')
@@ -157,4 +167,5 @@ def filter_flight_offers_by_date(offers, date):
 # Print filtered offers
 #print("Testing filter by date")
 #print(filtered_offers_by_date)
+
 
