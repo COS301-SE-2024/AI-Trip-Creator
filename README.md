@@ -20,6 +20,7 @@ At a high level, the web application should achieve the following:
 ### Demo1-video-
 ### Documentation-https://github.com/COS301-SE-2024/AI-Trip-Creator/tree/main/Documenation/
 ### Project Board- https://github.com/orgs/COS301-SE-2024/projects/110
+### https://ai-trip-creator.vercel.app/
     
 # Team Members 
 
