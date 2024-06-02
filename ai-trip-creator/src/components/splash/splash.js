@@ -35,7 +35,7 @@ const Splash = ({ setIsLoggedIn }) => {
             width: "20rem",
           }}
         >
-          <div style={{ marginBottom: "1rem" }}>
+          <div style={{ marginBottom: "1rem", textAlign: "center" }}>
             <p id="modal-title" size={18}>
               Login
             </p>
@@ -63,7 +63,7 @@ const Splash = ({ setIsLoggedIn }) => {
             width: "20rem",
           }}
         >
-          <div style={{ marginBottom: "1rem" }}>
+          <div style={{ marginBottom: "1rem", textAlign: "center" }}>
             <p id="modal-title" size={18}>
               Signup
             </p>

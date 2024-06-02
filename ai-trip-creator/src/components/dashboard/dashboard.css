@@ -1,0 +1,37 @@
+.dashboard {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 180px;
+  height: 100%;
+  background-color: #1e1e1e; /* Add background color */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto; /* Add scrollbar if content overflows */
+}
+
+.sidebar nav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar nav ul li {
+  margin-bottom: 10px;
+}
+
+.sidebar nav ul li a {
+  text-decoration: none;
+  color: grey; /* Adjust link color */
+}
+
+.sidebar nav ul li a:hover {
+  color: black; /* Adjust link hover color */
+}

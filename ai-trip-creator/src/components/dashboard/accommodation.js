@@ -1,17 +1,16 @@
 import React from "react";
 import "./dashboard.css";
 import Sidebar from "./sidebar";
-
-const Settings = () => {
+const Accommodation = () => {
   return (
-    <div className="dashboard">
+    <div className="dashboard" style={{ borderRadius: "50px" }}>
       <Sidebar />
       <div className="content">
-        <h1>settings Page</h1>
+        <h1>accommodation Page</h1>
         {/* Add more profile content here */}
       </div>
     </div>
   );
 };
 
-export default Settings;
+export default Accommodation;

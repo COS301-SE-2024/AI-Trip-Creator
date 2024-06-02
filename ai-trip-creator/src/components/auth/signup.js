@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Button, Input, Link, Select, SelectItem } from "@nextui-org/react";
+import {
+  Button,
+  Input,
+  Link,
+  Select,
+  SelectItem,
+  MenuItem,
+} from "@nextui-org/react";
 import axios from "axios";
 
 const Signup = ({ closeSignup, openLogin }) => {
@@ -37,70 +44,91 @@ const Signup = ({ closeSignup, openLogin }) => {
           onSubmit={handleSignup}
           style={{
             maxWidth: "20rem",
-            maxHeight: "20rem",
             display: "flex",
             flexDirection: "column",
-            alignItems: "center",
-            padding: "1rem",
+            alignItems: "flex-start",
+            padding: "0.5rem",
           }}
         >
-          <Input
-            fullWidth
-            clearable
-            bordered
-            labelPlaceholder="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={{ marginBottom: "1rem" }}
-          />
-          <Input
-            fullWidth
-            clearable
-            bordered
-            labelPlaceholder="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ marginBottom: "1rem" }}
-          />
-          <Input
-            fullWidth
-            clearable
-            bordered
-            labelPlaceholder="Name"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            style={{ marginBottom: "1rem" }}
-          />
-          <Input
-            fullWidth
-            bordered
-            labelPlaceholder="Birthday"
-            type="date"
-            value={birthday}
-            onChange={(e) => setBirthday(e.target.value)}
-            required
-            style={{ marginBottom: "1rem" }}
-          />
-          <Select
-            fullWidth
-            bordered
-            placeholder="Select Gender"
-            value={gender}
-            onChange={(e) => setGender(e.target.value)}
-            required
-            style={{ marginBottom: "1rem" }}
+          <div style={{ marginBottom: "0.25rem", width: "100%" }}>
+            <label style={{ marginBottom: "0.25rem", display: "block" }}>
+              Name
+            </label>
+            <Input
+              style={{ width: "100%" }}
+              fullWidth
+              clearable
+              bordered
+              labelPlaceholder="Name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+
+          <div style={{ marginBottom: "0.25rem", width: "100%" }}>
+            <label style={{ marginBottom: "0.25rem", display: "block" }}>
+              Birthday
+            </label>
+            <Input
+              style={{ height: "32px", width: "100%" }}
+              fullWidth
+              bordered
+              labelPlaceholder="Birthday"
+              type="date"
+              value={birthday}
+              onChange={(e) => setBirthday(e.target.value)}
+              required
+            />
+          </div>
+          <div style={{ marginBottom: "0.25rem", width: "100%" }}>
+            <label style={{ marginBottom: "0.25rem", display: "block" }}>
+              Email
+            </label>
+            <Input
+              style={{ width: "100%" }}
+              fullWidth
+              clearable
+              bordered
+              labelPlaceholder="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div style={{ marginBottom: "0.25rem", width: "100%" }}>
+            <label style={{ marginBottom: "0.25rem", display: "block" }}>
+              Password
+            </label>
+            <Input
+              style={{ width: "100%" }}
+              fullWidth
+              clearable
+              bordered
+              labelPlaceholder="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          <Button
+            type="submit"
+            style={{
+              alignSelf: "center",
+              marginTop: "0.5rem",
+              width: "100%",
+              borderRadius: "20px",
+              padding: "8px",
+            }}
           >
-            <SelectItem value="male">Male</SelectItem>
-            <SelectItem value="female">Female</SelectItem>
-            <SelectItem value="other">Other</SelectItem>
-          </Select>
-          <Button type="submit">Signup</Button>
+            Signup
+          </Button>
+
           <p>
             Already have an account?{" "}
             <Link
@@ -108,6 +136,7 @@ const Signup = ({ closeSignup, openLogin }) => {
                 closeSignup();
                 openLogin();
               }}
+              style={{ color: "#0000EE" }}
             >
               Login
             </Link>

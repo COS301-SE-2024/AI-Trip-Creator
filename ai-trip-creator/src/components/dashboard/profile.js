@@ -1,10 +1,15 @@
 import React from "react";
+import "./dashboard.css";
+import Sidebar from "./sidebar";
 
 const Profile = () => {
   return (
-    <div>
-      <h1>Profile Page</h1>
-      {/* Add more profile content here */}
+    <div className="dashboard">
+      <Sidebar />
+      <div className="content">
+        <h1>Profile Page</h1>
+        {/* Add more profile content here */}
+      </div>
     </div>
   );
 };
