@@ -3,10 +3,10 @@ import "./dashboard.css";
 import Sidebar from "./sidebar";
 const Accommodation = () => {
   return (
-    <div className="dashboard" style={{ borderRadius: "50px" }}>
+    <div className="dashboard">
       <Sidebar />
       <div className="content">
-        <h1>accommodation Page</h1>
+        <h1>Accommodation</h1>
         {/* Add more profile content here */}
       </div>
     </div>

@@ -7,7 +7,7 @@ const Flights = () => {
     <div className="dashboard">
       <Sidebar />
       <div className="content">
-        <h1>flight Page</h1>
+        <h1>Flights</h1>
         {/* Add more profile content here */}
       </div>
     </div>

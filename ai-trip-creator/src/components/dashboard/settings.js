@@ -7,7 +7,7 @@ const Settings = () => {
     <div className="dashboard">
       <Sidebar />
       <div className="content">
-        <h1>settings Page</h1>
+        <h1>Settings</h1>
         {/* Add more profile content here */}
       </div>
     </div>

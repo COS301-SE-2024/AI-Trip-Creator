@@ -7,7 +7,7 @@ const Help = () => {
     <div className="dashboard">
       <Sidebar />
       <div className="content">
-        <h1>help Page</h1>
+        <h1>Help</h1>
         {/* Add more profile content here */}
       </div>
     </div>

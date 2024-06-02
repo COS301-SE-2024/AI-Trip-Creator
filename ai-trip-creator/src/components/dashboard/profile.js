@@ -7,7 +7,7 @@ const Profile = () => {
     <div className="dashboard">
       <Sidebar />
       <div className="content">
-        <h1>Profile Page</h1>
+        <h1>My Profile</h1>
         {/* Add more profile content here */}
       </div>
     </div>

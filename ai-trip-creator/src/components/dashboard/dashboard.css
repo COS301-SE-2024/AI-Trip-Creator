@@ -43,6 +43,10 @@
   overflow: hidden;
 }
 
+.dashboard-container {
+  border-radius: 0; 
+}
+
 .sidebar {
   width: 250px;
   background-color: #1e1e1e;
