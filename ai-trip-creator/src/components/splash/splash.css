@@ -1,0 +1,17 @@
+.splash-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f0f0;
+}
+
+.splash-content {
+  text-align: center;
+}
+
+.app-name {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #333;
+}
