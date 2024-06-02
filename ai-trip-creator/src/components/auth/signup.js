@@ -8,6 +8,7 @@ import {
   MenuItem,
 } from "@nextui-org/react";
 import axios from "axios";
+import './auth.css';
 
 const Signup = ({ closeSignup, openLogin }) => {
   const [email, setEmail] = useState("");
