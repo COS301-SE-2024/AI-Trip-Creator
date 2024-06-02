@@ -34,9 +34,160 @@
 
 .sidebar nav ul li a:hover {
   color: black;
-} */
+} 
 
+.......................................................
+:root {
+  --background-color: #f8f9fa;
+  --text-color: #343a40;
+  --primary-color: #007bff;
+  --secondary-color: #6c757d;
+  --border-radius: 8px;
+  --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
+.dashboard {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #1e1e1e;
+  padding: 20px;
+  color: white;
+}
+
+.sidebar nav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar nav ul li {
+  margin: 10px 0;
+}
+
+.sidebar nav ul li a {
+  color: grey;
+  padding-left: 15px;
+  display: block;
+  padding: 10px 0;
+  transition: color 0.3s, background-color 0.3s;
+  border-radius: var(--border-radius);
+}
+
+.sidebar nav ul li a:hover {
+  color: white;
+  background-color: var(--primary-color);
+}
+
+.content {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: var(--background-color);
+  overflow-y: auto;
+  border-radius: 0 50px 50px 0;
+}
+
+h1 {
+  margin: 0;
+  padding-bottom: 20px;
+  font-size: 24px;
+  color: var(--text-color);
+}
+
+.accommodation-list, .flight-list, .help-content, .profile-content, .settings-content {
+  margin-top: 20px;
+}
+
+.accommodation-item, .flight-item {
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: var(--border-radius);
+  background-color: #fff;
+  box-shadow: var(--box-shadow);
+  transition: transform 0.3s;
+}
+
+.accommodation-item:hover, .flight-item:hover {
+  transform: translateY(-5px);
+}
+
+.accommodation-item h2, .flight-item h2 {
+  font-size: 20px;
+  color: var(--primary-color);
+  margin: 0 0 10px;
+}
+
+.accommodation-item p, .flight-item p {
+  color: var(--text-color);
+  margin: 5px 0;
+}
+
+button {
+  display: inline-block;
+  padding: 10px 15px;
+  margin-top: 10px;
+  background-color: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: darken(var(--primary-color), 10%);
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+ul li {
+  background-color: #eee;
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: var(--border-radius);
+  transition: background-color 0.3s;
+}
+
+ul li:hover {
+  background-color: #ddd;
+}
+
+input[type="password"], input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: var(--border-radius);
+}
+
+label {
+  display: block;
+  margin: 10px 0;
+  color: var(--text-color);
+}
+
+.settings-content label input {
+  margin-right: 10px;
+}
+
+.profile-content ul li {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.profile-content ul li:hover {
+  background-color: darken(var(--secondary-color), 10%);
+}
+*******************************************************
+
+*/
 .dashboard {
   display: flex;
   height: 100vh;
@@ -45,7 +196,12 @@
 
 .dashboard-container {
   border-radius: 0; 
+  padding: 1rem;
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
+
+
 
 .sidebar {
   width: 250px;
@@ -62,6 +218,7 @@
 
 .sidebar nav ul li {
   margin: 10px 0;
+  
 }
 
 .sidebar nav ul li a {
@@ -89,3 +246,9 @@ h1 {
   padding-bottom: 20px;
   font-size: 24px;
 }
+
+.a:hover{
+  color: red;
+}
+
+
