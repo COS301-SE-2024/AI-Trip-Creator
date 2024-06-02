@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import patch, Mock
-from ..Flight_Services.FlightServices import (
+from ...Flight_Services.FlightServices import (
     get_flight_offers, filter_flight_offers_by_carrier,
-    filter_flight_offers_by_date, filter_flight_offers
+    filter_flight_offers_by_time, filter_flight_offers
 )
 from amadeus.client.errors import ResponseError
 
@@ -75,32 +75,41 @@ class TestFlightSearch(unittest.TestCase):
         self.assertEqual(len(filtered_offers), 1)
         self.assertEqual(filtered_offers[0]['id'], "1")
 
-    def test_filter_flight_offers_by_date(self):
+    def test_filter_flight_offers_by_time(self):
+        # Mock flight offers data
         offers = [
             {
-                "id": "1",
-                "itineraries": [
+                'itineraries': [
                     {
-                        "segments": [
-                            {"departure": {"at": "2024-06-15T10:00:00"}}
+                        'segments': [
+                            {'departure': {'at': '2024-06-15T08:00:00'}, 'arrival': {'at': '2024-06-15T10:00:00'}}
                         ]
                     }
                 ]
             },
             {
-                "id": "2",
-                "itineraries": [
+                'itineraries': [
                     {
-                        "segments": [
-                            {"departure": {"at": "2024-06-16T10:00:00"}}
+                        'segments': [
+                            {'departure': {'at': '2024-06-15T10:30:00'}, 'arrival': {'at': '2024-06-15T12:30:00'}}
                         ]
                     }
                 ]
             }
         ]
-        filtered_offers = filter_flight_offers_by_date(offers, '2024-06-15')
-        self.assertEqual(len(filtered_offers), 1)
-        self.assertEqual(filtered_offers[0]['id'], "1")
+
+        # Test filtering flight offers by time
+        filtered_offers = filter_flight_offers_by_time(offers, '08:00', '10:00')
+        self.assertEqual(len(filtered_offers), 1)  # Expecting one offer to be filtered
+
+        # Check if the filtered offer matches the expected offer
+        expected_offer = offers[0]
+        self.assertEqual(filtered_offers[0], expected_offer)
+
+        # Test filtering with non-matching time
+        filtered_offers = filter_flight_offers_by_time(offers, '12:00', '14:00')
+        self.assertEqual(len(filtered_offers), 0)  # Expecting no offers to be filtered
+
 
     def test_filter_flight_offers_generic(self):
         offers = [
@@ -137,3 +146,4 @@ class TestFlightSearch(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
