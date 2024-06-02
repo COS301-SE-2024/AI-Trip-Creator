@@ -10,6 +10,7 @@ const Dashboard = () => {
       <div className="content">
         <Outlet />
         <h1>Dashboard</h1>
+        <p>Welcome to your travel planning dashboard. Here you can manage your flights, accommodations, activities, and more.</p>
       </div>
     </div>
   );
