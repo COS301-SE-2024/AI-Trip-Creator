@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, Mock
-from FlightServices import (
+from ..Flight_Services.FlightServices import (
     get_flight_offers, filter_flight_offers_by_carrier,
     filter_flight_offers_by_date, filter_flight_offers
 )
