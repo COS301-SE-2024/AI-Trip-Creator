@@ -1,62 +1,44 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import "./sidebar.css";
 
 const Sidebar = () => {
   return (
-    <div className="sidebar" style={{ backgroundColor: "#1E1E1E" }}>
+    <div className="sidebar">
       <nav>
         <ul>
           <li>
-            <Link
-              style={{
-                color: "grey",
-
-                paddingLeft: "15px",
-              }}
-              to="/dashboard"
-            >
+            <Link to="/dashboard">
               Home
             </Link>
           </li>
           <li>
-            <Link style={{ color: "grey", paddingLeft: "15px" }} to="/profile">
+            <Link to="/profile">
               Profile
             </Link>
           </li>
           <li>
-            <Link style={{ color: "grey", paddingLeft: "15px" }} to="/flights">
+            <Link to="/flights">
               Flights
             </Link>
           </li>
-
           <li>
-            <Link
-              style={{ color: "grey", paddingLeft: "15px" }}
-              to="/accommodation"
-            >
+            <Link to="/accommodation">
               Accommodation
             </Link>
           </li>
-          <li>
-            <Link
-              style={{ color: "grey", paddingLeft: "15px" }}
-              to="/Itinerary"
-            >
-              Itinerary
-            </Link>
-          </li>
-          <li style={{ paddingTop: "350px" }}>
+          <li style={{ paddingTop: "380px" }}>
             <Link style={{ color: "grey", paddingLeft: "15px" }} to="/help">
               Help
             </Link>
           </li>
           <li>
-            <Link style={{ color: "grey", paddingLeft: "15px" }} to="/settings">
+            <Link to="/settings">
               Settings
             </Link>
           </li>
           <li>
-            <Link style={{ color: "grey", paddingLeft: "15px" }} to="/">
+            <Link to="/">
               Logout
             </Link>
           </li>
