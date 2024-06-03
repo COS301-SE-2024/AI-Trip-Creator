@@ -6,24 +6,24 @@ const Accommodation = () => {
   const accommodations = [
     {
       id: "1",
-      name: "Grand Hotel",
-      price: "$150 per night",
-      location: "Paris, France",
-      description: "A luxurious stay in the heart of Paris with stunning views of the Eiffel Tower."
+      name: "The Oyster Box",
+      price: "R4000 per night",
+      location: "Durban, South Africa",
+      description: "A luxurious stay in Umhlanga with stunning views of the Indian Ocean."
     },
     {
       id: "2",
-      name: "Budget Inn",
-      price: "$50 per night",
-      location: "Berlin, Germany",
-      description: "Affordable and comfortable accommodation in central Berlin."
+      name: "Protea Hotel",
+      price: "R1500 per night",
+      location: "Cape Town, South Africa",
+      description: "Affordable and comfortable accommodation in central Cape Town with Table Mountain views."
     },
     {
       id: "3",
-      name: "Beachside Resort",
-      price: "$200 per night",
-      location: "Maldives",
-      description: "Experience paradise with beachfront rooms and excellent amenities."
+      name: "Kruger National Park Lodge",
+      price: "R3000 per night",
+      location: "Kruger National Park, South Africa",
+      description: "Experience the wild with comfortable rooms and excellent amenities in the heart of the Kruger National Park."
     }
   ];
 

@@ -8,39 +8,28 @@ const Sidebar = () => {
       <nav>
         <ul>
           <li>
-            <Link to="/dashboard">
-              Home
-            </Link>
+            <Link to="/dashboard">Home</Link>
           </li>
           <li>
-            <Link to="/profile">
-              Profile
-            </Link>
+            <Link to="/profile">Profile</Link>
           </li>
           <li>
-            <Link to="/flights">
-              Flights
-            </Link>
+            <Link to="/flights">Flights</Link>
           </li>
           <li>
-            <Link to="/accommodation">
-              Accommodation
-            </Link>
-          </li>
-          <li style={{ paddingTop: "380px" }}>
-            <Link to="/help">
-              Help
-            </Link>
+            <Link to="/accommodation">Accommodation</Link>
           </li>
           <li>
-            <Link to="/settings">
-              Settings
-            </Link>
+            <Link to="/Itinerary">Itinerary</Link>
+          </li>
+          <li style={{ paddingTop: "200px" }}>
+            <Link to="/help">Help</Link>
           </li>
           <li>
-            <Link to="/">
-              Logout
-            </Link>
+            <Link to="/settings">Settings</Link>
+          </li>
+          <li>
+            <Link to="/">Logout</Link>
           </li>
         </ul>
       </nav>
