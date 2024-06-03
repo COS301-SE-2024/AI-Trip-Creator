@@ -1,0 +1,39 @@
+:root {
+    --sidebar-background: #1e1e1e;
+    --sidebar-text-color: grey;
+    --sidebar-text-hover-color: white;
+    --primary-color: #6d7a89;
+    --border-radius: 20px;
+    --border-width: 50px;
+  }
+
+  .sidebar {
+    width: 250px;
+    background-color: var(--sidebar-background);
+    padding: 20px;
+    color: white;
+  }
+
+  .sidebar nav ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  .sidebar nav ul li {
+    margin: 10px 0;
+  }
+
+  .sidebar nav ul li a {
+    color: var(--sidebar-text-color);
+    padding-left: 15px;
+    display: block;
+    padding: 10px 0;
+    transition: color 0.3s, background-color 0.3s;
+    border-radius: var(--border-radius);
+  }
+
+  .sidebar nav ul li a:hover {
+    color: var(--sidebar-text-hover-color);
+    background-color: var(--primary-color);
+
+  }
