@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Button, Input, Link } from "@nextui-org/react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import './auth.css';
+import "./auth.css";
 
 const Login = ({ setIsLoggedIn, closeLogin, openSignup }) => {
   const [email, setEmail] = useState("");
