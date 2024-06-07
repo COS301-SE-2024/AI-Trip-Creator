@@ -1,26 +1,24 @@
 import React from "react";
 import Sidebar from "./sidebar";
-import ItineraryForm from "./ItineraryForm";
-import ItineraryDisplay from "./ItineraryDisplay";
 
 const Dashboard = ({ itinerary, generateItinerary }) => {
   const styles = {
     dashboard: {
-      display: 'flex',
-      height: '100vh',
+      display: "flex",
+      height: "100vh",
     },
     content: {
       flexGrow: 1,
-      padding: '20px',
-      backgroundColor: 'white',
+      padding: "20px",
+      backgroundColor: "white",
     },
     h1: {
-      color: 'teal',
-      marginBottom: '10px',
+      color: "teal",
+      marginBottom: "10px",
     },
     h2: {
-      color: 'black',
-      marginBottom: '20px',
+      color: "black",
+      marginBottom: "20px",
     },
   };
 
@@ -28,7 +26,6 @@ const Dashboard = ({ itinerary, generateItinerary }) => {
     <div style={styles.dashboard}>
       <Sidebar />
       <div className="content">
-        <Outlet />
         <h1>Dashboard</h1>
         <p>
           Welcome to your travel planning dashboard. Here you can manage your
@@ -41,4 +38,3 @@ const Dashboard = ({ itinerary, generateItinerary }) => {
 };
 
 export default Dashboard;
-
