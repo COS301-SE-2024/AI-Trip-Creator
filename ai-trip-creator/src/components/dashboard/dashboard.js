@@ -1,11 +1,31 @@
 import React from "react";
 import Sidebar from "./sidebar";
-import { Outlet } from "react-router-dom";
-import "./dashboard.css";
+import ItineraryForm from "./ItineraryForm";
+import ItineraryDisplay from "./ItineraryDisplay";
 
-const Dashboard = () => {
+const Dashboard = ({ itinerary, generateItinerary }) => {
+  const styles = {
+    dashboard: {
+      display: 'flex',
+      height: '100vh',
+    },
+    content: {
+      flexGrow: 1,
+      padding: '20px',
+      backgroundColor: 'white',
+    },
+    h1: {
+      color: 'teal',
+      marginBottom: '10px',
+    },
+    h2: {
+      color: 'black',
+      marginBottom: '20px',
+    },
+  };
+
   return (
-    <div className="dashboard">
+    <div style={styles.dashboard}>
       <Sidebar />
       <div className="content">
         <Outlet />
@@ -21,3 +41,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

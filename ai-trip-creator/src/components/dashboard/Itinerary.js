@@ -1,8 +1,8 @@
-import React from 'react';
-import './dashboard.css';
-import Sidebar from './sidebar';
-import ItineraryForm from './ItineraryForm';
-import ItineraryDisplay from './ItineraryDisplay';
+import React from "react";
+import "./dashboard.css";
+import Sidebar from "./sidebar";
+import ItineraryForm from "./ItineraryForm";
+import ItineraryDisplay from "./ItineraryDisplay";
 
 const Itinerary = ({ itinerary, generateItinerary }) => {
   return (

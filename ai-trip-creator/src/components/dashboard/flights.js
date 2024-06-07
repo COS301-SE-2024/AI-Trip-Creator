@@ -49,7 +49,6 @@
 
 // export default Flights;
 import React from "react";
-import "./dashboard.css";
 import Sidebar from "./sidebar";
 
 const Flights = () => {
@@ -57,7 +56,9 @@ const Flights = () => {
   const getRandomTime = () => {
     const hours = Math.floor(Math.random() * 24);
     const minutes = Math.floor(Math.random() * 60);
-    return `${hours < 10 ? "0" + hours : hours}:${minutes < 10 ? "0" + minutes : minutes}`;
+    return `${hours < 10 ? "0" + hours : hours}:${
+      minutes < 10 ? "0" + minutes : minutes
+    }`;
   };
 
   // Function to calculate departure time based on arrival time
@@ -69,16 +70,43 @@ const Flights = () => {
       departureHours -= 1;
       departureMinutes += 60;
     }
-    return `${departureHours < 10 ? "0" + departureHours : departureHours}:${departureMinutes < 10 ? "0" + departureMinutes : departureMinutes}`;
+    return `${departureHours < 10 ? "0" + departureHours : departureHours}:${
+      departureMinutes < 10 ? "0" + departureMinutes : departureMinutes
+    }`;
   };
 
   // Mock data for flights
   const flights = [
-    { id: 1, origin: "Pretoria", destination: "Cape Town", arrival: getRandomTime() },
-    { id: 2, origin: "Johannesburg", destination: "Cape Town", arrival: getRandomTime() },
-    { id: 3, origin: "Pretoria", destination: "Cape Town", arrival: getRandomTime() },
-    { id: 4, origin: "Johannesburg", destination: "Cape Town", arrival: getRandomTime() },
-    { id: 5, origin: "Pretoria", destination: "Cape Town", arrival: getRandomTime() },
+    {
+      id: 1,
+      origin: "Pretoria",
+      destination: "Cape Town",
+      arrival: getRandomTime(),
+    },
+    {
+      id: 2,
+      origin: "Johannesburg",
+      destination: "Cape Town",
+      arrival: getRandomTime(),
+    },
+    {
+      id: 3,
+      origin: "Pretoria",
+      destination: "Cape Town",
+      arrival: getRandomTime(),
+    },
+    {
+      id: 4,
+      origin: "Johannesburg",
+      destination: "Cape Town",
+      arrival: getRandomTime(),
+    },
+    {
+      id: 5,
+      origin: "Pretoria",
+      destination: "Cape Town",
+      arrival: getRandomTime(),
+    },
   ];
 
   // Calculate departure time for each flight
@@ -86,15 +114,44 @@ const Flights = () => {
     flight.departure = calculateDepartureTime(flight.arrival);
   });
 
+  const styles = {
+    dashboard: {
+      display: "flex",
+      height: "100vh",
+    },
+    content: {
+      flexGrow: 1,
+      padding: "20px",
+      backgroundColor: "white",
+    },
+    h1: {
+      color: "teal",
+      marginBottom: "10px",
+    },
+    flightList: {
+      marginTop: "20px",
+    },
+    flight: {
+      backgroundColor: "#f9f9f9",
+      padding: "10px",
+      marginBottom: "10px",
+      border: "1px solid #ddd",
+      borderRadius: "5px",
+    },
+    flightDetails: {
+      marginBottom: "10px",
+    },
+  };
+
   return (
-    <div className="dashboard">
+    <div style={styles.dashboard}>
       <Sidebar />
-      <div className="content">
-        <h1>Flight Page</h1>
-        <div className="flight-list">
+      <div style={styles.content}>
+        <h1 style={styles.h1}>Flight Page</h1>
+        <div style={styles.flightList}>
           {flights.map((flight) => (
-            <div key={flight.id} className="flight">
-              <div className="flight-details">
+            <div key={flight.id} style={styles.flight}>
+              <div style={styles.flightDetails}>
                 <h3>{`${flight.origin} to ${flight.destination}`}</h3>
                 <p>Departure: {flight.departure}</p>
                 <p>Arrival: {flight.arrival}</p>
