@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { Button } from "@nextui-org/react";
 import Login from "../auth/login";
 import Signup from "../auth/signup";
-import './splash.css';
+import "./splash.css";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Dashboard from "../dashboard/dashboard";
 
 const Splash = ({ setIsLoggedIn }) => {
   const [visibleLogin, setVisibleLogin] = useState(false);
@@ -17,7 +19,9 @@ const Splash = ({ setIsLoggedIn }) => {
     <div className="splash-container">
       <div className="header">
         <h1>Trip Creator</h1>
-        <Button onClick={openLogin} className="get-started-button">Get Started</Button>
+        <Button onClick={openLogin} className="get-started-button">
+          Get Started
+        </Button>
       </div>
 
       {visibleLogin && (
