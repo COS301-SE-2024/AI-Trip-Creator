@@ -1,31 +1,31 @@
 import React, { useState } from "react";
 import { Button, Input, Link } from "@nextui-org/react";
-import axios from "axios";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import './auth.css';
+import { auth } from "../../firebase/firebase-config";
+import "./auth.css";
 
 const Login = ({ setIsLoggedIn, closeLogin, openSignup }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("Form submitted"); // Debugging log
-    console.log("Attempting login with email:", email); // Debugging log
-    console.log("Attempting login with password:", password); // Debugging log
-
+    setError("");
     try {
-      // const response = await axios.post("/api/login", { email, password });
-      // if (response.data.success) {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
+      const user = userCredential.user;
       setIsLoggedIn(true);
-      console.log("Login successful, navigating to dashboard"); // Debugging log
-      navigate("/dashboard"); // Navigate to the dashboard
-      // } else {
-      // handle login failure
-      // }
+      navigate("/dashboard");
     } catch (error) {
       console.error("Login failed:", error);
+      setError(error.message);
     }
   };
 
@@ -34,6 +34,7 @@ const Login = ({ setIsLoggedIn, closeLogin, openSignup }) => {
       onSubmit={handleLogin}
       style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
     >
+      {error && <p style={{ color: "red" }}>{error}</p>}
       <div>
         <label
           htmlFor="email"
