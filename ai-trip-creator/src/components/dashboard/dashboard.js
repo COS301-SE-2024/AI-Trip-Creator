@@ -1,5 +1,6 @@
 import React from "react";
 import Sidebar from "./sidebar";
+import "./dashboard.css"
 
 const Dashboard = ({ itinerary, generateItinerary }) => {
   const styles = {
