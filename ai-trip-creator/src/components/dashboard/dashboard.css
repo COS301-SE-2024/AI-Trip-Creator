@@ -226,12 +226,14 @@ button.theme-toggle:hover {
 :root {
   --background-color-light: #ffffff;
   --text-color-light: #333333;
-  --primary-color-light: #007bff;
+  /* --primary-color-light: #3aa9af; */
+  --primary-color-light: #3e78b2a3;
   --secondary-color-light: #6c757d;
 
   --background-color-dark: #121212;
   --text-color-dark: #e0e0e0;
-  --primary-color-dark: #1a73e8;
+  /* --primary-color-dark: #1a73e8; */
+  --primary-color-dark: #3e78b2e1;
   --secondary-color-dark: #9aa0a6;
 
   --border-radius: 12px;
@@ -389,7 +391,9 @@ p{
 }
 
 .flight-item {
-  background-color: var(--primary-color);
+  /* background-color: #9AD0C2; */
+  /* background-color: #279494ad  ; */
+  background-color: var(--primary-color)  ;
   color: #ffffff;
   padding: 1rem;
   border-radius: var(--border-radius);

@@ -169,6 +169,7 @@
 
 import React from "react";
 import Sidebar from "./sidebar";
+import "./dashboard.css"
 
 const Flights = () => {
   const flights = [

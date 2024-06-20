@@ -12,6 +12,15 @@ export const ThemeProviderWrapper = ({ children }) => {
   const theme = useMemo(() => createTheme({
     palette: {
       mode,
+      ...(mode === 'dark' && {
+        background: {
+          default: '#121212', // Use a lighter shade of grey for dark mode
+          paper: '#1d1d1d',
+        },
+        text: {
+          primary: '#e0e0e0',
+        },
+      }),
     },
   }), [mode]);
 

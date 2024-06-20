@@ -97,18 +97,20 @@ const Sidebar = () => {
     //     console.error("Error logging out:", error);
     //   }
     // };
-  return (
-    <Drawer
-      variant="permanent"
-      anchor="left"
-      PaperProps={{
-        sx: {
-          width: 240,
-          backgroundColor: '#008080',
-          color: '#fff',
-        }
-      }}
-    >
+    return (
+      <Drawer
+        variant="permanent"
+        anchor="left"
+        PaperProps={{
+          sx: {
+            width: 240,
+            // backgroundColor: '#008080',
+            backgroundColor: '#004BA8',
+            color: '#FFFFFF',
+            elevation: 16, // Nav drawer elevation
+          },
+        }}
+      >
       <List>
         <ListItem button component={Link} to="/dashboard">
           <ListItemText primary="Home" />
