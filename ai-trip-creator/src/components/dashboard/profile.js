@@ -1,6 +1,7 @@
-import React from "react";
-import "./dashboard.css";
-import Sidebar from "./sidebar";
+// src/components/dashboard/profile.js
+import React from 'react';
+import { Box, Typography, List, ListItem } from '@mui/material';
+import Sidebar from './sidebar';
 
 const Profile = () => {
   const user = {
@@ -10,22 +11,22 @@ const Profile = () => {
   };
 
   return (
-    <div className="dashboard">
+    <Box display="flex" className="dashboard">
       <Sidebar />
-      <div className="content">
-        <h1>My Profile</h1>
-        <div className="profile-content">
-          <h2>{user.name}</h2>
-          <p>Email: {user.email}</p>
-          <h3>Preferences:</h3>
-          <ul>
+      <Box className="content" flexGrow={1} p={3}>
+        <Typography variant="h4">My Profile</Typography>
+        <Box className="profile-content" mt={2}>
+          <Typography variant="h5">{user.name}</Typography>
+          <Typography>Email: {user.email}</Typography>
+          <Typography variant="h6" mt={2}>Preferences:</Typography>
+          <List>
             {user.preferences.map(pref => (
-              <li key={pref}>{pref}</li>
+              <ListItem key={pref}>{pref}</ListItem>
             ))}
-          </ul>
-        </div>
-      </div>
-    </div>
+          </List>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 
