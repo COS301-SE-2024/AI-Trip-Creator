@@ -41,11 +41,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd ai-trip-creator-app && npm ci
+          cd ai-trip-creator && npm ci
 
       - name: Build Codebase
         run: |
-          cd ai-trip-creator-app && npm run build
+          cd ai-trip-creator && npm run build
 
   end:
     name: The End
