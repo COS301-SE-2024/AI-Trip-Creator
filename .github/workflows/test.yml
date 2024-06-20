@@ -20,8 +20,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd ai-trip-creator-app && npm ci
+          cd ai-trip-creator && npm ci
 
       - name: Run tests
         run: |
-          cd ai-trip-creator-app && npm test
+          cd ai-trip-creator && npm test
