@@ -223,16 +223,14 @@ button.theme-toggle:hover {
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
 
-:root {
+/* :root {
   --background-color-light: #ffffff;
   --text-color-light: #333333;
-  /* --primary-color-light: #3aa9af; */
   --primary-color-light: #3e78b2a3;
   --secondary-color-light: #6c757d;
 
   --background-color-dark: #121212;
   --text-color-dark: #e0e0e0;
-  /* --primary-color-dark: #1a73e8; */
   --primary-color-dark: #3e78b2a3;
   --secondary-color-dark: #9aa0a6;
 
@@ -253,14 +251,82 @@ button.theme-toggle:hover {
   --text-color: var(--text-color-dark);
   --primary-color: var(--primary-color-dark);
   --secondary-color: var(--secondary-color-dark);
+} */
+
+:root {
+  --background-color-light: #ffffff;
+  --text-color-light: #333333;
+  --primary-color-light: #3e78b2a3;
+  --secondary-color-light: #6c757d;
+
+  --background-color-dark: rgba(0, 0, 0, 0.477);
+  --text-color-dark: #e0e0e0;
+  --primary-color-dark: #3e78b2a3;
+  --secondary-color-dark: #9aa0a6;
+
+  --card-background-light: #b4c5e4;
+  --card-background-dark: #608bdc;
+
+  --border-radius: 12px;
+  --transition-duration: 0.3s;
+  --font-family: 'Poppins', sans-serif;
 }
 
+[data-theme="light"] {
+  --background-color: var(--background-color-light);
+  --text-color: var(--text-color-light);
+  --primary-color: var(--primary-color-light);
+  --secondary-color: var(--secondary-color-light);
+  --card-background: var(--card-background-light);
+}
+
+[data-theme="dark"] {
+  --background-color: var(--background-color-dark);
+  --text-color: var(--text-color-dark);
+  --primary-color: var(--primary-color-dark);
+  --secondary-color: var(--secondary-color-dark);
+  --card-background: var(--card-background-dark);
+}
+
+/* body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: var(--font-family);
+  margin: 0;
+  transition: background-color var(--transition-duration), color var(--transition-duration);
+} */
 body {
   background-color: var(--background-color);
   color: var(--text-color);
   font-family: var(--font-family);
   margin: 0;
   transition: background-color var(--transition-duration), color var(--transition-duration);
+}
+
+/* .card {
+  background-color: var(--card-background);
+  color: var(--text-color-light);
+  padding: 1.5rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius);
+  margin-bottom: 1.5rem;
+  transition: background-color var(--transition-duration), color var(--transition-duration);
+} */
+
+
+.card-flight {
+  background-color: var(--card-background);
+  color: var(--text-color-light);
+  padding: 1.5rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius);
+  margin-bottom: 1.5rem;
+  transition: background-color var(--transition-duration), color var(--transition-duration);
+}
+
+[data-theme="dark"] .card {
+  background-color: var(--background-color-dark);
+  color: var(--text-color-dark);
 }
 
 p{
@@ -387,7 +453,7 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 2rem;
   margin-bottom: 1.5rem;
 }
-
+/* 
 .flight-list {
   display: flex;
   flex-wrap: wrap;
@@ -395,8 +461,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .flight-item {
-  /* background-color: #9AD0C2; */
-  /* background-color: #279494ad  ; */
   background-color: var(--primary-color)  ;
   color: #ffffff;
   padding: 1rem;
@@ -412,7 +476,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .flight-item p {
   margin: 0.5rem 0;
-}
+} */
 
 .accommodation-item {
   background-color: #3e78b2a3;
@@ -425,7 +489,7 @@ h1 {
   padding-bottom: 20px;
   font-size: 24px;
 }
-
+/* 
 .card {
   background-color: #ffffff;
   padding: 1.5rem;
@@ -433,7 +497,7 @@ h1 {
   border-radius: var(--border-radius);
   margin-bottom: 1.5rem;
   transition: background-color var(--transition-duration), color var(--transition-duration);
-}
+} */
 
 .card h3 {
   margin-top: 0;
@@ -441,9 +505,9 @@ h1 {
   font-weight: 500;
 }
 
-[data-theme="dark"] .card {
+/* [data-theme="dark"] .card {
   background-color: #2e2e2e;
-}
+} */
 
 [data-theme="dark"] .sidebar {
   background-color: var(--primary-color-dark);
@@ -481,3 +545,6 @@ h1 {
 .elevation-2 {
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
 }
+
+
+
