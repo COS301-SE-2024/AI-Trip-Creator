@@ -86,17 +86,7 @@ import Splash from '../splash/splash';
 const Sidebar = () => {
   const { toggleTheme } = useTheme();
   const user = useUser();
-  // const navigate = useNavigate();
-  
-    // const handleLogout = async () => {
-    //   const auth = getAuth();
-    //   try {
-    //     await signOut(auth);
-    //     navigate("/"); // Redirect to the login page or home page
-    //   } catch (error) {
-    //     console.error("Error logging out:", error);
-    //   }
-    // };
+
     return (
       <Drawer
         variant="permanent"
