@@ -118,6 +118,9 @@ const Sidebar = () => {
         <ListItem button component={Link} to="/profile">
           <ListItemText primary="Profile" />
         </ListItem>
+        <ListItem button component={Link} to="/Itinerary">
+          <ListItemText primary="Itinerary" />
+        </ListItem>
         <ListItem button component={Link} to="/flights">
           <ListItemText primary="Flights" />
         </ListItem>
