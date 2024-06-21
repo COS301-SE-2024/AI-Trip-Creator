@@ -84,9 +84,7 @@ const Flights = () => {
     <div className="dashboard">
       <Sidebar />
       <Box className="content" sx={{ padding: '2rem' }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Flights
-        </Typography>
+      <h1>Flights</h1>
         {flights.map(flight => (
           <Card 
             key={flight.id} 
