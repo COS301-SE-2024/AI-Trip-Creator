@@ -50,9 +50,13 @@
 // export default Flights;
 import React from 'react';
 import Sidebar from './sidebar';
-import { Card, CardContent, Typography } from '@mui/material';
+import { Card, CardContent, Typography, Box } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
 const Flights = () => {
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === 'dark';
+
   const getRandomTime = () => {
     const hours = Math.floor(Math.random() * 24);
     const minutes = Math.floor(Math.random() * 60);
@@ -79,13 +83,22 @@ const Flights = () => {
   return (
     <div className="dashboard">
       <Sidebar />
-      <div className="content">
+      <Box className="content" sx={{ padding: '2rem' }}>
         <Typography variant="h4" component="h1" gutterBottom>
           Flights
         </Typography>
         {flights.map(flight => (
-          <Card key={flight.id} className="card">
-            <CardContent>
+          <Card 
+            key={flight.id} 
+            className="card-flight" 
+            sx={{ 
+              backgroundColor: isDarkMode ? '#0077b6' : '#b4c5e4', 
+              color: isDarkMode ? '#FFFFFF' : '#000000',
+              marginBottom: '1rem',
+              transition: 'background-color 0.3s, color 0.3s'
+            }}
+          >
+            <CardContent >
               <Typography variant="h6" component="h2">
                 {flight.origin} to {flight.destination}
               </Typography>
@@ -95,9 +108,10 @@ const Flights = () => {
             </CardContent>
           </Card>
         ))}
-      </div>
+      </Box>
     </div>
   );
 };
 
 export default Flights;
+
