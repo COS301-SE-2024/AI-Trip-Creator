@@ -73,15 +73,16 @@
 
 // export default Accommodation;
 
-// src/components/dashboard/accommodation.js
 import React from "react";
 import "./dashboard.css";
 import Sidebar from "./sidebar";
 import { Card, CardContent, Typography } from '@mui/material';
-
-
+import { useTheme } from '@mui/material/styles';
 
 const Accommodation = () => {
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === 'dark';
+
   const accommodations = [
     {
       id: "1",
@@ -116,18 +117,13 @@ const Accommodation = () => {
             <Card 
               key={acc.id} 
               sx={{ 
-                backgroundColor: isDarkMode ? '##666666 ' : '#b4c5e4', 
+                backgroundColor: isDarkMode ? '#666666' : '#b4c5e4', 
                 marginBottom: '1rem' 
               }} 
               className="accommodation-item"
             >
-              <CardContent 
-                sx={{ color: isDarkMode ? '#FFFFFF' : '#000000' }}
-              >
+              <CardContent sx={{ color: isDarkMode ? '#FFFFFF' : '#000000' }}>
                 <Typography variant="h6">{acc.name}</Typography>
-            <Card key={acc.id} sx={{ backgroundColor: '#3e78b2a3' }} className="accommodation-item">
-              <CardContent>
-                <h2 sx={{ color: '#FFFFF' }} >{acc.name}</h2>
                 <Typography variant="body1">{acc.price}</Typography>
                 <Typography variant="body1">{acc.location}</Typography>
                 <Typography variant="body2">{acc.description}</Typography>
