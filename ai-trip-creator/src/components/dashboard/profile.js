@@ -18,15 +18,8 @@ const Profile = () => {
     <Box display="flex" className="dashboard">
       <Sidebar />
       <Box className="content" flexGrow={1} p={3}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          My Profile
-        </Typography>
-        <Card 
-          sx={{ 
-            backgroundColor: isDarkMode ? '#666666' : '#b4c5e4', 
-            marginBottom: '1rem' 
-          }}
-        >
+      <h1>My Profile</h1>
+        <Card sx={{ backgroundColor: isDarkMode ? '#666666 ' : '#b4c5e4', marginBottom: '1rem' }}>
           <CardContent sx={{ color: isDarkMode ? '#FFFFFF' : '#000000' }}>
             <Typography variant="h5" component="h2">
               {user.name}
