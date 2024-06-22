@@ -1,7 +1,8 @@
+// settings.js
 import React, { useState } from 'react';
 import Sidebar from './sidebar';
 import { useTheme } from '../themeContext/themeContext';
-import { Button, TextField, Typography, Checkbox, FormControlLabel, Container, Box, CssBaseline } from '@mui/material';
+import { Button, TextField, Typography, Container, Box } from '@mui/material';
 import { getAuth, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
 import './dashboard.css';
 
@@ -28,6 +29,9 @@ const Settings = () => {
         await reauthenticateWithCredential(user, credential);
         await updatePassword(user, newPassword);
         setSuccess('Password updated successfully.');
+        // Clear the text fields
+        setCurrentPassword('');
+        setNewPassword('');
       } catch (error) {
         console.error("Password change failed:", error);
         setError(error.message);
@@ -65,16 +69,16 @@ const Settings = () => {
                 required
                 margin="normal"
               />
-              <Button submit className = "button" variant="contained" color="primary" >
+              <Button type="submit" className="button" variant="contained" color="primary">
                 Update Password
               </Button>
               {error && <Typography color="error">{error}</Typography>}
-              {success && <Typography color="success">{success}</Typography>}
+              {success && <Typography color="primary">{success}</Typography>}
             </form>
           </Box>
           <h2>Theme Preferences</h2>
           <Typography variant="body1">Press the 'Toggle Theme' button to switch between light mode/dark mode.</Typography>
-          <Button className = "button" variant="contained" color="primary" onClick={toggleTheme} sx={{ margin: '20px 0' }}>
+          <Button className="button" variant="contained" color="primary" onClick={toggleTheme} sx={{ margin: '20px 0' }}>
             Toggle Theme
           </Button>
         </Container>
