@@ -142,9 +142,7 @@ const Accommodations = ({ selectedDestination }) => {
         <h1>Accommodations</h1>
         {destination ? (
           <Box mt={4}>
-            <Typography variant="h5" gutterBottom>
-              Accommodations in {destination}
-            </Typography>
+            <h2>Accommodations in {destination}</h2>
             <Grid container spacing={2}>
               {accommodationsData[destination]?.map((accommodation) => (
                 <Grid item xs={12} sm={6} md={4} key={accommodation.name}>
