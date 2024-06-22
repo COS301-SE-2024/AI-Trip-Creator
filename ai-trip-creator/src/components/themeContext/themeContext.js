@@ -41,7 +41,6 @@
 //   );
 // };
 
-// src/components/ThemeContext.js
 import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
@@ -81,5 +80,6 @@ export const ThemeProviderWrapper = ({ children }) => {
         {children}
       </ThemeProvider>
     </ThemeContext.Provider>
+
   );
 };

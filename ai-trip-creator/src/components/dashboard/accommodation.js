@@ -122,7 +122,9 @@ const Accommodation = () => {
               }} 
               className="accommodation-item"
             >
-              <CardContent sx={{ color: isDarkMode ? '#FFFFFF' : '#000000' }}>
+              <CardContent 
+                sx={{ color: isDarkMode ? '#FFFFFF' : '#000000' }}
+              >
                 <Typography variant="h6">{acc.name}</Typography>
                 <Typography variant="body1">{acc.price}</Typography>
                 <Typography variant="body1">{acc.location}</Typography>
