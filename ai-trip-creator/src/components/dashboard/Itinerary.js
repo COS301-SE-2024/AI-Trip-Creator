@@ -1,10 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import "./dashboard.css";
 import Sidebar from "./sidebar";
 import ItineraryForm from "./ItineraryForm";
 import ItineraryDisplay from "./ItineraryDisplay";
 
-const Itinerary = ({ itinerary, generateItinerary }) => {
+const Itinerary = () => {
+  const [itinerary, setItinerary] = useState(null);
+
+  const generateItinerary = (preferences) => {
+    setItinerary(preferences);
+  };
+
   return (
     <div className="dashboard">
       <Sidebar />
