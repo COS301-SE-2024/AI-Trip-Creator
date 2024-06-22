@@ -40,7 +40,7 @@ function ItineraryForm({ onGenerateItinerary }) {
 
   const locations = [
     { name: 'Johannesburg', image: johannesburgImg},
-    { name: 'Cape Town', image: capetownImg },
+    { name: 'CapeTown', image: capetownImg },
     { name: 'Pretoria', image: pretoriaImg },
     { name: 'Durban', image: durbanImg },
     // { name: 'Gqeberha', image: 'image_url_gqeberha' },
