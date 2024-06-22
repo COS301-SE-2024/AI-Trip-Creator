@@ -65,6 +65,7 @@
 // }
 
 // export default ItineraryForm;
+
 import React, { useState } from 'react';
 import {
   Button,
@@ -216,3 +217,4 @@ function ItineraryForm({ onGenerateItinerary }) {
 }
 
 export default ItineraryForm;
+

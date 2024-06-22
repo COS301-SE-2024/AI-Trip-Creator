@@ -224,21 +224,17 @@ button.theme-toggle:hover {
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
 
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
-
-
 :root {
   --background-color-light: #ffffff;
   --text-color-light: #333333;
-  /* --primary-color-light: #3aa9af; */
   --primary-color-light: #3e78b2a3;
   --secondary-color-light: #6c757d;
 
-  --background-color-dark: #121212;
+  --background-color-dark: rgba(0, 0, 0, 0.477);
   --text-color-dark: #e0e0e0;
-  /* --primary-color-dark: #1a73e8; */
   --primary-color-dark: #3e78b2a3;
   --secondary-color-dark: #9aa0a6;
+
   --card-background-light: #b4c5e4;
   --card-background-dark: #666666 ;
 
@@ -254,6 +250,7 @@ button.theme-toggle:hover {
   --text-color: var(--text-color-light);
   --primary-color: var(--primary-color-light);
   --secondary-color: var(--secondary-color-light);
+  --card-background: var(--card-background-light);
 }
 
 [data-theme="dark"] {
@@ -261,6 +258,7 @@ button.theme-toggle:hover {
   --text-color: var(--text-color-dark);
   --primary-color: var(--primary-color-dark);
   --secondary-color: var(--secondary-color-dark);
+  --card-background: var(--card-background-dark);
 }
 
 body {
@@ -316,7 +314,7 @@ label{
   color: var(--text-color-dark);
 }
 
-p{
+p {
   color: var(--text-color);
 }
 
@@ -441,32 +439,6 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 1.5rem;
 }
 
-.flight-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-}
-
-.flight-item {
-  /* background-color: #9AD0C2; */
-  /* background-color: #279494ad  ; */
-  background-color: var(--primary-color)  ;
-  color: #ffffff;
-  padding: 1rem;
-  border-radius: var(--border-radius);
-  width: calc(33% - 1rem);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.flight-item h2 {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.flight-item p {
-  margin: 0.5rem 0;
-}
-
 .accommodation-item {
   background-color: #3e78b2a3;
   padding: 16px;
@@ -475,27 +447,14 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 {
   margin: 0;
-  padding-bottom: 20px;
-  font-size: 24px;
-}
-
-.card {
-  background-color: #ffffff;
-  padding: 1.5rem;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  border-radius: var(--border-radius);
-  margin-bottom: 1.5rem;
-  transition: background-color var(--transition-duration), color var(--transition-duration);
+  padding-bottom: 15px;
+  font-size: 60px;
 }
 
 .card h3 {
   margin-top: 0;
   font-size: 1.25rem;
   font-weight: 500;
-}
-
-[data-theme="dark"] .card {
-  background-color: #2e2e2e;
 }
 
 [data-theme="dark"] .sidebar {
@@ -506,7 +465,6 @@ h1 {
   background-color: var(--background-color-dark);
 }
 
-/* src/components/dashboard/dashboard.css */
 .elevation-16 {
   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
 }
