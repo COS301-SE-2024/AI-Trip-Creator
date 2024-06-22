@@ -223,6 +223,10 @@ button.theme-toggle:hover {
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
 
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+
+
 :root {
   --background-color-light: #ffffff;
   --text-color-light: #333333;
@@ -235,10 +239,14 @@ button.theme-toggle:hover {
   /* --primary-color-dark: #1a73e8; */
   --primary-color-dark: #3e78b2a3;
   --secondary-color-dark: #9aa0a6;
+  --card-background-light: #b4c5e4;
+  --card-background-dark: #666666 ;
 
   --border-radius: 12px;
   --transition-duration: 0.3s;
   --font-family: 'Poppins', sans-serif;
+  --font-family-body: 'Roboto', sans-serif;
+  /* --font-family-heading: 'Merriweather', serif; */
 }
 
 [data-theme="light"] {
@@ -261,6 +269,51 @@ body {
   font-family: var(--font-family);
   margin: 0;
   transition: background-color var(--transition-duration), color var(--transition-duration);
+}
+
+.card-flight {
+  background-color: var(--card-background);
+  color: var(--text-color-light);
+  padding: 1.5rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius);
+  margin-bottom: 1.5rem;
+  transition: background-color var(--transition-duration), color var(--transition-duration);
+}
+
+label{
+  color: var(--text-color);
+}
+
+.button {
+  background-color: var(--button-color-primary);
+  color: var(--button-text-color);
+  border-radius: var(--border-radius);
+  padding: 0.5rem 1rem;
+  font-family: var(--font-family-body);
+  transition: background-color var(--transition-duration), transform var(--transition-duration);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.button:hover {
+  background-color: var(--button-color-secondary);
+  transform: scale(1.05);
+}
+
+.button:disabled {
+  background-color: var(--button-color-secondary);
+  cursor: not-allowed;
+}
+
+.Button.Mui-active
+{
+  color: red;
+  size: 200px;
+}
+
+
+[data-theme="dark"] .card {
+  background-color: var(--background-color-dark);
+  color: var(--text-color-dark);
 }
 
 p{

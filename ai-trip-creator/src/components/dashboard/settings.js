@@ -90,7 +90,7 @@
 import React, { useState } from 'react';
 import Sidebar from './sidebar';
 import { useTheme } from '../themeContext/themeContext';
-import { Button, TextField, Typography, Checkbox, FormControlLabel, Container, Box } from '@mui/material';
+import { Button, TextField, Typography, Checkbox, FormControlLabel, Container, Box, CssBaseline } from '@mui/material';
 import { getAuth, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
 import './dashboard.css';
 
@@ -154,7 +154,7 @@ const Settings = () => {
                 required
                 margin="normal"
               />
-              <Button variant="contained" color="primary" type="submit">
+              <Button submit className = "button" variant="contained" color="primary" >
                 Update Password
               </Button>
               {error && <Typography color="error">{error}</Typography>}
@@ -163,7 +163,8 @@ const Settings = () => {
           </Box>
           <h2>Theme Preferences</h2>
           <Typography variant="body1">Press the 'Toggle Theme' button to switch between light mode/dark mode.</Typography>
-          <Button variant="contained" color="primary" onClick={toggleTheme} sx={{ margin: '20px 0' }}>
+          <CssBaseline></CssBaseline>
+          <Button className = "button" variant="contained" color="primary" onClick={toggleTheme} sx={{ margin: '20px 0' }}>
             Toggle Theme
           </Button>
         </Container>

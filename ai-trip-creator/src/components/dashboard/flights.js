@@ -199,6 +199,30 @@ const Flights = () => {
   return (
     <div className="dashboard">
       <Sidebar />
+      <Box className="content" sx={{ padding: '2rem' }}>
+      <h1>Flights</h1>
+        {flights.map(flight => (
+          <Card 
+            key={flight.id} 
+            className="card-flight" 
+            sx={{ 
+              backgroundColor: isDarkMode ? '#666666 ' : '#b4c5e4', 
+              color: isDarkMode ? '#FFFFFF' : '#000000',
+              marginBottom: '1rem',
+              transition: 'background-color 0.3s, color 0.3s'
+            }}
+          >
+            <CardContent >
+              <Typography variant="h6" component="h2">
+                {flight.origin} to {flight.destination}
+              </Typography>
+              <Typography variant="body1">
+                Departure: {flight.departure} | Arrival: {flight.arrival}
+              </Typography>
+            </CardContent>
+          </Card>
+        ))}
+      </Box>
       <div className="content">
         <h1>Flights</h1>
         <div className="flight-list">
