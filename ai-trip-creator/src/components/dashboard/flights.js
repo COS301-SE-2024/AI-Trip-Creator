@@ -90,7 +90,7 @@ const Flights = () => {
             key={flight.id} 
             className="card-flight" 
             sx={{ 
-              backgroundColor: isDarkMode ? '#0077b6' : '#b4c5e4', 
+              backgroundColor: isDarkMode ? '#666666 ' : '#b4c5e4', 
               color: isDarkMode ? '#FFFFFF' : '#000000',
               marginBottom: '1rem',
               transition: 'background-color 0.3s, color 0.3s'

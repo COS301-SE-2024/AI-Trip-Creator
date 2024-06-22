@@ -288,6 +288,10 @@ h1 {
   transition: background-color var(--transition-duration), color var(--transition-duration);
 } */
 
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+
+
 :root {
   --background-color-light: #ffffff;
   --text-color-light: #333333;
@@ -300,11 +304,13 @@ h1 {
   --secondary-color-dark: #9aa0a6;
 
   --card-background-light: #b4c5e4;
-  --card-background-dark: #608bdc;
+  --card-background-dark: #666666 ;
 
   --border-radius: 12px;
   --transition-duration: 0.3s;
   --font-family: 'Poppins', sans-serif;
+  --font-family-body: 'Roboto', sans-serif;
+  /* --font-family-heading: 'Merriweather', serif; */
 }
 
 [data-theme="light"] {
@@ -340,6 +346,36 @@ body {
   margin-bottom: 1.5rem;
   transition: background-color var(--transition-duration), color var(--transition-duration);
 }
+
+label{
+  color: var(--text-color);
+}
+
+.button {
+  background-color: var(--button-color-primary);
+  color: var(--button-text-color);
+  border-radius: var(--border-radius);
+  padding: 0.5rem 1rem;
+  font-family: var(--font-family-body);
+  transition: background-color var(--transition-duration), transform var(--transition-duration);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.button:hover {
+  background-color: var(--button-color-secondary);
+  transform: scale(1.05);
+}
+
+.button:disabled {
+  background-color: var(--button-color-secondary);
+  cursor: not-allowed;
+}
+
+.Button.Mui-active
+{
+  color: red;
+  size: 200px;
+}
+
 
 [data-theme="dark"] .card {
   background-color: var(--background-color-dark);

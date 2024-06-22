@@ -79,6 +79,8 @@ import Sidebar from "./sidebar";
 import { Card, CardContent, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
+
+
 const Accommodation = () => {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === 'dark';
@@ -117,7 +119,7 @@ const Accommodation = () => {
             <Card 
               key={acc.id} 
               sx={{ 
-                backgroundColor: isDarkMode ? '#0077b6' : '#b4c5e4', 
+                backgroundColor: isDarkMode ? '##666666 ' : '#b4c5e4', 
                 marginBottom: '1rem' 
               }} 
               className="accommodation-item"
