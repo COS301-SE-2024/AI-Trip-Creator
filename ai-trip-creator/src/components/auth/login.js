@@ -1,99 +1,89 @@
 import React, { useState } from "react";
-import { Button, TextField, Link, Box, Typography } from "@mui/material";
-import {
-  signInWithEmailAndPassword,
-  sendPasswordResetEmail,
-} from "firebase/auth";
+import { Button, Input, Link } from "@nextui-org/react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../../firebase/firebase-config";
-import "./auth.css";
+import './auth.css';
 
 const Login = ({ setIsLoggedIn, closeLogin, openSignup }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [resetError, setResetError] = useState("");
-  const [resetSuccess, setResetSuccess] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError("");
+    console.log("Form submitted"); // Debugging log
+    console.log("Attempting login with email:", email); // Debugging log
+    console.log("Attempting login with password:", password); // Debugging log
+
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password,
-      );
-      const user = userCredential.user;
+      // const response = await axios.post("/api/login", { email, password });
+      // if (response.data.success) {
       setIsLoggedIn(true);
-      navigate("/dashboard");
+      console.log("Login successful, navigating to dashboard"); // Debugging log
+      navigate("/dashboard"); // Navigate to the dashboard
+      // } else {
+      // handle login failure
+      // }
     } catch (error) {
       console.error("Login failed:", error);
-      setError("Login failed: Invalid Email/Password");
-    }
-  };
-
-  const handlePasswordReset = async () => {
-    setResetError("");
-    setResetSuccess("");
-    try {
-      await sendPasswordResetEmail(auth, email);
-      setResetSuccess("Password reset email sent!");
-    } catch (error) {
-      console.error("Password reset failed:", error);
-      setResetError("Password reset failed: Invalid Email");
     }
   };
 
   return (
-    <Box
-      component="form"
+    <form
       onSubmit={handleLogin}
-      sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+      style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
     >
-      {error && <Typography color="error">{error}</Typography>}
-      <TextField
-        label="Email"
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        fullWidth
-        required
-      />
-      <TextField
-        label="Password"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        fullWidth
-        required
-      />
-      <Button type="submit" variant="contained" color="primary">
-        Login
-      </Button>
-      <Typography variant="body2">
+      <div>
+        <label
+          htmlFor="email"
+          style={{ display: "block", marginBottom: "0.5rem" }}
+        >
+          Email
+        </label>
+        <Input
+          fullWidth
+          clearable
+          bordered
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+      </div>
+      <div>
+        <label
+          htmlFor="password"
+          style={{ display: "block", marginBottom: "0.5rem" }}
+        >
+          Password
+        </label>
+        <Input
+          fullWidth
+          clearable
+          bordered
+          id="password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+      </div>
+      <Button type="submit">Login</Button>
+      <p>
         Don't have an account?{" "}
         <Link
-          component="button"
-          variant="body2"
           onClick={() => {
             closeLogin();
             openSignup();
           }}
+          style={{ color: "#0000EE" }}
         >
           Signup
         </Link>
-      </Typography>
-      <Typography variant="body2">
-        Forgot your password?{" "}
-        <Link component="button" variant="body2" onClick={handlePasswordReset}>
-          Reset Password
-        </Link>
-      </Typography>
-      {resetError && <Typography color="error">{resetError}</Typography>}
-      {resetSuccess && <Typography color="success">{resetSuccess}</Typography>}
-    </Box>
+      </p>
+    </form>
   );
 };
 
