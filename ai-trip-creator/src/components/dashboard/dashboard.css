@@ -229,11 +229,13 @@ button.theme-toggle:hover {
   --text-color-light: #333333;
   --primary-color-light: #3e78b2a3;
   --secondary-color-light: #6c757d;
+  --heading1-color-light: #004BA8;
 
   --background-color-dark: rgba(0, 0, 0, 0.477);
   --text-color-dark: #e0e0e0;
   --primary-color-dark: #3e78b2a3;
   --secondary-color-dark: #9aa0a6;
+  --heading1-color-dark: #3a87e5;
 
   --card-background-light: #b4c5e4;
   --card-background-dark: #666666 ;
@@ -251,6 +253,7 @@ button.theme-toggle:hover {
   --primary-color: var(--primary-color-light);
   --secondary-color: var(--secondary-color-light);
   --card-background: var(--card-background-light);
+  --heading1-color: var(--heading1-color-light);
 }
 
 [data-theme="dark"] {
@@ -259,6 +262,7 @@ button.theme-toggle:hover {
   --primary-color: var(--primary-color-dark);
   --secondary-color: var(--secondary-color-dark);
   --card-background: var(--card-background-dark);
+  --heading1-color: var(--heading1-color-dark);
 }
 
 body {
@@ -448,7 +452,8 @@ h1, h2, h3, h4, h5, h6 {
 h1 {
   margin: 0;
   padding-bottom: 15px;
-  font-size: 60px;
+  font-size: 55px;
+  color: var(--heading1-color);
 }
 
 .card h3 {
