@@ -1,40 +1,132 @@
 import React from "react";
+import {
+  Box,
+  Typography,
+  Container,
+  Paper,
+  Grid,
+  CircularProgress,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
 import Sidebar from "./sidebar";
-import "./dashboard.css"
 
 const Dashboard = ({ itinerary, generateItinerary }) => {
-  const styles = {
-    dashboard: {
-      display: "flex",
-      height: "100vh",
-    },
-    content: {
-      flexGrow: 1,
-      padding: "20px",
-      backgroundColor: "white",
-    },
-    h1: {
-      color: "teal",
-      marginBottom: "10px",
-    },
-    h2: {
-      color: "black",
-      marginBottom: "20px",
-    },
-  };
+  const theme = useTheme();
+  const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
 
   return (
-    <div style={styles.dashboard}>
-      <Sidebar />
-      <div className="content">
-        <h1>Dashboard</h1>
-        <p>
-          Welcome to your travel planning dashboard. Here you can manage your
-          flights, accommodations, activities, and more.
-        </p>
-        <h2>Analytics coming soon</h2>
-      </div>
-    </div>
+    <Box display="flex" height="100vh">
+      <Drawer
+        variant={isSmUp ? "permanent" : "temporary"}
+        open={true}
+        sx={{
+          "& .MuiDrawer-paper": {
+            boxSizing: "border-box",
+            width: 240,
+          },
+        }}
+      >
+        <Sidebar />
+      </Drawer>
+      <Box
+        flexGrow={1}
+        p={3}
+        bgcolor="background.default"
+        sx={{ ml: isSmUp ? "240px" : "0" }}
+      >
+        <Container maxWidth="lg">
+          <Typography variant="h4" color="primary" gutterBottom>
+            Analytics Dashboard
+          </Typography>
+          <Typography variant="body1" paragraph>
+            Welcome to your analytics dashboard. Here you can view insights
+            about user activity and trip creation.
+          </Typography>
+          <Typography variant="h5" color="textSecondary" gutterBottom>
+            Analytics
+          </Typography>
+
+          <Grid container spacing={3}>
+            {/* Placeholder for an Analytics Component 1 */}
+            <Grid item xs={12} md={6}>
+              <Paper elevation={3} sx={{ p: 2 }}>
+                <Typography variant="h6" gutterBottom>
+                  Travel Trends
+                </Typography>
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  height="150px"
+                >
+                  <CircularProgress />
+                </Box>
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  align="center"
+                >
+                  Loading travel trends data...
+                </Typography>
+              </Paper>
+            </Grid>
+
+            {/* Placeholder for an Analytics Component 2 */}
+            <Grid item xs={12} md={6}>
+              <Paper elevation={3} sx={{ p: 2 }}>
+                <Typography variant="h6" gutterBottom>
+                  Popular Destinations
+                </Typography>
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  height="150px"
+                >
+                  <CircularProgress />
+                </Box>
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  align="center"
+                >
+                  Loading popular destinations data...
+                </Typography>
+              </Paper>
+            </Grid>
+
+            {/* Placeholder for an Analytics Component 3 */}
+            <Grid item xs={12}>
+              <Paper elevation={3} sx={{ p: 2 }}>
+                <Typography variant="h6" gutterBottom>
+                  User Activity
+                </Typography>
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  height="150px"
+                >
+                  <CircularProgress />
+                </Box>
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  align="center"
+                >
+                  Loading user activity data...
+                </Typography>
+              </Paper>
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
+    </Box>
   );
 };
 

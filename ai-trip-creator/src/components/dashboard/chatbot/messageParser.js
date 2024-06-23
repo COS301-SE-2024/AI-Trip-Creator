@@ -13,6 +13,22 @@ class messageParser {
     if (lowerCaseMessage.includes("flight")) {
       this.actionProvider.handleFlight();
     }
+
+    if (lowerCaseMessage.includes("hi")) {
+      this.actionProvider.handleHi();
+    }
+
+    if (lowerCaseMessage.includes("itinerary")) {
+      this.actionProvider.handleItinerary();
+    }
+
+    if (lowerCaseMessage.includes("home")) {
+      this.actionProvider.handleHome();
+    }
+
+    if (lowerCaseMessage.includes("accommodation")) {
+      this.actionProvider.handleAccomodation();
+    }
   }
 }
 
