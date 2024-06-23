@@ -150,7 +150,7 @@ const Flights = () => {
   }, []);
 
   return (
- integrate/FlightData
+ //integrate/FlightData
       <div className="dashboard">
           <Sidebar />
           <Box className="content" sx={{ padding: '2rem' }}>
