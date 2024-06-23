@@ -14,6 +14,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import Sidebar from "./sidebar";
+import "./dashboard.css";
 
 const Dashboard = ({ itinerary, generateItinerary }) => {
   const theme = useTheme();
@@ -44,10 +45,12 @@ const Dashboard = ({ itinerary, generateItinerary }) => {
             Analytics Dashboard
           </Typography> */}
           <h1>Analytics Dashboard</h1>
-          <Typography variant="body1" paragraph>
+          {/* <Typography variant="body1" paragraph>
             Welcome to your analytics dashboard. Here you can view insights
             about user activity and trip creation.
-          </Typography>
+          </Typography> */}
+          <p>Welcome to your analytics dashboard. Here you can view insights
+          about user activity and trip creation.</p>
           <Typography variant="h5" color="textSecondary" gutterBottom>
             Analytics
           </Typography>

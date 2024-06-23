@@ -14,7 +14,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: var(--background-color);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -35,4 +35,24 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+:root {
+  --background-color-light: #ffffff;
+
+  --background-color-dark: rgba(0, 0, 0, 0.477);
+
+  --border-radius: 12px;
+  --transition-duration: 0.3s;
+  --font-family: 'Poppins', sans-serif;
+  --font-family-body: 'Roboto', sans-serif;
+  /* --font-family-heading: 'Merriweather', serif; */
+}
+
+[data-theme="light"] {
+  --background-color: var(--background-color-light);
+}
+
+[data-theme="dark"] {
+  --background-color: var(--background-color-dark);
 }
