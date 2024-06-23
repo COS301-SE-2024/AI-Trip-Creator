@@ -1,45 +1,40 @@
-import { useState } from "react";
-import { Button, Input, Link } from "@nextui-org/react";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
-import { auth, firestore } from "../../firebase/firebase-config";
-import { useNavigate } from "react-router-dom";
-import "./auth.css";
+import React, { useState } from "react";
+import {
+  Button,
+  Input,
+  Link,
+  Select,
+  SelectItem,
+  MenuItem,
+} from "@nextui-org/react";
+import axios from "axios";
+import './auth.css';
 
 const Signup = ({ closeSignup, openLogin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [birthday, setBirthday] = useState("");
+  const [gender, setGender] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    setError("");
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      console.log("User created:", user);
-
-      await updateProfile(user, { displayName: name });
-      console.log("Profile updated");
-
-      await setDoc(doc(firestore, "users", user.uid), {
-        uid: user.uid,
-        name: name,
-        birthday: birthday,
-        email: email,
+      const response = await axios.post("/api/signup", {
+        email,
+        password,
+        name,
+        birthday,
+        gender,
       });
-      console.log("Document written");
-
-      setShowSuccess(true);
-      navigate("/dashboard");
+      if (response.data.success) {
+        setShowSuccess(true);
+      } else {
+        // handle signup failure
+      }
     } catch (error) {
       console.error("Signup failed:", error);
-      setError(error.message);
     }
   };
 
@@ -56,10 +51,9 @@ const Signup = ({ closeSignup, openLogin }) => {
             padding: "0.5rem",
           }}
         >
-          {error && <p style={{ color: "red" }}>{error}</p>}
           <div style={{ marginBottom: "0.25rem", width: "100%" }}>
             <label style={{ marginBottom: "0.25rem", display: "block" }}>
-              Fullname
+              Name
             </label>
             <Input
               style={{ width: "100%" }}
@@ -139,7 +133,7 @@ const Signup = ({ closeSignup, openLogin }) => {
           <p>
             Already have an account?{" "}
             <Link
-              onPress={() => {
+              onClick={() => {
                 closeSignup();
                 openLogin();
               }}
@@ -154,7 +148,7 @@ const Signup = ({ closeSignup, openLogin }) => {
           <p>
             Signup successful! A verification link has been sent to your email.
           </p>
-          <Button onPress={() => setShowSuccess(false)}>Okay</Button>
+          <Button onClick={() => setShowSuccess(false)}>Okay</Button>
         </div>
       )}
     </>
