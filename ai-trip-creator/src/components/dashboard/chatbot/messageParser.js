@@ -27,7 +27,7 @@ class messageParser {
     }
 
     if (lowerCaseMessage.includes("accommodation")) {
-      this.actionProvider.handleAccomodation();
+      this.actionProvider.handleAccommodation();
     }
   }
 }
