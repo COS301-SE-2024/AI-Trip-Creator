@@ -17,9 +17,11 @@ import johannesburgImg from './images/johannesburg.jpg';
 import pretoriaImg from './images/pretoria.jpg';
 import capetownImg from './images/capetown.jpg';
 import durbanImg from './images/durban.jpeg';
+import gqerberhaImg from './images/Gqerberha.jpg'
 
 function ItineraryForm({ onGenerateItinerary }) {
   const [preferences, setPreferences] = useState({
+    currentLocation: '',
     destination: '',
     duration: '',
     interests: '',
@@ -40,10 +42,10 @@ function ItineraryForm({ onGenerateItinerary }) {
 
   const locations = [
     { name: 'Johannesburg', image: johannesburgImg},
-    { name: 'CapeTown', image: capetownImg },
+    { name: 'Cape Town', image: capetownImg },
     { name: 'Pretoria', image: pretoriaImg },
     { name: 'Durban', image: durbanImg },
-    // { name: 'Gqeberha', image: 'image_url_gqeberha' },
+    { name: 'Gqeberha', image: gqerberhaImg },
   ];
 
   const durations = ['1-3 days', '4-7 days', '8-14 days', '15+ days'];
@@ -51,8 +53,29 @@ function ItineraryForm({ onGenerateItinerary }) {
 
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
-      <h2>Create Your Itinerary</h2>        
+      <h2>Create Your Itinerary</h2>
       <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <FormControl fullWidth>
+            <InputLabel id="current-location">Current Location</InputLabel>
+            <Select
+              labelId="current-location"
+              name="currentLocation"
+              value={preferences.currentLocation}
+              onChange={handleChange}
+              label="Current Location"
+            >
+              <MenuItem value="" disabled>
+                Select a location
+              </MenuItem>
+              {locations.map((location) => (
+                <MenuItem key={location.name} value={location.name}>
+                  {location.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
         <Grid item xs={12}>
           <FormControl fullWidth>
             <InputLabel id="destination-label">Destination</InputLabel>
@@ -66,10 +89,12 @@ function ItineraryForm({ onGenerateItinerary }) {
               <MenuItem value="" disabled>
                 Select a location
               </MenuItem>
-              {locations.map((location) => (
-                <MenuItem key={location.name} value={location.name}>
-                  {location.name}
-                </MenuItem>
+              {locations
+                .filter((location) => location.name !== preferences.currentLocation)
+                .map((location) => (
+                  <MenuItem key={location.name} value={location.name}>
+                    {location.name}
+                  </MenuItem>
               ))}
             </Select>
           </FormControl>
@@ -153,4 +178,3 @@ function ItineraryForm({ onGenerateItinerary }) {
 }
 
 export default ItineraryForm;
-
