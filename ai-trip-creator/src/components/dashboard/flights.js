@@ -47,7 +47,7 @@ const Flights = () => {
             }}
           >
             <CardContent >
-              <Typography variant="h6" component="h2">
+              <Typography variant="h6" component="h2" fontWeight={"10"}>
                 {flight.origin} to {flight.destination}
               </Typography>
               <Typography variant="body1">

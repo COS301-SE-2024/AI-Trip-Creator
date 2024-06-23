@@ -40,9 +40,10 @@ const Dashboard = ({ itinerary, generateItinerary }) => {
         sx={{ ml: isSmUp ? "240px" : "0" }}
       >
         <Container maxWidth="lg">
-          <Typography variant="h4" color="primary" gutterBottom>
+          {/* <<Typography variant="h4" color="primary" gutterBottom>
             Analytics Dashboard
-          </Typography>
+          </Typography> */}
+          <h1>Analytics Dashboard</h1>
           <Typography variant="body1" paragraph>
             Welcome to your analytics dashboard. Here you can view insights
             about user activity and trip creation.
