@@ -1,9 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import "./dashboard.css";
 import Sidebar from "./sidebar";
 import ChatbotComponent from "./chatbot/chatbot";
 
 const Help = () => {
+  const [isChatbotVisible, setChatbotVisible] = useState(false);
+
+  const toggleChatbotVisibility = () => {
+    setChatbotVisible((prev) => !prev);
+  };
+
   return (
     <div className="dashboard">
       <Sidebar />
@@ -33,9 +39,7 @@ const Help = () => {
               Navigate to the Flights section and use the 'Add Flight' button to
               enter flight details.
             </p>
-            <li>
-              <>Can I save my itinerary?</>
-            </li>
+            <li>Can I save my itinerary?</li>
             <p>
               Yes, you can save your itinerary by clicking the 'Save Itinerary'
               button in the Itinerary section.
@@ -48,7 +52,15 @@ const Help = () => {
           </ul>
         </div>
 
-        <ChatbotComponent />
+        <div
+          className={`chatbot-container ${isChatbotVisible ? "visible" : ""}`}
+        >
+          {isChatbotVisible && <ChatbotComponent />}
+        </div>
+
+        <button className="floating-button" onClick={toggleChatbotVisibility}>
+          {isChatbotVisible ? "x" : "Chat"}
+        </button>
       </div>
     </div>
   );
