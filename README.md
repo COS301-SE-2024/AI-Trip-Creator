@@ -18,7 +18,8 @@ At a high level, the web application should achieve the following:
    The interface should be quick to learn and easy to understand providing the user(s) with all the information they need to ease the process of travel planning.
 
 ### Demo1-video-
-### Documentation-https://github.com/COS301-SE-2024/AI-Trip-Creator/tree/main/Documenation/
+### Demo 1 Documentation: https://docs.google.com/document/d/19L6aMWtfrBhs8b1KxlzUgDt6_VR9y-CtPlmndlVveJM/edit?usp=sharing
+### Demo 2 Documentation: https://drive.google.com/drive/folders/1FdCSEWLEiCJMx1wZnsEbrxyj8pMCxOQv?usp=drive_link
 ### Project Board- https://github.com/orgs/COS301-SE-2024/projects/110
 ### https://ai-trip-creator.vercel.app/
     
