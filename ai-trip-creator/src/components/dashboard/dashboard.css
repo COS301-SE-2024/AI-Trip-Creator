@@ -525,10 +525,10 @@ h1 {
 
 .chatbot-container {
   position: fixed;
-  bottom: 100px;
+  bottom: 80px;
   right: 20px;
-  width: 400px;
-  height: 600px;
+  width: 500px;
+  height: 500px;
   z-index: 1000;
   display: none;
 }
