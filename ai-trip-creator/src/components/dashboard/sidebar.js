@@ -314,9 +314,17 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
-import { Drawer, List, ListItem, ListItemText, Divider, Switch, FormControlLabel } from '@mui/material';
+import { Drawer, List, ListItem, ListItemText, ListItemIcon, Divider, Switch, FormControlLabel } from '@mui/material';
 import { useTheme } from '../themeContext/themeContext';
 import { useUser } from '../UserContext/UserContext';
+import HomeIcon from '@mui/icons-material/Home';
+import EventNoteIcon from '@mui/icons-material/EventNote';
+import FlightIcon from '@mui/icons-material/Flight';
+import HotelIcon from '@mui/icons-material/Hotel';
+import PersonIcon from '@mui/icons-material/Person';
+import HelpIcon from '@mui/icons-material/Help';
+import SettingsIcon from '@mui/icons-material/Settings';
+import LogoutIcon from '@mui/icons-material/Logout';
 import './dashboard.css';
 
 const Sidebar = () => {
@@ -392,28 +400,36 @@ const Sidebar = () => {
     >
       <List>
         <ListItem button component={Link} to="/dashboard">
+          <ListItemIcon><HomeIcon sx={{ color: '#FFFFFF' }} /></ListItemIcon>
           <ListItemText primary="Home" />
         </ListItem>
-        <ListItem button component={Link} to="/profile">
-          <ListItemText primary="Profile" />
-        </ListItem>
         <ListItem button component={Link} to="/Itinerary">
+          <ListItemIcon><EventNoteIcon sx={{ color: '#FFFFFF' }} /></ListItemIcon>
           <ListItemText primary="Itinerary" />
         </ListItem>
         <ListItem button component={Link} to="/flights">
+          <ListItemIcon><FlightIcon sx={{ color: '#FFFFFF' }} /></ListItemIcon>
           <ListItemText primary="Flights" />
         </ListItem>
         <ListItem button component={Link} to="/accommodation">
+          <ListItemIcon><HotelIcon sx={{ color: '#FFFFFF' }} /></ListItemIcon>
           <ListItemText primary="Accommodation" />
         </ListItem>
         <Divider sx={{ my: 2, borderColor: '#34495e' }} />
+        <ListItem button component={Link} to="/profile">
+          <ListItemIcon><PersonIcon sx={{ color: '#FFFFFF' }} /></ListItemIcon>
+          <ListItemText primary="Profile" />
+        </ListItem>
         <ListItem button component={Link} to="/help">
+          <ListItemIcon><HelpIcon sx={{ color: '#FFFFFF' }} /></ListItemIcon>
           <ListItemText primary="Help" />
         </ListItem>
         <ListItem button component={Link} to="/settings">
+          <ListItemIcon><SettingsIcon sx={{ color: '#FFFFFF' }} /></ListItemIcon>
           <ListItemText primary="Settings" />
         </ListItem>
         <ListItem button component={Link} to="/">
+          <ListItemIcon><LogoutIcon sx={{ color: '#FFFFFF' }} /></ListItemIcon>
           <ListItemText primary="Logout" />
         </ListItem>
       </List>
