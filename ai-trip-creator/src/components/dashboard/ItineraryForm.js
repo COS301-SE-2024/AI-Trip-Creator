@@ -275,9 +275,7 @@ function ItineraryForm({ onGenerateItinerary }) {
 
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3, p: 2, backgroundColor: '#f5f5f5', borderRadius: 2 }}>
-      <Typography variant="h4" gutterBottom align="center">
-        Create Your Itinerary
-      </Typography>
+      <h2>Create Your Itinerary</h2>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6} md={4}>
           <FormControl fullWidth>
@@ -432,9 +430,7 @@ function ItineraryForm({ onGenerateItinerary }) {
         </Grid>
       </Grid>
       <Box mt={4}>
-        <Typography variant="h5" gutterBottom>
-          Destinations
-        </Typography>
+        <h2>Destinations</h2>
         <Grid container spacing={2}>
           {locations.map((location) => (
             <Grid item xs={12} sm={6} md={4} key={location.name}>
