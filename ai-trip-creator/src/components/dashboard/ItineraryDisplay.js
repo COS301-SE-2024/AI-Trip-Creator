@@ -107,7 +107,7 @@ function ItineraryDisplay({ itinerary }) {
 
     return {
       durationDetails: details[itinerary.duration],
-      interestsDetails: interestsDetails[itinerary.interests]
+      interestsDetails: itinerary.interests.map(interest => interestsDetails[interest]).join(', ')
     };
   };
 
@@ -120,7 +120,7 @@ function ItineraryDisplay({ itinerary }) {
       </Typography>
       <Typography variant="h6"><strong>Destination:</strong> {itinerary.destination}</Typography>
       <Typography variant="h6"><strong>Duration:</strong> {itinerary.duration} ({durationDetails})</Typography>
-      <Typography variant="h6"><strong>Interests:</strong> {itinerary.interests} ({interestsDetails})</Typography>
+      <Typography variant="h6"><strong>Interests:</strong> {interestsDetails}</Typography>
       <Button variant="contained" color="secondary" href={`/accommodations?destination=${itinerary.destination}`}>
         View Accommodations
       </Button>

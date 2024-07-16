@@ -192,8 +192,16 @@ import {
   CardContent,
   CardMedia,
   Grid,
+  Chip,
+  Paper,
+  TextField,
+  Autocomplete,
+  ToggleButton,
+  ToggleButtonGroup,
+  Slider,
+  Rating,
 } from '@mui/material';
-
+import { DatePicker } from '@mui/lab';
 import johannesburgImg from './images/johannesburg.jpg';
 import pretoriaImg from './images/pretoria.jpg';
 import capetownImg from './images/capetown.jpg';
@@ -205,7 +213,11 @@ function ItineraryForm({ onGenerateItinerary }) {
     currentLocation: '',
     destination: '',
     duration: '',
-    interests: '',
+    interests: [],
+    travelDate: null,
+    budget: '',
+    priority: '',
+    groupSize: 1,
   });
 
   const handleChange = (e) => {
@@ -213,6 +225,34 @@ function ItineraryForm({ onGenerateItinerary }) {
     setPreferences({
       ...preferences,
       [name]: value,
+    });
+  };
+
+  const handleInterestsChange = (event, values) => {
+    setPreferences({
+      ...preferences,
+      interests: values,
+    });
+  };
+
+  const handleDateChange = (date) => {
+    setPreferences({
+      ...preferences,
+      travelDate: date,
+    });
+  };
+
+  const handlePriorityChange = (event, newPriority) => {
+    setPreferences({
+      ...preferences,
+      priority: newPriority,
+    });
+  };
+
+  const handleGroupSizeChange = (event, newValue) => {
+    setPreferences({
+      ...preferences,
+      groupSize: newValue,
     });
   };
 
@@ -231,12 +271,15 @@ function ItineraryForm({ onGenerateItinerary }) {
 
   const durations = ['1-3 days', '4-7 days', '8-14 days', '15+ days'];
   const interests = ['Culture', 'Adventure', 'Relaxation', 'Nature', 'Food', 'Shopping', 'Nightlife'];
+  const budgets = ['Low', 'Medium', 'High'];
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
-      <h2>Create Your Itinerary</h2>
+    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3, p: 2, backgroundColor: '#f5f5f5', borderRadius: 2 }}>
+      <Typography variant="h4" gutterBottom align="center">
+        Create Your Itinerary
+      </Typography>
       <Grid container spacing={3}>
-        <Grid item xs={12}>
+        <Grid item xs={12} sm={6} md={4}>
           <FormControl fullWidth>
             <InputLabel id="current-location">Current Location</InputLabel>
             <Select
@@ -257,7 +300,7 @@ function ItineraryForm({ onGenerateItinerary }) {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} sm={6} md={4}>
           <FormControl fullWidth>
             <InputLabel id="destination-label">Destination</InputLabel>
             <Select
@@ -276,11 +319,11 @@ function ItineraryForm({ onGenerateItinerary }) {
                   <MenuItem key={location.name} value={location.name}>
                     {location.name}
                   </MenuItem>
-              ))}
+                ))}
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} sm={6} md={4}>
           <FormControl fullWidth>
             <InputLabel id="duration-label">Duration</InputLabel>
             <Select
@@ -301,26 +344,86 @@ function ItineraryForm({ onGenerateItinerary }) {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} sm={6} md={4}>
+          <DatePicker
+            label="Travel Date"
+            value={preferences.travelDate}
+            onChange={handleDateChange}
+            renderInput={(params) => <TextField {...params} fullWidth />}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={4}>
           <FormControl fullWidth>
-            <InputLabel id="interests-label">Interests</InputLabel>
+            <InputLabel id="budget-label">Budget</InputLabel>
             <Select
-              labelId="interests-label"
-              name="interests"
-              value={preferences.interests}
+              labelId="budget-label"
+              name="budget"
+              value={preferences.budget}
               onChange={handleChange}
-              label="Interests"
+              label="Budget"
             >
               <MenuItem value="" disabled>
-                Select an interest
+                Select a budget
               </MenuItem>
-              {interests.map((interest) => (
-                <MenuItem key={interest} value={interest}>
-                  {interest}
+              {budgets.map((budget) => (
+                <MenuItem key={budget} value={budget}>
+                  {budget}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
+        </Grid>
+        <Grid item xs={12} sm={6} md={4}>
+          <FormControl fullWidth>
+            <Autocomplete
+              multiple
+              options={interests}
+              getOptionLabel={(option) => option}
+              value={preferences.interests}
+              onChange={handleInterestsChange}
+              renderInput={(params) => (
+                <TextField {...params} variant="outlined" label="Interests" placeholder="Select interests" />
+              )}
+              renderTags={(value, getTagProps) =>
+                value.map((option, index) => (
+                  <Chip key={option} label={option} {...getTagProps({ index })} />
+                ))
+              }
+            />
+          </FormControl>
+        </Grid>
+        <Grid item xs={12} sm={6} md={4}>
+          <Typography gutterBottom>Group Size</Typography>
+          <Slider
+            value={preferences.groupSize}
+            onChange={handleGroupSizeChange}
+            step={1}
+            marks
+            min={1}
+            max={20}
+            valueLabelDisplay="auto"
+            aria-labelledby="group-size-slider"
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={4}>
+          <Typography gutterBottom>Priority</Typography>
+          <ToggleButtonGroup
+            value={preferences.priority}
+            exclusive
+            onChange={handlePriorityChange}
+            aria-label="priority"
+            fullWidth
+          >
+            <ToggleButton value="Budget" aria-label="budget">
+              Budget
+            </ToggleButton>
+            <ToggleButton value="Comfort" aria-label="comfort">
+              Comfort
+            </ToggleButton>
+            <ToggleButton value="Experience" aria-label="experience">
+              Experience
+            </ToggleButton>
+          </ToggleButtonGroup>
         </Grid>
         <Grid item xs={12}>
           <Button type="submit" variant="contained" color="primary" fullWidth>
@@ -329,7 +432,9 @@ function ItineraryForm({ onGenerateItinerary }) {
         </Grid>
       </Grid>
       <Box mt={4}>
-        <h2>Destinations</h2>
+        <Typography variant="h5" gutterBottom>
+          Destinations
+        </Typography>
         <Grid container spacing={2}>
           {locations.map((location) => (
             <Grid item xs={12} sm={6} md={4} key={location.name}>
