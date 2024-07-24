@@ -14,8 +14,12 @@ def fetch_accommodation_details(url):
         print("Page title:", soup.title.string)
         
         # Extract hotel name
-        name_tag = soup.find('h2', {'id': 'hp_hotel_name'})
-        name = name_tag.get_text(strip=True) if name_tag else 'N/A'
+        title_tag = soup.find('title')
+        if title_tag:
+            title_text = title_tag.get_text(strip=True)
+            name = title_text.split(',')[0]  # Take the part before the comma
+        else:
+            name = 'N/A'
         
         # Extract hotel description from meta tag
         description_tag = soup.find('meta', {'name': 'description'})
@@ -32,7 +36,7 @@ def fetch_accommodation_details(url):
             except (json.JSONDecodeError, KeyError) as e:
                 print(f"Error parsing JSON-LD: {e}")
 
-        image_tag = soup.find('img', {'class': 'hotel_image'})
+        image_tag = soup.find('img', {'class': 'hide'})
         image = image_tag.get('src') if image_tag else 'N/A'
         
         # Debug: Print the extracted elements to verify
