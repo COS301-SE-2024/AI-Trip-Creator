@@ -304,7 +304,7 @@ const HowItWorks = () => (
     sx={{
       mt: "2rem",
       p: "1.5rem",
-      backgroundColor: "rgba(255, 255, 255, 0.2)",
+      backgroundColor: "rgba(225, 225, 225, 0.9)",
       borderRadius: "8px",
       textAlign: "center",
     }}
@@ -351,7 +351,7 @@ const WhyPlanWithUs = () => (
     sx={{
       mt: "2rem",
       p: "1.5rem",
-      backgroundColor: "rgba(255, 255, 255, 0.4)",
+      backgroundColor: "rgba(225, 225, 225, 0.9)",
       borderRadius: "8px",
       textAlign: "center",
     }}
@@ -389,7 +389,7 @@ const Splash = ({ setIsLoggedIn }) => {
         flexDirection: "column",
         alignItems: "center",
         height: "auto",
-        backgroundColor: "gray",
+        backgroundColor: "white",
         backgroundSize: "cover",
         backgroundPosition: "center",
         color: "white",
@@ -481,15 +481,19 @@ const Splash = ({ setIsLoggedIn }) => {
       )}
 
       <>
-        <Typography variant="body">Popular Destinations</Typography>
+        <Typography sx={{ color: "black" }} variant="body">
+          Popular Destinations
+        </Typography>
       </>
       <ImageCarousel />
 
       <HowItWorks />
       <>
-        <Typography variant="body">Popular Itineraries</Typography>
-        <ImageCarousel />
+        <Typography sx={{ color: "black" }} variant="body">
+          Popular Itineraries
+        </Typography>
       </>
+      <ImageCarousel />
       <WhyPlanWithUs />
       <Button
         onClick={openLogin}
