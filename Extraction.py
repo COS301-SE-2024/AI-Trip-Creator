@@ -7,11 +7,7 @@ def fetch_accommodation_details(url):
     response = requests.get(url)
     
     if response.status_code == 200:
-        # Parse the HTML content using BeautifulSoup
         soup = BeautifulSoup(response.text, "html.parser")
-        
-        # Debug: Print the title of the page to verify successful fetching
-        print("Page title:", soup.title.string)
         
         # Extract hotel name
         title_tag = soup.find('title')
@@ -56,31 +52,42 @@ def fetch_accommodation_details(url):
         return None
 
 def main():
-    location = input("Which location do you want to look for accommodation? \n")
+    while True:
+        location = input("Which location do you want to look for accommodation? \n")
     
-    accommodations = extract_link(location)
+        accommodations = extract_link(location)
     
-    print("Accommodation links and names found:")
-    for idx, accommodation in enumerate(accommodations):
-        print(f"{idx + 1}. {accommodation['name']}: {accommodation['link']}")
+        print("Accommodation links and names found:")
+        for idx, accommodation in enumerate(accommodations):
+            print(f"{idx + 1}. {accommodation['name']}: {accommodation['link']}")
     
-    Name_of_Hotel = input("Please enter the name of the accommodation where you wish to stay: ")
+        Name_of_Hotel = input("Please enter the name of the accommodation where you wish to stay: ")
     
-    selected_accommodation = None
-    for accommodation in accommodations:
-        if accommodation['name'].lower() == Name_of_Hotel.lower():
-            selected_accommodation = accommodation
+        selected_accommodation = None
+        for accommodation in accommodations:
+            if accommodation['name'].lower() == Name_of_Hotel.lower():
+                selected_accommodation = accommodation
+                break
+    
+        if selected_accommodation:
+            print(f"Fetching details for {selected_accommodation['name']}...")
+            details = fetch_accommodation_details(selected_accommodation['link'])
+            if details:
+                print("\nAccommodation Details:")
+                for key, value in details.items():
+                    print(f"{key.capitalize()}: {value}")
+        else:
+            print("No accommodation found with the provided name.")
             break
-    
-    if selected_accommodation:
-        print(f"Fetching details for {selected_accommodation['name']}...")
-        details = fetch_accommodation_details(selected_accommodation['link'])
-        if details:
-            print("\nAccommodation Details:")
-            for key, value in details.items():
-                print(f"{key.capitalize()}: {value}")
-    else:
-        print("No accommodation found with the provided name.")
+
+        # The logic of the while statement should be changed when integrating the code into the Web App
+
+        Continue_or_not = input("Would you like to retrieve information for other accommodations ? \n")
+
+        if Continue_or_not == 'Yes':
+            continue
+        else:
+            break
 
 if __name__ == "__main__":
     main()
