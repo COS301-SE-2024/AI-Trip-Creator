@@ -196,17 +196,22 @@ import React, { useState } from 'react';
 import { Box, Typography, Card, CardContent, TextField, Button, MenuItem, List, ListItem, Select, InputLabel, FormControl } from '@mui/material';
 import Sidebar from './sidebar';
 import { useTheme } from '@mui/material/styles';
+import { addDoc, collection } from "firebase/firestore"; 
+import { db } from "./firebase"; 
 import "./dashboard.css";
 
 const Profile = () => {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === 'dark';
 
+  const usersCollectionRef = collection(db, "Profile"); 
+
+
   const initialUser = {
     name: "John Doe",
     email: "john.doe@example.com",
     preferences: ["Beach", "Adventure", "Luxury"]
-  };
+  };  
 
   const [user, setUser] = useState(initialUser);
   const [editing, setEditing] = useState(false);
