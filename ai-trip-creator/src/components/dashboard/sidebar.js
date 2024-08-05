@@ -100,35 +100,43 @@ const Sidebar = () => {
       <List>
         <ListItem button component={Link} to="/dashboard">
           <FaHome style={{ marginRight: "10px" }} />{" "}
+          {/* Example: Replace with your own icon component */}
           <ListItemText primary="Home" />
         </ListItem>
         <ListItem button component={Link} to="/Itinerary">
           <FaListAlt style={{ marginRight: "10px" }} />{" "}
+          {/* Example: Replace with your own icon component */}
           <ListItemText primary="Itinerary" />
         </ListItem>
         <ListItem button component={Link} to="/flights">
           <FaPlane style={{ marginRight: "10px" }} />{" "}
+          {/* Example: Replace with your own icon component */}
           <ListItemText primary="Flights" />
         </ListItem>
         <ListItem button component={Link} to="/accommodation">
           <FaBed style={{ marginRight: "10px" }} />{" "}
+          {/* Example: Replace with your own icon component */}
           <ListItemText primary="Accommodation" />
         </ListItem>
         <Divider sx={{ my: 2, borderColor: "#34495e" }} />
         <ListItem button component={Link} to="/profile">
           <FaUser style={{ marginRight: "10px" }} />{" "}
+          {/* Example: Replace with your own icon component */}
           <ListItemText primary="Profile" />
         </ListItem>
         <ListItem button component={Link} to="/help">
           <FaQuestion style={{ marginRight: "10px" }} />{" "}
+          {/* Example: Replace with your own icon component */}
           <ListItemText primary="Help" />
         </ListItem>
         <ListItem button component={Link} to="/settings">
           <FaCog style={{ marginRight: "10px" }} />{" "}
+          {/* Example: Replace with your own icon component */}
           <ListItemText primary="Settings" />
         </ListItem>
         <ListItem button component={Link} to="/">
           <FaSignOutAlt style={{ marginRight: "10px" }} />{" "}
+          {/* Example: Replace with your own icon component */}
           <ListItemText primary="Logout" />
         </ListItem>
       </List>
