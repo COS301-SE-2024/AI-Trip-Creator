@@ -1,4 +1,4 @@
-/* .splash-container {
+/* /* .splash-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -101,9 +101,9 @@ body {
   font-size: 1.5rem;
   color: var(--primary-color);
   margin: 0;
-} */
+} 
 
-/* General styles */
+/* General styles 
 body, html {
   margin: 0;
   padding: 0;
@@ -179,4 +179,161 @@ body, html {
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
   z-index: 500;
+} 
+///////
+.splashBackground {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
+
+.splashContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  position: relative;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.content {
+  z-index: 2;
+  padding: 2rem;
+  text-align: center;
+  max-width: 800px;
+  color: #fff;
+}
+
+.header {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.subheader {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.button {
+  font-size: 16px;
+  padding: 10px 20px;
+  border-radius: 10px;
+}
+
+.loginButton {
+  background-color: #007bff;
+}
+
+.loginButton:hover {
+  background-color: #0056b3;
+}
+
+.signupButton {
+  background-color: #28a745;
+}
+
+.signupButton:hover {
+  background-color: #218838;
+}
+
+.reviewCard {
+  background-color: #fff;
+  border-radius: 15px;
+  padding: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 450px;
+}
+
+.carouselContainer {
+  width: 100%;
+  margin-top: 2rem;
+}
+
+.dialogTitle {
+  color: white;
+}
+*/
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", sans-serif;
+}
+
+.splash-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-image: url('/src/travelBackground.jpg');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  text-align: center;
+}
+
+.get-started-button {
+  background-color: #1573d8;
+  color: white;
+  font-size: 1.5rem;
+  padding: 0.5rem 2rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.get-started-button:hover {
+  background-color: #0f3d82;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 2rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  border-radius: 10px;
+}
+
+.modal-content {
+  text-align: left;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 500;
+}
+
