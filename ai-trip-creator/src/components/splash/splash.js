@@ -79,7 +79,7 @@ const ReviewCard = () => {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        mt: "20px",
+        mt: "10px",
         width: "100%",
         position: "relative",
       }}
@@ -208,7 +208,7 @@ const ImageCarousel = () => {
         justifyContent: "center",
         alignItems: "center",
         width: "100%",
-        mt: "2rem",
+        mt: "1rem",
         position: "relative",
       }}
     >
@@ -302,9 +302,8 @@ const ImageCarousel = () => {
 const HowItWorks = () => (
   <Box
     sx={{
-      mt: "2rem",
       p: "1.5rem",
-      backgroundColor: "rgba(225, 225, 225, 0.9)",
+      backgroundColor: "rgba(200, 200, 200, 0.9)",
       borderRadius: "8px",
       textAlign: "center",
     }}
@@ -402,9 +401,9 @@ const Splash = ({ setIsLoggedIn }) => {
       <Box
         sx={{
           backgroundColor: "#000024",
-          marginBottom: "30px",
+          marginBottom: "1rem",
           width: "100%",
-          padding: "2rem",
+          padding: "1.5rem",
           boxSizing: "border-box",
           overflowX: "hidden",
           overflowY: "hidden",
@@ -414,7 +413,7 @@ const Splash = ({ setIsLoggedIn }) => {
           variant="h1"
           sx={{
             fontSize: "100px",
-            marginBottom: "2rem",
+            marginBottom: "1.5rem",
             textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)",
             fontFamily: "Poppins, sans-serif",
           }}
@@ -479,45 +478,11 @@ const Splash = ({ setIsLoggedIn }) => {
           }}
         />
       )}
-
-      <>
-        <Typography sx={{ color: "black" }} variant="body">
-          Popular Destinations
-        </Typography>
-      </>
-      <ImageCarousel />
-
       <HowItWorks />
-      <>
-        <Typography sx={{ color: "black" }} variant="body">
-          Popular Itineraries
-        </Typography>
-      </>
-      <ImageCarousel />
-      <WhyPlanWithUs />
-      <Button
-        onClick={openLogin}
-        sx={{
-          backgroundColor: "#1573d8",
-          color: "white",
-          fontSize: "1.5rem",
-          padding: "0.5rem 2rem",
-          borderRadius: "5px",
-          cursor: "pointer",
-          fontFamily: "Poppins, sans-serif",
-          transition: "background-color 0.3s",
-          "&:hover": {
-            backgroundColor: "#0f3d82",
-          },
-          mt: "1rem",
-        }}
-      >
-        Plan Vacation
-      </Button>
 
-      <>
-        <ReviewCard />
-      </>
+      <ImageCarousel />
+
+      <></>
     </Box>
   );
 };
