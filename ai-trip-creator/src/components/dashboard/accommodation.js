@@ -87,7 +87,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import "./dashboard.css";
+// import "./dashboard.css";
 import Sidebar from "./sidebar";
 import { Box, Grid, Typography, Card, CardContent, CardMedia } from "@mui/material";
 import bluewater from "./images/bluewatershotel.jpg";

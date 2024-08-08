@@ -316,39 +316,39 @@ import Sidebar from './sidebar';
 import { useTheme } from '@mui/material/styles';
 import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore"; 
 import { db, auth } from "../../firebase/firebase-config"; 
+import { getAuth } from 'firebase/auth';
 import "./dashboard.css";
 
 const Profile = () => {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === 'dark';
 
+  const auth = getAuth();
+  const currUser = auth.currentUser;
+  let email = "";
+
+  
+  if (currUser != null) {
+    //const displayName = currUser..name;
+    
+    const email = currUser.emailVerified;
+    
+  } 
+  else {
+    
+  }
+
   const initialUser = {
     name: "John Doe",
-    email: "john.doe@example.com",
+    email: email,
     preferences: ["Beach", "Adventure", "Luxury"]
   };  
+
+
 
   const [user, setUser] = useState(initialUser);
   const [editing, setEditing] = useState(false);
   const [selectedPreferences, setSelectedPreferences] = useState(user.preferences);
-  const [userDocId, setUserDocId] = useState(null);
-
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      const user = auth.currentUser;
-      if (user) {
-        const userDoc = await getDoc(doc(db, "Profile", user.uid));
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          setUser(userData);
-          setSelectedPreferences(userData.preferences);
-          setUserDocId(user.uid);
-        }
-      }
-    };
-
-    fetchUserProfile();
-  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -377,11 +377,6 @@ const Profile = () => {
           preferences: selectedPreferences,
         };
 
-        if (userDocId) {
-          await updateDoc(doc(db, "Profile", user.uid), userProfile);
-        } else {
-          await setDoc(doc(db, "Profile", user.uid), userProfile);
-        }
         console.log("Profile saved successfully!");
       }
     } catch (error) {
