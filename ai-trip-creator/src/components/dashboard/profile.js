@@ -1,216 +1,63 @@
-// import React from 'react';
-// import { Box, Typography, Card, CardContent, List, ListItem } from '@mui/material';
-// import Sidebar from './sidebar';
-// import { useTheme } from '@mui/material/styles';
-// import "./dashboard.css";
-
-// const Profile = () => {
-//   const theme = useTheme();
-//   const isDarkMode = theme.palette.mode === 'dark';
-
-//   const user = {
-//     name: "John Doe",
-//     email: "john.doe@example.com",
-//     preferences: ["Beach", "Adventure", "Luxury"]
-//   };
-
-//   return (
-//     <Box display="flex" className="dashboard">
-//       <Sidebar />
-//       <Box className="content" flexGrow={1} p={3}>
-//       <h1>My Profile</h1>
-//         <Card sx={{ backgroundColor: isDarkMode ? '#666666 ' : '#b4c5e4', marginBottom: '1rem' }}>
-//           <CardContent sx={{ color: isDarkMode ? '#FFFFFF' : '#000000' }}>
-//             <Typography variant="h5" component="h2">
-//               {user.name}
-//             </Typography>
-//             <Typography>Email: {user.email}</Typography>
-//             <Typography variant="h6" mt={2}>
-//               Preferences:
-//             </Typography>
-//             <List>
-//               {user.preferences.map(pref => (
-//                 <ListItem key={pref}>{pref}</ListItem>
-//               ))}
-//             </List>
-//           </CardContent>
-//         </Card>
-//       </Box>
-//     </Box>
-//   );
-// };
-
-// export default Profile;
-
-// import React, { useState, useContext } from 'react';
-// import {
-//   Box,
-//   Typography,
-//   Card,
-//   CardContent,
-//   TextField,
-//   Button,
-//   MenuItem,
-//   List,
-//   ListItem,
-//   Select,
-//   InputLabel,
-//   FormControl,
-//   Grid
-// } from '@mui/material';
-// import Sidebar from './sidebar';
-// import { useTheme } from '@mui/material/styles';
-// import EditIcon from '@mui/icons-material/Edit';
-// import SaveIcon from '@mui/icons-material/Save';
-// import { useUser } from '../UserContext/UserContext';  // Import useUser hook
-// import './dashboard.css';
-
-// const Profile = () => {
-//   const theme = useTheme();
-//   const isDarkMode = theme.palette.mode === 'dark';
-//   const user = useUser();  // Use the user from UserContext
-
-//   const initialUser = {
-//     name: user?.displayName || "John Doe",  // Use user data if available
-//     email: user?.email || "john.doe@example.com",
-//     preferences: ["Beach", "Adventure", "Luxury"]
-//   };
-
-//   const [profileData, setProfileData] = useState(initialUser);
-//   const [editing, setEditing] = useState(false);
-//   const [selectedPreferences, setSelectedPreferences] = useState(profileData.preferences);
-
-//   const handleInputChange = (e) => {
-//     const { name, value } = e.target;
-//     setProfileData({ ...profileData, [name]: value });
-//   };
-
-//   const handlePreferencesChange = (event) => {
-//     const {
-//       target: { value },
-//     } = event;
-//     setSelectedPreferences(
-//       typeof value === 'string' ? value.split(',') : value,
-//     );
-//   };
-
-//   const handleSave = () => {
-//     setProfileData({ ...profileData, preferences: selectedPreferences });
-//     setEditing(false);
-//   };
-
-//   const preferencesOptions = ["Beach", "Adventure", "Luxury", "Culture", "Food", "Nightlife"];
-
-//   return (
-//     <Box display="flex" className="dashboard">
-//       <Sidebar />
-//       <Box className="content" flexGrow={1} p={3}>
-//         <h1>My Profile</h1>
-//         <Card sx={{ backgroundColor: isDarkMode ? '#666666' : '#b4c5e4', marginBottom: '1rem', padding: '1rem' }}>
-//           <CardContent sx={{ color: isDarkMode ? '#FFFFFF' : '#000000' }}>
-//             {editing ? (
-//               <Grid container spacing={2}>
-//                 <Grid item xs={12}>
-//                   <TextField
-//                     label="Name"
-//                     name="name"
-//                     value={profileData.name}
-//                     onChange={handleInputChange}
-//                     fullWidth
-//                   />
-//                 </Grid>
-//                 <Grid item xs={12}>
-//                   <TextField
-//                     label="Email"
-//                     name="email"
-//                     value={profileData.email}
-//                     onChange={handleInputChange}
-//                     fullWidth
-//                   />
-//                 </Grid>
-//                 <Grid item xs={12}>
-//                   <FormControl fullWidth>
-//                     <InputLabel>Preferences</InputLabel>
-//                     <Select
-//                       multiple
-//                       value={selectedPreferences}
-//                       onChange={handlePreferencesChange}
-//                       renderValue={(selected) => selected.join(', ')}
-//                     >
-//                       {preferencesOptions.map((option) => (
-//                         <MenuItem key={option} value={option}>
-//                           {option}
-//                         </MenuItem>
-//                       ))}
-//                     </Select>
-//                   </FormControl>
-//                 </Grid>
-//                 <Grid item xs={12} display="flex" justifyContent="flex-end">
-//                   <Button
-//                     variant="contained"
-//                     color="primary"
-//                     onClick={handleSave}
-//                     startIcon={<SaveIcon />}
-//                     sx={{ mt: 2 }}
-//                   >
-//                     Save
-//                   </Button>
-//                 </Grid>
-//               </Grid>
-//             ) : (
-//               <>
-//                 <Typography variant="h5" component="h2" gutterBottom>
-//                   {profileData.name}
-//                 </Typography>
-//                 <Typography gutterBottom>Email: {profileData.email}</Typography>
-//                 <Typography variant="h6" mt={2} gutterBottom>
-//                   Preferences:
-//                 </Typography>
-//                 <List>
-//                   {profileData.preferences.map(pref => (
-//                     <ListItem key={pref}>{pref}</ListItem>
-//                   ))}
-//                 </List>
-//                 <Button
-//                   variant="contained"
-//                   color="primary"
-//                   onClick={() => setEditing(true)}
-//                   startIcon={<EditIcon />}
-//                   sx={{ mt: 2 }}
-//                 >
-//                   Edit Profile
-//                 </Button>
-//               </>
-//             )}
-//           </CardContent>
-//         </Card>
-//       </Box>
-//     </Box>
-//   );
-// };
-
-// export default Profile;
-
-
-import React, { useState } from 'react';
-import { Box, Typography, Card, CardContent, TextField, Button, MenuItem, List, ListItem, Select, InputLabel, FormControl } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, Card, CardContent, TextField, Button, MenuItem, List, ListItem, Select, InputLabel, FormControl, CircularProgress } from '@mui/material';
 import Sidebar from './sidebar';
-import { useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles'; 
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "../../firebase/firebase-config"; 
 import "./dashboard.css";
 
 const Profile = () => {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === 'dark';
+  const auth = getAuth();
 
-  const initialUser = {
-    name: "John Doe",
-    email: "john.doe@example.com",
-    preferences: ["Beach", "Adventure", "Luxury"]
-  };
-
-  const [user, setUser] = useState(initialUser);
+  const [user, setUser] = useState({
+    name: "",
+    email: "",
+    preferences: []
+  });
+  const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
-  const [selectedPreferences, setSelectedPreferences] = useState(user.preferences);
+  const [selectedPreferences, setSelectedPreferences] = useState([]);
+  
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        try {
+          // Fetch the user's name from the 'users' collection
+          const userDocRef = doc(db, "users", currentUser.uid);
+          const userDocSnap = await getDoc(userDocRef);
+
+          let userData = {
+            name: "John Doe",
+            email: currentUser.email,
+            preferences: []
+          };
+
+          if (userDocSnap.exists()) {
+            userData.name = userDocSnap.data().name || userData.name;
+          }
+
+          // Fetch the user's preferences from the 'Preferences' collection
+          const prefsDocRef = doc(db, "Preferences", currentUser.uid);
+          const prefsDocSnap = await getDoc(prefsDocRef);
+
+          if (prefsDocSnap.exists()) {
+            userData.preferences = prefsDocSnap.data().preferences || [];
+          }
+
+          setUser(userData);
+          setSelectedPreferences(userData.preferences);
+        } catch (error) {
+          console.error("Error loading user data:", error);
+        }
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [auth]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -218,17 +65,35 @@ const Profile = () => {
   };
 
   const handlePreferencesChange = (event) => {
-    const {
-      target: { value },
-    } = event;
+    const { value } = event.target;
     setSelectedPreferences(
-      typeof value === 'string' ? value.split(',') : value,
+      typeof value === 'string' ? value.split(',') : value
     );
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setUser({ ...user, preferences: selectedPreferences });
     setEditing(false);
+
+    try {
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        const userProfile = {
+          name: user.name,
+          preferences: selectedPreferences
+        };
+
+        // Save the user's name to the 'users' collection
+        await setDoc(doc(db, "users", currentUser.uid), { name: user.name }, { merge: true });
+
+        // Save the user's preferences to the 'Preferences' collection
+        await setDoc(doc(db, "Preferences", currentUser.uid), { preferences: selectedPreferences }, { merge: true });
+
+        console.log("Profile saved successfully!");
+      }
+    } catch (error) {
+      console.error("Error saving profile:", error);
+    }
   };
 
   const preferencesOptions = ["Beach", "Adventure", "Luxury", "Culture", "Food", "Nightlife"];
@@ -238,66 +103,69 @@ const Profile = () => {
       <Sidebar />
       <Box className="content" flexGrow={1} p={3}>
         <h1>My Profile</h1>
-        <Card sx={{ backgroundColor: isDarkMode ? '#666666' : '#b4c5e4', marginBottom: '1rem' }}>
-          <CardContent sx={{ color: isDarkMode ? '#FFFFFF' : '#000000' }}>
-            {editing ? (
-              <>
-                <TextField
-                  label="Name"
-                  name="name"
-                  value={user.name}
-                  onChange={handleInputChange}
-                  fullWidth
-                  margin="normal"
-                />
-                <TextField
-                  label="Email"
-                  name="email"
-                  value={user.email}
-                  onChange={handleInputChange}
-                  fullWidth
-                  margin="normal"
-                />
-                <FormControl fullWidth margin="normal">
-                  <InputLabel>Preferences</InputLabel>
-                  <Select
-                    multiple
-                    value={selectedPreferences}
-                    onChange={handlePreferencesChange}
-                    renderValue={(selected) => selected.join(', ')}
-                  >
-                    {preferencesOptions.map((option) => (
-                      <MenuItem key={option} value={option}>
-                        {option}
-                      </MenuItem>
+        {loading ? (
+          <CircularProgress />
+        ) : (
+          <Card sx={{ backgroundColor: isDarkMode ? '#666666' : '#b4c5e4', marginBottom: '1rem' }}>
+            <CardContent sx={{ color: isDarkMode ? '#FFFFFF' : '#000000' }}>
+              {editing ? (
+                <>
+                  <TextField
+                    label="Name"
+                    name="name"
+                    value={user.name}
+                    onChange={handleInputChange}
+                    fullWidth
+                    margin="normal"
+                  />
+                  <TextField
+                    label="Email"
+                    name="email"
+                    value={user.email}
+                    onChange={handleInputChange}
+                    fullWidth
+                    margin="normal"
+                    disabled
+                  />
+                  <FormControl fullWidth margin="normal">
+                    <InputLabel>Preferences</InputLabel>
+                    <Select
+                      multiple
+                      value={selectedPreferences}
+                      onChange={handlePreferencesChange}
+                      renderValue={(selected) => selected.join(', ')}
+                    >
+                      {preferencesOptions.map((option) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <Button variant="contained" color="primary" onClick={handleSave} sx={{ mt: 2 }}>
+                    Save
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <h2>
+                    {user.name}
+                  </h2>
+                  <Typography>Email: {user.email}</Typography>
+                  <h3>Preferences</h3>
+                  <List>
+                    {user.preferences.map(pref => (
+                      <ListItem key={pref}>{pref}</ListItem>
                     ))}
-                  </Select>
-                </FormControl>
-                <Button variant="contained" color="primary" onClick={handleSave} sx={{ mt: 2 }}>
-                  Save
-                </Button>
-              </>
-            ) : (
-              <>
-                <Typography variant="h5" component="h2">
-                  {user.name}
-                </Typography>
-                <Typography>Email: {user.email}</Typography>
-                <Typography variant="h6" mt={2}>
-                  Preferences:
-                </Typography>
-                <List>
-                  {user.preferences.map(pref => (
-                    <ListItem key={pref}>{pref}</ListItem>
-                  ))}
-                </List>
-                <Button variant="contained" color="primary" onClick={() => setEditing(true)} sx={{ mt: 2 }}>
-                  Edit Profile
-                </Button>
-              </>
-            )}
-          </CardContent>
-        </Card>
+                  </List>
+                  <Button variant="contained" color="primary" onClick={() => setEditing(true)} sx={{ mt: 2 }}>
+                    Edit Profile
+                  </Button>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        )}
       </Box>
     </Box>
   );
