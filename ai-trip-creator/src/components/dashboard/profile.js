@@ -3,6 +3,7 @@ import { Box, Typography, Card, CardContent, TextField, Button, MenuItem, List, 
 import Sidebar from './sidebar';
 import { useTheme } from '@mui/material/styles'; 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getFirestore, doc, getDoc } from "firebase/firestore"; 
 import "./dashboard.css";
 
 const Profile = () => {
@@ -10,28 +11,39 @@ const Profile = () => {
   const isDarkMode = theme.palette.mode === 'dark';
 
   const auth = getAuth();
+  const db = getFirestore();
 
   const [user, setUser] = useState({
     name: "",
     email: "",
-    preferences: ["Beach", "Adventure", "Luxury"]
+    preferences: []
   });
 
   const [editing, setEditing] = useState(false);
   const [selectedPreferences, setSelectedPreferences] = useState(user.preferences);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        setUser((prevUser) => ({
-          ...prevUser,
-          email: firebaseUser.email || ""
-        }));
+        // Fetch the user's name from Firestore using UID
+        const userDocRef = doc(db, "users", firebaseUser.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setUser({
+            name: userData.name || "John Doe",
+            email: firebaseUser.email || "",
+            preferences: user.preferences, // Keep existing preferences
+          });
+        } else {
+          console.log("No such document!");
+        }
       }
     });
 
     return () => unsubscribe();
-  }, [auth]);
+  }, [auth, db]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
