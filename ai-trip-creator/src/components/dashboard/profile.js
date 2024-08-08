@@ -55,8 +55,8 @@ const Profile = () => {
             email: currentUser.email,
             preferences: {
               interests: [],
-              budget: "Cheap", 
-              accommodationRating: "1", 
+              budget: "Cheap",
+              accommodationRating: "1",
               activities: [],
             },
           };
@@ -79,7 +79,7 @@ const Profile = () => {
           if (prefsDocSnap.exists()) {
             userData.preferences.interests =
               prefsDocSnap.data().preferences || userData.preferences.interests;
-              userData.preferences.budget =
+            userData.preferences.budget =
               prefsDocSnap.data().budget || userData.preferences.budget;
             userData.preferences.accommodationRating =
               prefsDocSnap.data().accommodationRating ||
@@ -319,12 +319,7 @@ const Profile = () => {
                     Accommodation Rating: {user.preferences.accommodationRating}{" "}
                     Stars
                   </Typography>
-                  <Typography variant="h6">Activities:</Typography>
-                  <List>
-                    {user.preferences.activities.map((activity) => (
-                      <ListItem key={activity}>{activity}</ListItem>
-                    ))}
-                  </List>
+
                   <Button
                     variant="contained"
                     color="primary"
