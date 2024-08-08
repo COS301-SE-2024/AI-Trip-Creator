@@ -25,25 +25,30 @@ const Profile = () => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         try {
+          // Fetch the user's name from the 'users' collection
           const userDocRef = doc(db, "users", currentUser.uid);
           const userDocSnap = await getDoc(userDocRef);
 
+          let userData = {
+            name: "John Doe",
+            email: currentUser.email,
+            preferences: []
+          };
+
           if (userDocSnap.exists()) {
-            const userData = userDocSnap.data();
-            setUser({
-              name: userData.name || "",
-              email: currentUser.email,
-              preferences: userData.preferences || []
-            });
-            setSelectedPreferences(userData.preferences || []);
-          } else {
-            setUser({
-              name: "John Doe",
-              email: currentUser.email,
-              preferences: []
-            });
-            setSelectedPreferences([]);
+            userData.name = userDocSnap.data().name || userData.name;
           }
+
+          // Fetch the user's preferences from the 'Preferences' collection
+          const prefsDocRef = doc(db, "Preferences", currentUser.uid);
+          const prefsDocSnap = await getDoc(prefsDocRef);
+
+          if (prefsDocSnap.exists()) {
+            userData.preferences = prefsDocSnap.data().preferences || [];
+          }
+
+          setUser(userData);
+          setSelectedPreferences(userData.preferences);
         } catch (error) {
           console.error("Error loading user data:", error);
         }
@@ -77,7 +82,13 @@ const Profile = () => {
           name: user.name,
           preferences: selectedPreferences
         };
-        await setDoc(doc(db, "Preferences", currentUser.uid), userProfile);
+
+        // Save the user's name to the 'users' collection
+        await setDoc(doc(db, "users", currentUser.uid), { name: user.name }, { merge: true });
+
+        // Save the user's preferences to the 'Preferences' collection
+        await setDoc(doc(db, "Preferences", currentUser.uid), { preferences: selectedPreferences }, { merge: true });
+
         console.log("Profile saved successfully!");
       }
     } catch (error) {
@@ -137,13 +148,11 @@ const Profile = () => {
                 </>
               ) : (
                 <>
-                  <Typography variant="h5" component="h2">
+                  <h2>
                     {user.name}
-                  </Typography>
+                  </h2>
                   <Typography>Email: {user.email}</Typography>
-                  <Typography variant="h6" mt={2}>
-                    Preferences:
-                  </Typography>
+                  <h3>Preferences</h3>
                   <List>
                     {user.preferences.map(pref => (
                       <ListItem key={pref}>{pref}</ListItem>
