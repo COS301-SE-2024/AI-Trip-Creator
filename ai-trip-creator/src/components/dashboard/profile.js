@@ -3,7 +3,7 @@ import { Box, Typography, Card, CardContent, TextField, Button, MenuItem, List, 
 import Sidebar from './sidebar';
 import { useTheme } from '@mui/material/styles'; 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { getFirestore, doc, getDoc } from "firebase/firestore"; 
+import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore"; 
 import "./dashboard.css";
 
 const Profile = () => {
@@ -14,13 +14,13 @@ const Profile = () => {
   const db = getFirestore();
 
   const [user, setUser] = useState({
-    name: "",
+    name: "John Doe",
     email: "",
     preferences: []
   });
 
   const [editing, setEditing] = useState(false);
-  const [selectedPreferences, setSelectedPreferences] = useState(user.preferences);
+  const [selectedPreferences, setSelectedPreferences] = useState([]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -34,10 +34,17 @@ const Profile = () => {
           setUser({
             name: userData.name || "John Doe",
             email: firebaseUser.email || "",
-            preferences: user.preferences, // Keep existing preferences
+            preferences: user.preferences, // Set preferences after fetching them
           });
-        } else {
-          console.log("No such document!");
+        }
+
+        // Fetch the user's preferences from Firestore using UID
+        const preferencesDocRef = doc(db, "Preferences", firebaseUser.uid);
+        const preferencesDoc = await getDoc(preferencesDocRef);
+
+        if (preferencesDoc.exists()) {
+          const preferencesData = preferencesDoc.data();
+          setSelectedPreferences(preferencesData.preferences || []);
         }
       }
     });
@@ -72,10 +79,15 @@ const Profile = () => {
           preferences: selectedPreferences,
         };
 
-        console.log("Profile saved successfully!");
+        // Save preferences to Firestore
+        await setDoc(doc(db, "Preferences", currentUser.uid), {
+          preferences: selectedPreferences,
+        });
+
+        console.log("Profile and preferences saved successfully!");
       }
     } catch (error) {
-      console.error("Error saving profile: ", error);
+      console.error("Error saving profile and preferences: ", error);
     }
   };
 
@@ -136,7 +148,7 @@ const Profile = () => {
                   Preferences:
                 </Typography>
                 <List>
-                  {user.preferences.map(pref => (
+                  {selectedPreferences.map(pref => (
                     <ListItem key={pref}>{pref}</ListItem>
                   ))}
                 </List>
