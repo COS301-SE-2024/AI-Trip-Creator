@@ -3,7 +3,6 @@ import { Box, Typography, Card, CardContent, TextField, Button, MenuItem, List, 
 import Sidebar from './sidebar';
 import { useTheme } from '@mui/material/styles'; 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-
 import "./dashboard.css";
 
 const Profile = () => {
@@ -12,18 +11,27 @@ const Profile = () => {
 
   const auth = getAuth();
 
-  const initialUser = {
+  const [user, setUser] = useState({
     name: "",
     email: "",
     preferences: ["Beach", "Adventure", "Luxury"]
-  };  
+  });
 
-  const [user, setUser] = useState(initialUser);
   const [editing, setEditing] = useState(false);
   const [selectedPreferences, setSelectedPreferences] = useState(user.preferences);
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        setUser((prevUser) => ({
+          ...prevUser,
+          email: firebaseUser.email || ""
+        }));
+      }
+    });
 
-
+    return () => unsubscribe();
+  }, [auth]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -44,11 +52,11 @@ const Profile = () => {
     setEditing(false);
 
     try {
-      const user = auth.currentUser;
-      if (user) {
+      const currentUser = auth.currentUser;
+      if (currentUser) {
         const userProfile = {
           name: user.name,
-          email: user.email,
+          email: currentUser.email,
           preferences: selectedPreferences,
         };
 
@@ -85,6 +93,7 @@ const Profile = () => {
                   onChange={handleInputChange}
                   fullWidth
                   margin="normal"
+                  disabled
                 />
                 <FormControl fullWidth margin="normal">
                   <InputLabel>Preferences</InputLabel>
