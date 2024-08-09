@@ -46,7 +46,6 @@ const Profile = () => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         try {
-          // Fetch the user's profile from the 'users' collection
           const userDocRef = doc(db, "users", currentUser.uid);
           const userDocSnap = await getDoc(userDocRef);
 
@@ -72,7 +71,6 @@ const Profile = () => {
               userDocSnap.data().activities || userData.preferences.activities;
           }
 
-          // Fetch the user's preferences from the 'Preferences' collection
           const prefsDocRef = doc(db, "Preferences", currentUser.uid);
           const prefsDocSnap = await getDoc(prefsDocRef);
 
@@ -142,13 +140,15 @@ const Profile = () => {
     try {
       const currentUser = auth.currentUser;
       if (currentUser) {
-        // Save the user's preferences to the 'Preferences' collection
         await setDoc(
           doc(db, "Preferences", currentUser.uid),
           updatedPreferences,
           { merge: true },
         );
-
+        await setDoc(doc(db, "users", currentUser.uid), {
+          name: user.name,
+          preferences: updatedPreferences,
+        });
         console.log("Profile saved successfully!");
       }
     } catch (error) {
@@ -180,20 +180,28 @@ const Profile = () => {
   ];
 
   return (
-    <Box display="flex" className="dashboard">
+    <Box display="flex" justifyContent="center" alignItems="center" p={3} sx={{ minHeight: "100vh", backgroundColor: isDarkMode ? "#2c2c2c" : "#f5f5f5" }}>
       <Sidebar />
-      <Box className="content" flexGrow={1} p={0.5}>
+      <Box flexGrow={1} maxWidth="800px">
+        {/* <Typography variant="h4" component="h1" align="center" color="primary" gutterBottom>
+          My Profile
+        </Typography> */}
         <h1>My Profile</h1>
         {loading ? (
-          <CircularProgress />
+          <Box display="flex" justifyContent="center" alignItems="center" height="50vh">
+            <CircularProgress />
+          </Box>
         ) : (
           <Card
             sx={{
-              backgroundColor: isDarkMode ? "#666666" : "#b4c5e4",
-              marginBottom: "1rem",
+              backgroundColor: isDarkMode ? "#424242" : "#ffffff",
+              borderRadius: "16px",
+              width: "1000px",
+              boxShadow: isDarkMode ? "0px 4px 20px rgba(0, 0, 0, 0.5)" : "0px 4px 20px rgba(0, 0, 0, 0.1)",
+              padding: "24px",
             }}
           >
-            <CardContent sx={{ color: isDarkMode ? "#FFFFFF" : "#000000" }}>
+            <CardContent>
               {editing ? (
                 <>
                   <TextField
@@ -203,7 +211,12 @@ const Profile = () => {
                     onChange={handleInputChange}
                     fullWidth
                     margin="normal"
-                    disabled
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "8px",
+                        boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.2)",
+                      },
+                    }}
                   />
                   <TextField
                     label="Email"
@@ -213,16 +226,34 @@ const Profile = () => {
                     fullWidth
                     margin="normal"
                     disabled
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "8px",
+                        boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.2)",
+                      },
+                    }}
                   />
 
                   <FormControl component="fieldset" fullWidth margin="normal">
-                    <Typography variant="h6">Budget Level</Typography>
+                    {/* <Typography variant="h6">Budget Level</Typography> */}
+                    <h3>Budget Level</h3>
                     <ToggleButtonGroup
                       value={budgetLevel}
                       exclusive
                       onChange={handleBudgetChange}
                       aria-label="Budget Level"
                       fullWidth
+                      sx={{
+                        "& .MuiToggleButton-root": {
+                          borderRadius: "8px",
+                          padding: "10px 20px",
+                          margin: "8px",
+                          "&.Mui-selected": {
+                            backgroundColor: "#1976d2",
+                            color: "#fff",
+                          },
+                        },
+                      }}
                     >
                       <ToggleButton value="Cheap" aria-label="Cheap">
                         Cheap
@@ -231,52 +262,72 @@ const Profile = () => {
                         Mild
                       </ToggleButton>
                       <ToggleButton value="High" aria-label="High">
-                        High
-                      </ToggleButton>
-                    </ToggleButtonGroup>
-                  </FormControl>
-                  <FormControl component="fieldset" fullWidth margin="normal">
-                    <Typography variant="h6">Accommodation Rating</Typography>
-                    <ToggleButtonGroup
-                      value={accommodationRating}
-                      exclusive
-                      onChange={handleRatingChange}
-                      aria-label="Accommodation Rating"
-                      fullWidth
+                      High
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </FormControl>
+              <FormControl component="fieldset" fullWidth margin="normal">
+                {/* <Typography variant="h6">Accommodation Rating</Typography> */}
+                <h3>Accommodation Rating</h3>
+                <ToggleButtonGroup
+                  value={accommodationRating}
+                  exclusive
+                  onChange={handleRatingChange}
+                  aria-label="Accommodation Rating"
+                  fullWidth
+                  sx={{
+                    "& .MuiToggleButton-root": {
+                      borderRadius: "8px",
+                      padding: "10px 20px",
+                      margin: "8px",
+                      "&.Mui-selected": {
+                        backgroundColor: "#1976d2",
+                        color: "#fff",
+                      },
+                    },
+                  }}
+                >
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <ToggleButton
+                      key={star}
+                      value={star}
+                      aria-label={`Rating ${star}`}
                     >
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <ToggleButton
-                          key={star}
-                          value={star}
-                          aria-label={`Rating ${star}`}
-                        >
-                          {star} Stars
-                        </ToggleButton>
-                      ))}
-                    </ToggleButtonGroup>
+                      {star} Stars
+                    </ToggleButton>
+                  ))}
+                  </ToggleButtonGroup>
                   </FormControl>
                   <FormControl component="fieldset" fullWidth margin="normal">
-                    <Typography variant="h6">Interests</Typography>
+                    {/* <Typography variant="h6">Interests</Typography> */}
+                    <h3>Interests</h3>
                     <ToggleButtonGroup
-                      aria-label="Interests"
-                      fullWidth
                       value={selectedPreferences}
                       onChange={handlePreferencesChange}
-                      sx={{ flexWrap: "wrap" }}
+                      aria-label="Interests"
+                      fullWidth
+                      sx={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        "& .MuiToggleButton-root": {
+                          // borderRadius: "100%",
+                          
+                          width: "223px",
+                          // padding: "10px 15px",
+                          margin: "8px",
+                          "&.Mui-selected": {
+                            backgroundColor: "#1976d2",
+                            color: "#fff",
+                            
+                          },
+                        },
+                      }}
                     >
                       {activitiesOptions.map((activity) => (
                         <ToggleButton
                           key={activity}
                           value={activity}
                           aria-label={activity}
-                          sx={{
-                            borderRadius: "50%",
-                            margin: "4px",
-                            "&.Mui-selected": {
-                              backgroundColor: "#007bff",
-                              color: "#fff",
-                            },
-                          }}
                         >
                           {activity}
                         </ToggleButton>
@@ -286,9 +337,20 @@ const Profile = () => {
                   <Box display="flex" justifyContent="space-between" mt={2}>
                     <Button
                       variant="contained"
-                      color="primary"
+                      color="secondary"
                       onClick={handleCancel}
-                      sx={{ mt: 2 }}
+                      sx={{
+                        backgroundColor: "#f50057",
+                        color: "#fff",
+                        padding: "10px 20px",
+                        borderRadius: "8px",
+                        "&:hover": {
+                          backgroundColor: "#c51162",
+                        },
+                        "&:focus": {
+                          boxShadow: "0px 0px 8px rgba(245, 0, 87, 0.5)",
+                        },
+                      }}
                     >
                       Cancel
                     </Button>
@@ -296,7 +358,18 @@ const Profile = () => {
                       variant="contained"
                       color="primary"
                       onClick={handleSave}
-                      sx={{ mt: 2 }}
+                      sx={{
+                        backgroundColor: "#1976d2",
+                        color: "#fff",
+                        padding: "10px 20px",
+                        borderRadius: "8px",
+                        "&:hover": {
+                          backgroundColor: "#1565c0",
+                        },
+                        "&:focus": {
+                          boxShadow: "0px 0px 8px rgba(25, 118, 210, 0.5)",
+                        },
+                      }}
                     >
                       Save Changes
                     </Button>
@@ -304,18 +377,28 @@ const Profile = () => {
                 </>
               ) : (
                 <>
-                  <h2>{user.name}</h2>
-                  <Typography>Email: {user.email}</Typography>
-                  <Typography variant="h6">Preferences:</Typography>
+                  {/* <Typography variant="h5" component="h2" mb={2}>
+                    {user.name}
+                  </Typography> */}
+                  <h3>{user.name}</h3>
+                  
+                  <Typography variant="body1" color="textSecondary">
+                    Email: {user.email}
+                  </Typography>
+                  
+                  {/* <Typography variant="h6" mt={2}>
+                    Preferences
+                  </Typography> */}
+                  <h2>Preferences</h2>
                   <List>
                     {user.preferences.interests.map((pref) => (
                       <ListItem key={pref}>{pref}</ListItem>
                     ))}
                   </List>
-                  <Typography variant="h6">
+                  <Typography variant="body1">
                     Budget Level: {user.preferences.budget}
                   </Typography>
-                  <Typography variant="h6">
+                  <Typography variant="body1">
                     Accommodation Rating: {user.preferences.accommodationRating}{" "}
                     Stars
                   </Typography>
@@ -324,9 +407,21 @@ const Profile = () => {
                     variant="contained"
                     color="primary"
                     onClick={() => setEditing(true)}
-                    sx={{ mt: 2 }}
+                    sx={{
+                      mt: 3,
+                      padding: "10px 20px",
+                      borderRadius: "8px",
+                      backgroundColor: "#1976d2",
+                      color: "#fff",
+                      "&:hover": {
+                        backgroundColor: "#1565c0",
+                      },
+                      "&:focus": {
+                        boxShadow: "0px 0px 8px rgba(25, 118, 210, 0.5)",
+                      },
+                    }}
                   >
-                    Edit
+                    Edit Profile
                   </Button>
                 </>
               )}
@@ -339,3 +434,4 @@ const Profile = () => {
 };
 
 export default Profile;
+
