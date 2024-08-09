@@ -37,7 +37,7 @@ const Profile = () => {
   });
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
-  const [selectedPreferences, setSelectedPreferences] = useState([]);
+  const [selectedInterests, setSelectedInterests] = useState([]);
   const [budgetLevel, setBudgetLevel] = useState("");
   const [accommodationRating, setAccommodationRating] = useState("");
   const [selectedActivities, setSelectedActivities] = useState([]);
@@ -78,7 +78,7 @@ const Profile = () => {
 
           if (prefsDocSnap.exists()) {
             userData.preferences.interests =
-              prefsDocSnap.data().preferences || userData.preferences.interests;
+              prefsDocSnap.data().interests || userData.preferences.interests;
             userData.preferences.budget =
               prefsDocSnap.data().budget || userData.preferences.budget;
             userData.preferences.accommodationRating =
@@ -89,7 +89,7 @@ const Profile = () => {
           }
 
           setUser(userData);
-          setSelectedPreferences(userData.preferences.interests);
+          setSelectedInterests(userData.preferences.interests);
           setBudgetLevel(userData.preferences.budget);
           setAccommodationRating(userData.preferences.accommodationRating);
           setSelectedActivities(userData.preferences.activities);
@@ -108,8 +108,8 @@ const Profile = () => {
     setUser({ ...user, [name]: value });
   };
 
-  const handlePreferencesChange = (event, newPreferences) => {
-    setSelectedPreferences(newPreferences);
+  const handleInterestsChange = (event, newPreferences) => {
+    setSelectedInterests(newPreferences);
   };
 
   const handleBudgetChange = (event, newBudget) => {
@@ -130,7 +130,7 @@ const Profile = () => {
 
   const handleSave = async () => {
     const updatedPreferences = {
-      interests: selectedPreferences,
+      interests: selectedInterests,
       budget: budgetLevel,
       accommodationRating: accommodationRating,
       activities: selectedActivities,
@@ -157,7 +157,7 @@ const Profile = () => {
   };
 
   const handleCancel = () => {
-    setSelectedPreferences(user.preferences.interests);
+    setSelectedInterests(user.preferences.interests);
     setBudgetLevel(user.preferences.budget);
     setAccommodationRating(user.preferences.accommodationRating);
     setSelectedActivities(user.preferences.activities);
@@ -260,8 +260,8 @@ const Profile = () => {
                     <ToggleButtonGroup
                       aria-label="Interests"
                       fullWidth
-                      value={selectedPreferences}
-                      onChange={handlePreferencesChange}
+                      value={selectedInterests}
+                      onChange={handleInterestsChange}
                       sx={{ flexWrap: "wrap" }}
                     >
                       {activitiesOptions.map((activity) => (
