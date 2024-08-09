@@ -98,7 +98,7 @@ def fetch_accommodation_details(url):
             #price = re.sub(r'\$\d+(\.\d+)?', f'ZAR {price_zar:.2f}', price_text)
             # Remove text in brackets
             #price = re.sub(r'\s*\(.*?\)', '', price).strip()
-            price=round(price_usd * exchange_rate)
+            price=round((price_usd * exchange_rate),2)
 
         image_tag = soup.find('img', {'class': 'hide'})
         image = image_tag.get('src') if image_tag else 'N/A'
