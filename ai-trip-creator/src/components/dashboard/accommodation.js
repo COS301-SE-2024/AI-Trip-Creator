@@ -15,9 +15,13 @@ import {
   Card,
   CardMedia,
   CardContent,
+  CircularProgress,
 } from "@mui/material";
 import { FaFilter, FaSearch } from "react-icons/fa";
 import Sidebar from "./sidebar";
+import { db } from "../../firebase/firebase-config";
+import { collection, doc, setDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth"; // Import getAuth
 
 const Accommodation = () => {
   const [query, setQuery] = useState("");
@@ -30,6 +34,7 @@ const Accommodation = () => {
   });
   const [filterVisible, setFilterVisible] = useState(false);
   const [sortOption, setSortOption] = useState("");
+  const [loading, setLoading] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -43,20 +48,55 @@ const Accommodation = () => {
   }, [location]);
 
   const handleSearch = async (searchQuery = query) => {
+    setLoading(true);
     try {
+      const auth = getAuth(); // Get the current auth instance
+      const user = auth.currentUser; // Get the current user
+      if (!user) {
+        throw new Error("User is not authenticated");
+      }
+
+      console.log("Authenticated user:", user.uid);
+
       const response = await fetch(
         `http://localhost:5000/api/search?query=${searchQuery}`,
       );
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
       const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || `HTTP error! status: ${response.status}`);
+      }
+
       setSearchResults(data.results);
-      setFilteredResults(data.results); // Initialize filtered results with search results
+      setFilteredResults(data.results);
       setError("");
+
+      // Write accommodations data to Firestore under the city document
+      const cityDocRef = doc(db, "Accommodation", searchQuery);
+      const cityData = {
+        accommodations: data.results.map((accommodation) => ({
+          name: accommodation.name,
+          description: accommodation.description,
+          price: accommodation.price,
+          rating: accommodation.rating,
+          image: accommodation.image,
+        })),
+      };
+
+      try {
+        await setDoc(cityDocRef, cityData, { merge: true });
+        console.log(`Successfully wrote accommodations for ${searchQuery}`);
+      } catch (firestoreError) {
+        console.error(
+          `Error writing accommodations to Firestore for ${searchQuery}:`,
+          firestoreError,
+        );
+      }
     } catch (error) {
       console.error("Error fetching search results:", error);
       setError("Failed to fetch accommodation data. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -198,59 +238,75 @@ const Accommodation = () => {
                     handleFilterChange(event, newValue)
                   }
                   valueLabelDisplay="auto"
-                  name="price"
                   min={0}
-                  max={4000}
+                  max={1000}
                 />
               </FormControl>
-              <FormControl component="fieldset" sx={{ mb: 2 }}>
-                <Typography>Rating</Typography>
+              <FormControl fullWidth sx={{ mb: 2 }}>
+                <InputLabel htmlFor="rating-select">Minimum Rating</InputLabel>
                 <Select
+                  name="rating"
                   value={filters.rating}
                   onChange={handleFilterChange}
-                  name="rating"
-                  fullWidth
+                  inputProps={{ id: "rating-select" }}
                 >
-                  <MenuItem value="">Any Rating</MenuItem>
-                  <MenuItem value="3">3+</MenuItem>
-                  <MenuItem value="4">4+</MenuItem>
+                  <MenuItem value="">Any</MenuItem>
+                  <MenuItem value="1">1</MenuItem>
+                  <MenuItem value="2">2</MenuItem>
+                  <MenuItem value="3">3</MenuItem>
+                  <MenuItem value="4">4</MenuItem>
                   <MenuItem value="5">5</MenuItem>
                 </Select>
               </FormControl>
-              <Button variant="contained" onClick={handleFilterApply}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleFilterApply}
+              >
                 Apply Filters
               </Button>
             </Box>
           )}
+        </Box>
 
-          {error && <p style={{ color: "red" }}>{error}</p>}
-
-          <div>
-            {filteredResults.map((result, index) => (
-              <Card key={index} sx={{ maxWidth: 345, mb: 2 }}>
+        {/* Accommodation Results */}
+        <Box
+          sx={{
+            mt: 2,
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "center",
+            gap: 2,
+          }}
+        >
+          {loading ? (
+            <CircularProgress />
+          ) : (
+            filteredResults.map((accommodation, index) => (
+              <Card key={index} sx={{ maxWidth: 300 }}>
                 <CardMedia
                   component="img"
                   height="140"
-                  image={result.image}
-                  alt={result.name}
+                  image={accommodation.image}
+                  alt={accommodation.name}
                 />
                 <CardContent>
-                  <Typography variant="h5" component="div">
-                    {result.name}
+                  <Typography gutterBottom variant="h5" component="div">
+                    {accommodation.name}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {result.description}
+                    {accommodation.description}
                   </Typography>
-                  <Typography variant="body2" color="text.primary">
-                    Rating: {result.rating}
+                  <Typography variant="body1" color="text.primary">
+                    Price: R{accommodation.price}
                   </Typography>
-                  <Typography variant="body2" color="text.primary">
-                    Price: R{result.price}
+                  <Typography variant="body2" color="text.secondary">
+                    Rating: {accommodation.rating}
                   </Typography>
                 </CardContent>
               </Card>
-            ))}
-          </div>
+            ))
+          )}
         </Box>
       </Box>
     </Box>
