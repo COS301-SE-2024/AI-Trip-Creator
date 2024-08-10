@@ -17,7 +17,7 @@ import {
   CardContent,
   CircularProgress,
 } from "@mui/material";
-import { FaFilter, FaSearch } from "react-icons/fa";
+import { FaFilter, FaSearch, FaStar } from "react-icons/fa";
 import Sidebar from "./sidebar";
 import { db } from "../../firebase/firebase-config";
 import { collection, doc, getDoc } from "firebase/firestore";
@@ -283,10 +283,15 @@ const Accommodation = () => {
                     {accommodation.description}
                   </Typography>
                   <Typography variant="body1" color="text.primary">
-                    Price: R{accommodation.price}
+                    from R{accommodation.price}/per night
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    style={{ display: "flex", alignItems: "center" }}
+                  >
                     Rating: {accommodation.rating}
+                    <FaStar color="gold" style={{ marginRight: "4px" }} />
                   </Typography>
                 </CardContent>
               </Card>
