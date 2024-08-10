@@ -21,7 +21,7 @@ import { FaFilter, FaSearch, FaStar } from "react-icons/fa";
 import Sidebar from "./sidebar";
 import { db } from "../../firebase/firebase-config";
 import { collection, doc, getDoc } from "firebase/firestore";
-import { getAuth } from "firebase/auth"; // Import getAuth
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const Accommodation = () => {
   const [query, setQuery] = useState("");
@@ -35,7 +35,17 @@ const Accommodation = () => {
   const [filterVisible, setFilterVisible] = useState(false);
   const [sortOption, setSortOption] = useState("");
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null); // Track user authentication state
   const location = useLocation();
+
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user); // Set user state on auth state change
+    });
+
+    return () => unsubscribe(); // Clean up subscription on unmount
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -43,23 +53,24 @@ const Accommodation = () => {
 
     if (destinationParam) {
       setQuery(destinationParam);
-      handleSearch(destinationParam); // Trigger search with destinationParam
+      handleSearch(destinationParam.toLowerCase().replace(/\s+/g, ""));
     }
-  }, [location]);
+  }, [location, user]);
 
   const handleSearch = async (searchQuery = query) => {
     setLoading(true);
     try {
-      const auth = getAuth(); // Get the current auth instance
-      const user = auth.currentUser; // Get the current user
       if (!user) {
         throw new Error("User is not authenticated");
       }
 
       console.log("Authenticated user:", user.uid);
 
-      // Write accommodations data to Firestore under the city document
-      const cityDocRef = doc(db, "Accommodation", searchQuery);
+      const cityDocRef = doc(
+        db,
+        "Accommodation",
+        searchQuery.toLowerCase().replace(/\s+/g, ""),
+      );
       const cityDocSnapshot = await getDoc(cityDocRef);
 
       if (cityDocSnapshot.exists()) {
@@ -101,7 +112,7 @@ const Accommodation = () => {
   const applyFiltersAndSorting = () => {
     let updatedResults = [...searchResults];
 
-    // Apply filters
+    // apply filters
     updatedResults = updatedResults.filter((result) => {
       const meetsPrice =
         result.price >= filters.price[0] && result.price <= filters.price[1];
@@ -111,7 +122,7 @@ const Accommodation = () => {
       return meetsPrice && meetsRating;
     });
 
-    // Apply sorting
+    // apply sorting
     if (sortOption === "priceAsc") {
       updatedResults.sort((a, b) => a.price - b.price);
     } else if (sortOption === "priceDesc") {
@@ -129,7 +140,6 @@ const Accommodation = () => {
 
   return (
     <Box sx={{ display: "flex" }}>
-      {/* Sidebar */}
       <Sidebar
         sx={{
           width: "250px",
@@ -143,7 +153,6 @@ const Accommodation = () => {
         }}
       />
 
-      {/* Main Content */}
       <Box
         sx={{
           flexGrow: 1,
@@ -153,7 +162,6 @@ const Accommodation = () => {
           flexDirection: "column",
         }}
       >
-        {/* Search Bar and Filters */}
         <Box
           sx={{
             display: "flex",
@@ -254,7 +262,6 @@ const Accommodation = () => {
           )}
         </Box>
 
-        {/* Accommodation Results */}
         <Box
           sx={{
             mt: 2,
