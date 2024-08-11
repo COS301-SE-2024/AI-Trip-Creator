@@ -29,7 +29,7 @@ const Accommodation = () => {
   const [filteredResults, setFilteredResults] = useState([]);
   const [error, setError] = useState("");
   const [filters, setFilters] = useState({
-    price: [0, 10000],
+    price: [0, 5000],
     rating: "",
   });
   const [filterVisible, setFilterVisible] = useState(false);
@@ -97,10 +97,10 @@ const Accommodation = () => {
   };
 
   const handleFilterChange = (event, newValue) => {
-    const { name, value } = event.target;
-    if (name === "price") {
+    if (Array.isArray(newValue)) {
       setFilters({ ...filters, price: newValue });
     } else {
+      const { name, value } = event.target;
       setFilters({ ...filters, [name]: value });
     }
   };
@@ -227,12 +227,11 @@ const Accommodation = () => {
                 <Typography>Price Range</Typography>
                 <Slider
                   value={filters.price}
-                  onChange={(event, newValue) =>
-                    handleFilterChange(event, newValue)
-                  }
+                  onChange={handleFilterChange}
                   valueLabelDisplay="auto"
                   min={0}
-                  max={1000}
+                  max={5000}
+                  step={100}
                 />
               </FormControl>
               <FormControl fullWidth sx={{ mb: 2 }}>
@@ -249,6 +248,11 @@ const Accommodation = () => {
                   <MenuItem value="3">3</MenuItem>
                   <MenuItem value="4">4</MenuItem>
                   <MenuItem value="5">5</MenuItem>
+                  <MenuItem value="6">6</MenuItem>
+                  <MenuItem value="7">7</MenuItem>
+                  <MenuItem value="8">8</MenuItem>
+                  <MenuItem value="9">9</MenuItem>
+                  <MenuItem value="10">10</MenuItem>
                 </Select>
               </FormControl>
               <Button
