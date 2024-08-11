@@ -288,6 +288,7 @@ const Profile = () => {
                       sx={{
                         mb: 2,
                         backgroundColor: "#800080",
+                        color: "#FFFFFF",
                           "&:hover": {
                             backgroundColor: "#6A19B5",
                             color: "#fff",
@@ -400,6 +401,7 @@ const Profile = () => {
                       onClick={handleSave}
                       sx={{
                         mx:1,
+                        color: "#FFFFFF",
                         backgroundColor: "#800080",
                           "&:hover": {
                             backgroundColor: "#6A19B5",
