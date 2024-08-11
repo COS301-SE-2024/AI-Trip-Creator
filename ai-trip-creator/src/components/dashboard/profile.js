@@ -285,7 +285,15 @@ const Profile = () => {
                     <Button
                       variant="contained"
                       component="label"
-                      sx={{ mb: 2 }}
+                      sx={{
+                        mb: 2,
+                        backgroundColor: "#800080",
+                          "&:hover": {
+                            backgroundColor: "#6A19B5",
+                            color: "#fff",
+                    
+                        },
+                      }}
                     >
                       Upload New Picture
                       <input
