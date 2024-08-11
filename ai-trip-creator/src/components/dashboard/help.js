@@ -11,7 +11,7 @@ const Help = () => {
   };
 
   return (
-    <div>
+    <div className="dashboard">
       <Sidebar />
       <div className="content">
         <h1>Help</h1>
