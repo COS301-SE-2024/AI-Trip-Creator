@@ -4,7 +4,7 @@ import Sidebar from "./sidebar";
 
 const Settings = () => {
   return (
-    <div >
+    <div className="dashboard">
       <Sidebar />
       <div className="content">
         <h1>Settings</h1>
