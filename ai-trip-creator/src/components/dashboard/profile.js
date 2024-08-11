@@ -13,6 +13,7 @@ import {
   ToggleButtonGroup,
   List,
   ListItem,
+  
 } from "@mui/material";
 import Sidebar from "./sidebar";
 import { useTheme } from "@mui/material/styles";
@@ -25,6 +26,8 @@ const Profile = () => {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark";
   const auth = getAuth();
+
+
 
   const [user, setUser] = useState({
     name: "",
@@ -316,6 +319,14 @@ const Profile = () => {
                       exclusive
                       onChange={handleBudgetChange}
                       fullWidth
+                      sx={{
+                        "& .MuiToggleButton-root": {
+                          "&.Mui-selected": {
+                            backgroundColor: "#1976d2",
+                            color: "#fff",
+                          },
+                        },
+                      }}
                     >
                       <ToggleButton value="Cheap">Cheap</ToggleButton>
                       <ToggleButton value="Affordable">Affordable</ToggleButton>
@@ -329,6 +340,14 @@ const Profile = () => {
                       exclusive
                       onChange={handleRatingChange}
                       fullWidth
+                      sx={{
+                        "& .MuiToggleButton-root": {
+                          "&.Mui-selected": {
+                            backgroundColor: "#1976d2",
+                            color: "#fff",
+                          },
+                        },
+                      }}
                     >
                       <ToggleButton value="1">1-Star</ToggleButton>
                       <ToggleButton value="2">2-Star</ToggleButton>
@@ -344,6 +363,22 @@ const Profile = () => {
                       onChange={handleActivitiesChange}
                       fullWidth
                       multiple
+                      sx={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        "& .MuiToggleButton-root": {
+                          // borderRadius: "100%",
+                          
+                          width: "223px",
+                          padding: "10px 15px",
+                          margin: "8px",
+                          "&.Mui-selected": {
+                            backgroundColor: "#1976d2",
+                            color: "#fff",
+                            
+                          },
+                        },
+                      }}
                     >
                       {activitiesOptions.map((option) => (
                         <ToggleButton key={option} value={option}>
@@ -356,7 +391,16 @@ const Profile = () => {
                     <Button
                       variant="contained"
                       onClick={handleSave}
-                      sx={{ mx: 1 }}
+                      sx={{
+                        mx:1,
+                        backgroundColor: "#800080",
+                        "& .MuiToggleButton-root": {
+                          "&:hover": {
+                            backgroundColor: "#A020F0",
+                            color: "#fff",
+                          },
+                        },
+                      }}
                     >
                       Save
                     </Button>
@@ -377,20 +421,21 @@ const Profile = () => {
                       src={profilePicturePreview}
                       sx={{ width: 120, height: 120, mb: 2 }}
                     />
-                    <Typography variant="h5" gutterBottom>
+                    {/* <Typography variant="h5" gutterBottom>
                       {user.name}
-                    </Typography>
+                    </Typography> */}
+                    <h2 gutterBottom>{user.name}</h2>
                     <Typography variant="body1" color="textSecondary" gutterBottom>
                       {user.email}
                     </Typography>
                   </Box>
                   <Box mt={3}>
                     <h3>Budget Level</h3>
-                    <Typography variant="body1">{budgetLevel}</Typography>
+                    <p>{budgetLevel}</p>
                   </Box>
                   <Box mt={3}>
                     <h3>Accommodation Rating</h3>
-                    <Typography variant="body1">{accommodationRating}-Star</Typography>
+                    <p>{accommodationRating}-Star</p>
                   </Box>
                   <Box mt={3}>
                     <h3>Activities</h3>
