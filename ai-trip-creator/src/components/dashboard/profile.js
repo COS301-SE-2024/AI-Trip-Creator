@@ -427,25 +427,25 @@ const Profile = () => {
                     <Avatar
                       alt={user.name}
                       src={profilePicturePreview}
-                      sx={{ width: 120, height: 120, mb: 2 }}
+                      sx={{ width: 150, height: 150, mb: 1 }}
                     />
                     {/* <Typography variant="h5" gutterBottom>
                       {user.name}
                     </Typography> */}
                     <h2 gutterBottom>{user.name}</h2>
-                    <Typography variant="body1" color="textSecondary" gutterBottom>
+                    <Typography variant="body1" color="textSecondary" sx={{mt:-4}} gutterBottom >
                       {user.email}
                     </Typography>
                   </Box>
-                  <Box mt={3}>
-                    <h3>Budget Level</h3>
+                  <Box mt={-3} mb={5} >
+                    <h3 >Budget Level</h3>
                     <p>{budgetLevel}</p>
                   </Box>
-                  <Box mt={3}>
+                  <Box mt={-3} mb={5}>
                     <h3>Accommodation Rating</h3>
                     <p>{accommodationRating}-Star</p>
                   </Box>
-                  <Box mt={3}>
+                  <Box mt={-3} mb={5}>
                     <h3>Activities</h3>
                     <List>
                       {selectedActivities.map((activity) => (
