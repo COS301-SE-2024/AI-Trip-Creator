@@ -27,8 +27,7 @@ const Profile = () => {
   const isDarkMode = theme.palette.mode === "dark";
   const auth = getAuth();
 
-
-
+  
   const [user, setUser] = useState({
     name: "",
     email: "",
@@ -394,11 +393,10 @@ const Profile = () => {
                       sx={{
                         mx:1,
                         backgroundColor: "#800080",
-                        "& .MuiToggleButton-root": {
                           "&:hover": {
-                            backgroundColor: "#A020F0",
+                            backgroundColor: "#6A19B5",
                             color: "#fff",
-                          },
+                    
                         },
                       }}
                     >
