@@ -136,7 +136,7 @@ const Flights = () => {
   useEffect(() => {
       const fetchData = async () => {
           try {
-              const flightOffers = await getFlightOffers('DUR', 'CPT', '2024-07-01', 1, 10);
+              const flightOffers = await getFlightOffers('DUR', 'CPT', '2024-08-14', 1, 10);
               if (flightOffers) {
                   setFlights(flightOffers);
               } else {
