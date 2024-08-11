@@ -4,14 +4,14 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey:  REACT_APP_FIREBASE_apiKey,
-  authDomain: REACT_APP_FIREBASE_authDomain,
-  databaseURL: REACT_APP_FIREBASE_databaseURL,
-  projectId: REACT_APP_FIREBASE_projectId,
-  storageBucket:  REACT_APP_FIREBASE_storageBucket,
-  messagingSenderId: REACT_APP_FIREBASE_messagingSenderId,
-  appId: REACT_APP_FIREBASE_appId,
-  measurementId:REACT_APP_FIREBASE_measurementId,
+  apiKey: "AIzaSyAwuPv1t0KhiADo9MK7SZbWPgfWNcaTAeA",
+  authDomain: "ai-trip-creator.firebaseapp.com",
+  databaseURL: "https://ai-trip-creator-default-rtdb.firebaseio.com",
+  projectId: "ai-trip-creator",
+  storageBucket: "ai-trip-creator.appspot.com",
+  messagingSenderId: "300004223652",
+  appId: "1:300004223652:web:a2b08dffaeb9f9b44fd431",
+  measurementId: "G-K1EFHGGM1S",
 };
 
 const app = initializeApp(firebaseConfig);
