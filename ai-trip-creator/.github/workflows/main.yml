@@ -2,7 +2,6 @@ name: Firebase Deployment
 on:
   push:
     branches: [main, develop]
-
 jobs:
   build:
     name: Build
@@ -10,25 +9,17 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2.3.2
-
       - name: Install Dependencies
-        run: |
-          cd ai-trip-creator
-          npm install
-
+        run: npm install
       - name: Build
         env:
           CI: false
-        run: |
-          cd ai-trip-creator
-          npm run build
-
+        run: npm run build
       - name: Archive Production Artifact
         uses: actions/upload-artifact@v2
         with:
           name: build
-          path: ai-trip-creator/build
-
+          path: build
   deploy:
     name: Deploy
     needs: build
@@ -36,13 +27,11 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2.3.2
-
       - name: Download Artifact
         uses: actions/download-artifact@v2
         with:
           name: build
           path: build
-
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@master
         with:
