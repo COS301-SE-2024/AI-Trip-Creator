@@ -40,7 +40,7 @@ const Settings = () => {
   };
 
   return (
-    <div className="dashboard">
+    <div >
       <Sidebar />
       <div className="content">
         <Container>

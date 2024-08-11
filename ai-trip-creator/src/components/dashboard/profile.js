@@ -6,12 +6,14 @@ import {
   CardContent,
   TextField,
   Button,
-  List,
-  ListItem,
-  ToggleButton,
-  ToggleButtonGroup,
+  Avatar,
   CircularProgress,
   FormControl,
+  ToggleButton,
+  ToggleButtonGroup,
+  List,
+  ListItem,
+  
 } from "@mui/material";
 import Sidebar from "./sidebar";
 import { useTheme } from "@mui/material/styles";
@@ -25,9 +27,11 @@ const Profile = () => {
   const isDarkMode = theme.palette.mode === "dark";
   const auth = getAuth();
 
+  
   const [user, setUser] = useState({
     name: "",
     email: "",
+    photoURL: "",
     preferences: {
       interests: [],
       budget: "",
@@ -41,18 +45,20 @@ const Profile = () => {
   const [budgetLevel, setBudgetLevel] = useState("");
   const [accommodationRating, setAccommodationRating] = useState("");
   const [selectedActivities, setSelectedActivities] = useState([]);
+  const [profilePicture, setProfilePicture] = useState(null);
+  const [profilePicturePreview, setProfilePicturePreview] = useState("");
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         try {
-          // Fetch the user's profile from the 'users' collection
           const userDocRef = doc(db, "users", currentUser.uid);
           const userDocSnap = await getDoc(userDocRef);
 
           let userData = {
             name: "John Doe",
             email: currentUser.email,
+            photoURL: "",
             preferences: {
               interests: [],
               budget: "Cheap",
@@ -62,17 +68,18 @@ const Profile = () => {
           };
 
           if (userDocSnap.exists()) {
-            userData.name = userDocSnap.data().name || userData.name;
+            const docData = userDocSnap.data();
+            userData.name = docData.name || userData.name;
+            userData.photoURL = docData.photoURL || "";
             userData.preferences.budget =
-              userDocSnap.data().budget || userData.preferences.budget;
+              docData.budget || userData.preferences.budget;
             userData.preferences.accommodationRating =
-              userDocSnap.data().accommodationRating ||
+              docData.accommodationRating ||
               userData.preferences.accommodationRating;
             userData.preferences.activities =
-              userDocSnap.data().activities || userData.preferences.activities;
+              docData.activities || userData.preferences.activities;
           }
 
-          // Fetch the user's preferences from the 'Preferences' collection
           const prefsDocRef = doc(db, "Preferences", currentUser.uid);
           const prefsDocSnap = await getDoc(prefsDocRef);
 
@@ -93,6 +100,7 @@ const Profile = () => {
           setBudgetLevel(userData.preferences.budget);
           setAccommodationRating(userData.preferences.accommodationRating);
           setSelectedActivities(userData.preferences.activities);
+          setProfilePicturePreview(userData.photoURL);
         } catch (error) {
           console.error("Error loading user data:", error);
         }
@@ -106,6 +114,14 @@ const Profile = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUser({ ...user, [name]: value });
+  };
+
+  const handleProfilePictureChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setProfilePicture(file);
+      setProfilePicturePreview(URL.createObjectURL(file));
+    }
   };
 
   const handlePreferencesChange = (event, newPreferences) => {
@@ -129,30 +145,75 @@ const Profile = () => {
   };
 
   const handleSave = async () => {
-    const updatedPreferences = {
-      interests: selectedPreferences,
-      budget: budgetLevel,
-      accommodationRating: accommodationRating,
-      activities: selectedActivities,
-    };
+    let photoURL = user.photoURL;
 
-    setUser({ ...user, preferences: updatedPreferences });
-    setEditing(false);
+    if (profilePicture) {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        photoURL = reader.result;
 
-    try {
-      const currentUser = auth.currentUser;
-      if (currentUser) {
-        // Save the user's preferences to the 'Preferences' collection
-        await setDoc(
-          doc(db, "Preferences", currentUser.uid),
-          updatedPreferences,
-          { merge: true },
-        );
+        const updatedUser = {
+          ...user,
+          photoURL,
+          preferences: {
+            interests: selectedPreferences,
+            budget: budgetLevel,
+            accommodationRating: accommodationRating,
+            activities: selectedActivities,
+          },
+        };
 
-        console.log("Profile saved successfully!");
+        setUser(updatedUser);
+        setEditing(false);
+
+        try {
+          const currentUser = auth.currentUser;
+          if (currentUser) {
+            await setDoc(doc(db, "users", currentUser.uid), updatedUser, {
+              merge: true,
+            });
+            await setDoc(
+              doc(db, "Preferences", currentUser.uid),
+              updatedUser.preferences,
+              { merge: true }
+            );
+            console.log("Profile saved successfully!");
+          }
+        } catch (error) {
+          console.error("Error saving profile:", error);
+        }
+      };
+      reader.readAsDataURL(profilePicture);
+    } else {
+      const updatedUser = {
+        ...user,
+        preferences: {
+          interests: selectedPreferences,
+          budget: budgetLevel,
+          accommodationRating: accommodationRating,
+          activities: selectedActivities,
+        },
+      };
+
+      setUser(updatedUser);
+      setEditing(false);
+
+      try {
+        const currentUser = auth.currentUser;
+        if (currentUser) {
+          await setDoc(doc(db, "users", currentUser.uid), updatedUser, {
+            merge: true,
+          });
+          await setDoc(
+            doc(db, "Preferences", currentUser.uid),
+            updatedUser.preferences,
+            { merge: true }
+          );
+          console.log("Profile saved successfully!");
+        }
+      } catch (error) {
+        console.error("Error saving profile:", error);
       }
-    } catch (error) {
-      console.error("Error saving profile:", error);
     }
   };
 
@@ -161,6 +222,7 @@ const Profile = () => {
     setBudgetLevel(user.preferences.budget);
     setAccommodationRating(user.preferences.accommodationRating);
     setSelectedActivities(user.preferences.activities);
+    setProfilePicturePreview(user.photoURL);
     setEditing(false);
   };
 
@@ -180,22 +242,68 @@ const Profile = () => {
   ];
 
   return (
-    <Box display="flex" className="dashboard">
+    <Box
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      p={3}
+      sx={{ minHeight: "100vh", backgroundColor: isDarkMode ? "#2c2c2c" : "#f5f5f5" }}
+    >
       <Sidebar />
-      <Box className="content" flexGrow={1} p={0.5}>
+      <Box flexGrow={1} maxWidth="800px">
         <h1>My Profile</h1>
         {loading ? (
-          <CircularProgress />
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            height="50vh"
+          >
+            <CircularProgress />
+          </Box>
         ) : (
           <Card
             sx={{
-              backgroundColor: isDarkMode ? "#666666" : "#b4c5e4",
-              marginBottom: "1rem",
+              backgroundColor: isDarkMode ? "#424242" : "#ffffff",
+              borderRadius: "16px",
+              width: "1000px",
+              boxShadow: isDarkMode
+                ? "0px 4px 20px rgba(0, 0, 0, 0.5)"
+                : "0px 4px 20px rgba(0, 0, 0, 0.1)",
+              padding: "24px",
             }}
           >
-            <CardContent sx={{ color: isDarkMode ? "#FFFFFF" : "#000000" }}>
+            <CardContent>
               {editing ? (
                 <>
+                  <Box display="flex" flexDirection="column" alignItems="center">
+                    <Avatar
+                      alt={user.name}
+                      src={profilePicturePreview}
+                      sx={{ width: 120, height: 120, mb: 2 }}
+                    />
+                    <Button
+                      variant="contained"
+                      component="label"
+                      sx={{
+                        mb: 2,
+                        backgroundColor: "#800080",
+                        color: "#FFFFFF",
+                          "&:hover": {
+                            backgroundColor: "#6A19B5",
+                            color: "#fff",
+                    
+                        },
+                      }}
+                    >
+                      Upload New Picture
+                      <input
+                        type="file"
+                        hidden
+                        onChange={handleProfilePictureChange}
+                      />
+                    </Button>
+                  </Box>
                   <TextField
                     label="Name"
                     name="name"
@@ -203,131 +311,157 @@ const Profile = () => {
                     onChange={handleInputChange}
                     fullWidth
                     margin="normal"
-                    disabled
                   />
                   <TextField
                     label="Email"
                     name="email"
                     value={user.email}
-                    onChange={handleInputChange}
                     fullWidth
                     margin="normal"
                     disabled
                   />
-
                   <FormControl component="fieldset" fullWidth margin="normal">
-                    <Typography variant="h6">Budget Level</Typography>
+                    <h3>Budget Level</h3>
                     <ToggleButtonGroup
                       value={budgetLevel}
                       exclusive
                       onChange={handleBudgetChange}
-                      aria-label="Budget Level"
                       fullWidth
+                      sx={{
+                        "& .MuiToggleButton-root": {
+                          "&.Mui-selected": {
+                            backgroundColor: "#1976d2",
+                            color: "#fff",
+                          },
+                        },
+                      }}
                     >
-                      <ToggleButton value="Cheap" aria-label="Cheap">
-                        Cheap
-                      </ToggleButton>
-                      <ToggleButton value="Mild" aria-label="Mild">
-                        Mild
-                      </ToggleButton>
-                      <ToggleButton value="High" aria-label="High">
-                        High
-                      </ToggleButton>
+                      <ToggleButton value="Cheap">Cheap</ToggleButton>
+                      <ToggleButton value="Affordable">Affordable</ToggleButton>
+                      <ToggleButton value="Luxury">Luxury</ToggleButton>
                     </ToggleButtonGroup>
                   </FormControl>
                   <FormControl component="fieldset" fullWidth margin="normal">
-                    <Typography variant="h6">Accommodation Rating</Typography>
+                    <h3>Accommodation Rating</h3>
                     <ToggleButtonGroup
                       value={accommodationRating}
                       exclusive
                       onChange={handleRatingChange}
-                      aria-label="Accommodation Rating"
                       fullWidth
+                      sx={{
+                        "& .MuiToggleButton-root": {
+                          "&.Mui-selected": {
+                            backgroundColor: "#1976d2",
+                            color: "#fff",
+                          },
+                        },
+                      }}
                     >
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <ToggleButton
-                          key={star}
-                          value={star}
-                          aria-label={`Rating ${star}`}
-                        >
-                          {star} Stars
-                        </ToggleButton>
-                      ))}
+                      <ToggleButton value="1">1-Star</ToggleButton>
+                      <ToggleButton value="2">2-Star</ToggleButton>
+                      <ToggleButton value="3">3-Star</ToggleButton>
+                      <ToggleButton value="4">4-Star</ToggleButton>
+                      <ToggleButton value="5">5-Star</ToggleButton>
                     </ToggleButtonGroup>
                   </FormControl>
                   <FormControl component="fieldset" fullWidth margin="normal">
-                    <Typography variant="h6">Interests</Typography>
+                    <h3>Activities</h3>
                     <ToggleButtonGroup
-                      aria-label="Interests"
+                      value={selectedActivities}
+                      onChange={handleActivitiesChange}
                       fullWidth
-                      value={selectedPreferences}
-                      onChange={handlePreferencesChange}
-                      sx={{ flexWrap: "wrap" }}
+                      multiple
+                      sx={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        "& .MuiToggleButton-root": {
+                          // borderRadius: "100%",
+                          
+                          width: "223px",
+                          padding: "10px 15px",
+                          margin: "8px",
+                          "&.Mui-selected": {
+                            backgroundColor: "#1976d2",
+                            color: "#fff",
+                            
+                          },
+                        },
+                      }}
                     >
-                      {activitiesOptions.map((activity) => (
-                        <ToggleButton
-                          key={activity}
-                          value={activity}
-                          aria-label={activity}
-                          sx={{
-                            borderRadius: "50%",
-                            margin: "4px",
-                            "&.Mui-selected": {
-                              backgroundColor: "#007bff",
-                              color: "#fff",
-                            },
-                          }}
-                        >
-                          {activity}
+                      {activitiesOptions.map((option) => (
+                        <ToggleButton key={option} value={option}>
+                          {option}
                         </ToggleButton>
                       ))}
                     </ToggleButtonGroup>
                   </FormControl>
-                  <Box display="flex" justifyContent="space-between" mt={2}>
+                  <Box mt={3} display="flex" justifyContent="center">
                     <Button
                       variant="contained"
-                      color="primary"
-                      onClick={handleCancel}
-                      sx={{ mt: 2 }}
+                      onClick={handleSave}
+                      sx={{
+                        mx:1,
+                        color: "#FFFFFF",
+                        backgroundColor: "#800080",
+                          "&:hover": {
+                            backgroundColor: "#6A19B5",
+                            color: "#fff",
+                    
+                        },
+                      }}
                     >
-                      Cancel
+                      Save
                     </Button>
                     <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={handleSave}
-                      sx={{ mt: 2 }}
+                      variant="outlined"
+                      onClick={handleCancel}
+                      sx={{ mx: 1 }}
                     >
-                      Save Changes
+                      Cancel
                     </Button>
                   </Box>
                 </>
               ) : (
                 <>
-                  <h2>{user.name}</h2>
-                  <Typography>Email: {user.email}</Typography>
-                  <Typography variant="h6">Preferences:</Typography>
-                  <List>
-                    {user.preferences.interests.map((pref) => (
-                      <ListItem key={pref}>{pref}</ListItem>
-                    ))}
-                  </List>
-                  <Typography variant="h6">
-                    Budget Level: {user.preferences.budget}
-                  </Typography>
-                  <Typography variant="h6">
-                    Accommodation Rating: {user.preferences.accommodationRating}{" "}
-                    Stars
-                  </Typography>
-
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => setEditing(true)}
-                    sx={{ mt: 2 }}
-                  >
-                    Edit
-                  </Button>
+                  <Box display="flex" flexDirection="column" alignItems="center">
+                    <Avatar
+                      alt={user.name}
+                      src={profilePicturePreview}
+                      sx={{ width: 150, height: 150, mb: 1 }}
+                    />
+                    {/* <Typography variant="h5" gutterBottom>
+                      {user.name}
+                    </Typography> */}
+                    <h2 gutterBottom>{user.name}</h2>
+                    <Typography variant="body1" color="textSecondary" sx={{mt:-4}} gutterBottom >
+                      {user.email}
+                    </Typography>
+                  </Box>
+                  <Box mt={-3} mb={5} >
+                    <h3 >Budget Level</h3>
+                    <p>{budgetLevel}</p>
+                  </Box>
+                  <Box mt={-3} mb={5}>
+                    <h3>Accommodation Rating</h3>
+                    <p>{accommodationRating}-Star</p>
+                  </Box>
+                  <Box mt={-3} mb={5}>
+                    <h3>Activities</h3>
+                    <List>
+                      {selectedActivities.map((activity) => (
+                        <ListItem key={activity}>{activity}</ListItem>
+                      ))}
+                    </List>
+                  </Box>
+                  <Box mt={3} display="flex" justifyContent="center">
+                    <Button
+                      variant="contained"
+                      onClick={() => setEditing(true)}
+                      sx={{ mx: 1 }}
+                    >
+                      Edit Profile
+                    </Button>
+                  </Box>
                 </>
               )}
             </CardContent>
