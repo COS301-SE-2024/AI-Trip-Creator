@@ -1,37 +1,45 @@
 // settings.js
-import React, { useState } from 'react';
-import Sidebar from './sidebar';
-import { useTheme } from '../themeContext/themeContext';
-import { Button, TextField, Typography, Container, Box } from '@mui/material';
-import { getAuth, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
-import './dashboard.css';
+import React, { useState } from "react";
+import Sidebar from "./sidebar";
+import { useTheme } from "../themeContext/themeContext";
+import { Button, TextField, Typography, Container, Box } from "@mui/material";
+import {
+  getAuth,
+  updatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
+} from "firebase/auth";
+import "./dashboard.css";
 
 const Settings = () => {
   const { toggleTheme } = useTheme();
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [emailNotifications, setEmailNotifications] = useState(false);
   const [smsNotifications, setSmsNotifications] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const auth = getAuth();
   const user = auth.currentUser;
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
 
     if (user) {
       try {
-        const credential = EmailAuthProvider.credential(user.email, currentPassword);
+        const credential = EmailAuthProvider.credential(
+          user.email,
+          currentPassword,
+        );
         await reauthenticateWithCredential(user, credential);
         await updatePassword(user, newPassword);
-        setSuccess('Password updated successfully.');
+        setSuccess("Password updated successfully.");
         // Clear the text fields
-        setCurrentPassword('');
-        setNewPassword('');
+        setCurrentPassword("");
+        setNewPassword("");
       } catch (error) {
         console.error("Password change failed:", error);
         setError(error.message);
@@ -40,14 +48,16 @@ const Settings = () => {
   };
 
   return (
-    <div className="dashboard">
+    <div>
       <Sidebar />
       <div className="content">
         <Container>
           <h1>Settings</h1>
           <Box className="settings-content" mb={4}>
             <h2>Account Settings</h2>
-            <Typography variant="body1">Update your account details and preferences below.</Typography>
+            <Typography variant="body1">
+              Update your account details and preferences below.
+            </Typography>
 
             <form onSubmit={handlePasswordChange}>
               <h2>Change Password</h2>
@@ -69,7 +79,12 @@ const Settings = () => {
                 required
                 margin="normal"
               />
-              <Button type="submit" className="button" variant="contained" color="primary">
+              <Button
+                type="submit"
+                className="button"
+                variant="contained"
+                color="primary"
+              >
                 Update Password
               </Button>
               {error && <Typography color="error">{error}</Typography>}
@@ -77,8 +92,17 @@ const Settings = () => {
             </form>
           </Box>
           <h2>Theme Preferences</h2>
-          <Typography variant="body1">Press the 'Toggle Theme' button to switch between light mode/dark mode.</Typography>
-          <Button className="button" variant="contained" color="primary" onClick={toggleTheme} sx={{ margin: '20px 0' }}>
+          <Typography variant="body1">
+            Press the 'Toggle Theme' button to switch between light mode/dark
+            mode.
+          </Typography>
+          <Button
+            className="button"
+            variant="contained"
+            color="primary"
+            onClick={toggleTheme}
+            sx={{ margin: "20px 0" }}
+          >
             Toggle Theme
           </Button>
         </Container>

@@ -14,14 +14,15 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import Sidebar from "./sidebar";
-import "./dashboard.css";
+// import "./dashboard.css";
 
 const Dashboard = ({ itinerary, generateItinerary }) => {
   const theme = useTheme();
   const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
+  const isDarkMode = theme.palette.mode === "dark";
 
   return (
-    <Box display="flex" height="100vh">
+    <Box display="flex">
       <Drawer
         variant={isSmUp ? "permanent" : "temporary"}
         open={true}
@@ -37,8 +38,12 @@ const Dashboard = ({ itinerary, generateItinerary }) => {
       <Box
         flexGrow={1}
         p={3}
-        bgcolor="background.default"
-        sx={{ ml: isSmUp ? "240px" : "0" }}
+        //  bgcolor="background.default"
+
+        sx={{
+          ml: isSmUp ? "240px" : "0",
+          bgcolor: isDarkMode ? "#0000007a " : "#ffffff",
+        }}
       >
         <Container maxWidth="lg">
           {/* <<Typography variant="h4" color="primary" gutterBottom>
@@ -49,8 +54,10 @@ const Dashboard = ({ itinerary, generateItinerary }) => {
             Welcome to your analytics dashboard. Here you can view insights
             about user activity and trip creation.
           </Typography> */}
-          <p>Welcome to your analytics dashboard. Here you can view insights
-          about user activity and trip creation.</p>
+          <p>
+            Welcome to your analytics dashboard. Here you can view insights
+            about user activity and trip creation.
+          </p>
           <Typography variant="h5" color="textSecondary" gutterBottom>
             Analytics
           </Typography>
@@ -58,7 +65,10 @@ const Dashboard = ({ itinerary, generateItinerary }) => {
           <Grid container spacing={3}>
             {/* Placeholder for an Analytics Component 1 */}
             <Grid item xs={12} md={6}>
-              <Paper elevation={3} sx={{ p: 2 }}>
+              <Paper
+                elevation={3}
+                sx={{ p: 2, bgcolor: isDarkMode ? "#7d7f7c " : "#ffffff" }}
+              >
                 <Typography variant="h6" gutterBottom>
                   Travel Trends
                 </Typography>
@@ -82,7 +92,10 @@ const Dashboard = ({ itinerary, generateItinerary }) => {
 
             {/* Placeholder for an Analytics Component 2 */}
             <Grid item xs={12} md={6}>
-              <Paper elevation={3} sx={{ p: 2 }}>
+              <Paper
+                elevation={3}
+                sx={{ p: 2, bgcolor: isDarkMode ? "#7d7f7c " : "#ffffff" }}
+              >
                 <Typography variant="h6" gutterBottom>
                   Popular Destinations
                 </Typography>
@@ -106,7 +119,10 @@ const Dashboard = ({ itinerary, generateItinerary }) => {
 
             {/* Placeholder for an Analytics Component 3 */}
             <Grid item xs={12}>
-              <Paper elevation={3} sx={{ p: 2 }}>
+              <Paper
+                elevation={3}
+                sx={{ p: 2, bgcolor: isDarkMode ? "#7d7f7c " : "#ffffff" }}
+              >
                 <Typography variant="h6" gutterBottom>
                   User Activity
                 </Typography>
