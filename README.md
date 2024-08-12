@@ -9,7 +9,7 @@ The Rolling Capstones
 - Demo links
 - Documentation
 - Team members
-- Reposiroty information
+- Repository information
 
 ## Purpose of project
 The purpose of this application is to use the power of an AI chatbot and virtual assistant to aid users in planning for trips.
