@@ -34,6 +34,8 @@ At a high level, the web application should achieve the following:
 
 ### Coding Standards: https://docs.google.com/document/d/1t-oqqG4aHLipHFRUZ-bhNzYQLz90ghLKzz5P_EyJZ2k/edit?usp=sharing
 
+### Architectural Requirements: https://docs.google.com/document/d/1H7bH4GkZ-gYgsrXFR4yK0Zux2w1p5OAweX4wgQijOp0/edit?usp=sharing
+
 ### Project Board- https://github.com/orgs/COS301-SE-2024/projects/110
 ### Deployed application: [ai-trip-creator.web.app/](https://ai-trip-creator.web.app/)
     
