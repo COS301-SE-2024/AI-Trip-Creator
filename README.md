@@ -7,6 +7,7 @@ The Rolling Capstones
 # Table of contents
 - Purpose of project
 - Demo links
+- Documentation
 - Team members
 - Reposiroty information
 
@@ -24,9 +25,15 @@ At a high level, the web application should achieve the following:
    The interface should be quick to learn and easy to understand providing the user(s) with all the information they need to ease the process of travel planning.
 ## Demo links
 ### Demo1-video-
+
+## Documentation
+
 ### Demo 1 Documentation: https://docs.google.com/document/d/19L6aMWtfrBhs8b1KxlzUgDt6_VR9y-CtPlmndlVveJM/edit?usp=sharing
 ### Demo 2 Documentation: https://drive.google.com/drive/folders/1FdCSEWLEiCJMx1wZnsEbrxyj8pMCxOQv?usp=drive_link
 ### Demo 3 Documentation: https://docs.google.com/document/d/1WftryvZLKDnwDYBZSdE5w6eT0XxTaJnezaBwjwcu9R0/edit?usp=sharing
+
+### Technical Installation: https://docs.google.com/document/d/1t-oqqG4aHLipHFRUZ-bhNzYQLz90ghLKzz5P_EyJZ2k/edit?usp=sharing
+
 ### Project Board- https://github.com/orgs/COS301-SE-2024/projects/110
 ### Deployed application: [ai-trip-creator.web.app/](https://ai-trip-creator.web.app/)
     
