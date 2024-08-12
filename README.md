@@ -32,6 +32,8 @@ At a high level, the web application should achieve the following:
 ### Demo 2 Documentation: https://drive.google.com/drive/folders/1FdCSEWLEiCJMx1wZnsEbrxyj8pMCxOQv?usp=drive_link
 ### Demo 3 Documentation: https://docs.google.com/document/d/1WftryvZLKDnwDYBZSdE5w6eT0XxTaJnezaBwjwcu9R0/edit?usp=sharing
 
+### Technical Installation https://github.com/COS301-SE-2024/AI-Trip-Creator/blob/Documentation/Technical_installation.pdf
+
 ### Coding Standards: https://docs.google.com/document/d/1t-oqqG4aHLipHFRUZ-bhNzYQLz90ghLKzz5P_EyJZ2k/edit?usp=sharing
 
 ### Architectural Requirements: https://docs.google.com/document/d/1H7bH4GkZ-gYgsrXFR4yK0Zux2w1p5OAweX4wgQijOp0/edit?usp=sharing
