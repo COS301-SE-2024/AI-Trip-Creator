@@ -32,7 +32,7 @@ At a high level, the web application should achieve the following:
 ### Demo 2 Documentation: https://drive.google.com/drive/folders/1FdCSEWLEiCJMx1wZnsEbrxyj8pMCxOQv?usp=drive_link
 ### Demo 3 Documentation: https://docs.google.com/document/d/1WftryvZLKDnwDYBZSdE5w6eT0XxTaJnezaBwjwcu9R0/edit?usp=sharing
 
-### Technical Installation: https://docs.google.com/document/d/1t-oqqG4aHLipHFRUZ-bhNzYQLz90ghLKzz5P_EyJZ2k/edit?usp=sharing
+### Coding Standards: https://docs.google.com/document/d/1t-oqqG4aHLipHFRUZ-bhNzYQLz90ghLKzz5P_EyJZ2k/edit?usp=sharing
 
 ### Project Board- https://github.com/orgs/COS301-SE-2024/projects/110
 ### Deployed application: [ai-trip-creator.web.app/](https://ai-trip-creator.web.app/)
