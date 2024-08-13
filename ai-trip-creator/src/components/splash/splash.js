@@ -14,7 +14,7 @@ import {
   IconButton,
   Slide,
 } from "@mui/material";
-import { createTheme } from "@mui/material/styles";
+import { useTheme, createTheme } from "@mui/material/styles";
 import Login from "../auth/login";
 import Signup from "../auth/signup";
 import {
@@ -25,15 +25,14 @@ import {
 import { AiOutlineStar, AiOutlineMenu } from "react-icons/ai";
 import getLPTheme  from "./getLPTheme";
 import { Link } from "react-scroll";
-import { useTheme } from "../themeContext/themeContext";
+import CssBaseline from '@mui/material/CssBaseline';
 
-
-
-
-// Custom theme with improved font and colors
-const theme = createTheme(getLPTheme(), {
+const theme = createTheme({
   typography: {
-    fontFamily: "Roboto, Arial, sans-serif",
+    fontFamily: "Poppins, sans-serif",
+    body1: {
+      fontFamily: "Roboto, sans-serif",
+    },
   },
   palette: {
     primary: {
@@ -366,23 +365,42 @@ const SplashPage = () => {
 
   return (
     <ThemeProvider theme={theme}>
+      <CssBaseline />
       <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-        <AppBar position="static" sx={{ backgroundColor: theme.palette.primary.main }}>
-          <Toolbar>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Trip Creator
+        
+        {/* Animated Heading */}
+        <Box sx={{ textAlign: "center", py: 4, backgroundColor: "#f4f6f8" }}>
+          <Slide direction="down" in={true} mountOnEnter unmountOnExit>
+            <Typography
+              variant="h2"
+              component="div"
+              sx={{
+                fontSize: "4rem",
+                fontWeight: 700,
+                lineHeight: 1.2,
+                color: theme.palette.primary.main,
+                textShadow: "2px 2px 4px rgba(0, 0, 0, 0.3)",
+              }}
+            >
+              AI Trip Creator
             </Typography>
-            <Button color="inherit" onClick={handleLoginOpen}>
-              Login
-            </Button>
-            <Button color="inherit" onClick={handleSignupOpen}>
-              Signup
-            </Button>
-        </Toolbar>
-        </AppBar>
+          </Slide>
+        </Box>
 
-        {/* Navigation Bar */}
-        <Box sx={{ backgroundColor: "#f4f6f8", py: 2 }}>
+        {/* Floating and Sticky Navigation Bar */}
+        <AppBar
+          position="sticky"
+          sx={{
+            backgroundColor: theme.palette.primary.main,
+            top: 0,
+            boxShadow: "none",
+            transition: "transform 0.3s ease, background-color 0.3s ease",
+            "&:hover": {
+              transform: "translateY(-5px)",
+              backgroundColor: theme.palette.primary.dark,
+            },
+          }}
+        >
           <Container maxWidth="lg">
             <Toolbar sx={{ justifyContent: "center" }}>
               <Link
@@ -393,7 +411,7 @@ const SplashPage = () => {
                 offset={-70}
                 duration={500}
               >
-                <Button sx={{ mx: 2 }}>Home</Button>
+                <Button sx={{ mx: 2, color: "white" }}>Home</Button>
               </Link>
               <Link
                 activeClass="active"
@@ -403,7 +421,7 @@ const SplashPage = () => {
                 offset={-70}
                 duration={500}
               >
-                <Button sx={{ mx: 2 }}>How It Works</Button>
+                <Button sx={{ mx: 2, color: "white" }}>How It Works</Button>
               </Link>
               <Link
                 activeClass="active"
@@ -413,7 +431,7 @@ const SplashPage = () => {
                 offset={-70}
                 duration={500}
               >
-                <Button sx={{ mx: 2 }}>Gallery</Button>
+                <Button sx={{ mx: 2, color: "white" }}>Gallery</Button>
               </Link>
               <Link
                 activeClass="active"
@@ -423,22 +441,26 @@ const SplashPage = () => {
                 offset={-70}
                 duration={500}
               >
-                <Button sx={{ mx: 2 }}>Reviews</Button>
+                <Button sx={{ mx: 2, color: "white" }}>Reviews</Button>
               </Link>
             </Toolbar>
           </Container>
-        </Box>
+        </AppBar>
 
         {/* Hero Section */}
+        
         <Box
           id="hero"
           sx={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0')`,
+            // backgroundImage: `url('https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0')`,
+            backgroundImage: `url(https://miro.medium.com/v2/resize:fit:1400/1*cGZF-4g_DbSgUsE3yjmphA.jpeg)`,
             backgroundSize: "cover",
+            backgroundBlendMode: "saturation",
             backgroundPosition: "center",
             color: "white",
             textAlign: "center",
             py: 8,
+            minHeight: "80vh",
           }}
         >
           <Container maxWidth="lg">
@@ -489,8 +511,10 @@ const SplashPage = () => {
             </Button>
           </Container>
         </Box>
+        
 
         {/* How It Works Section */}
+        <Box id="howItWorks" sx={{ minHeight: "100vh", backgroundColor: "#ffffff" }}>
         <Container id="howItWorks" maxWidth="lg" sx={{ my: 8 }}>
           <Typography variant="h4" component="h2" align="center" gutterBottom>
             How It Works
@@ -533,8 +557,10 @@ const SplashPage = () => {
             </Grid>
           </Grid>
         </Container>
+        </Box>
 
         {/* Gallery Section */}
+        <Box id="gallery" sx={{ minHeight: "100vh", backgroundColor: "#e3f2fd" }}>
         <Box id="gallery" sx={{ backgroundColor: "#f4f6f8", py: 8 }}>
           <Container maxWidth="lg">
             <Typography variant="h4" component="h2" align="center" gutterBottom>
@@ -543,8 +569,10 @@ const SplashPage = () => {
             <ImageCarousel />
           </Container>
         </Box>
+        </Box>
 
         {/* Reviews Section */}
+        <Box id="reviews" sx={{ minHeight: "100vh", backgroundColor: "#ffffff" }}>
         <Box id="reviews" sx={{ backgroundColor: "#ffffff", py: 8 }}>
           <Container maxWidth="lg">
             <Typography variant="h4" component="h2" align="center" gutterBottom>
@@ -586,6 +614,7 @@ const SplashPage = () => {
               </Grid>
             </Grid>
           </Container>
+        </Box>
         </Box>
 
         {/* Footer */}
