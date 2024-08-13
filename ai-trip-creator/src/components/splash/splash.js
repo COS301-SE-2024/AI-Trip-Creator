@@ -378,7 +378,8 @@ const SplashPage = () => {
                 fontSize: "4rem",
                 fontWeight: 700,
                 lineHeight: 1.2,
-                color: theme.palette.primary.main,
+                // color: theme.palette.primary.main,
+                color: "#5A7BB8",
                 textShadow: "2px 2px 4px rgba(0, 0, 0, 0.3)",
               }}
             >
@@ -391,13 +392,15 @@ const SplashPage = () => {
         <AppBar
           position="sticky"
           sx={{
-            backgroundColor: theme.palette.primary.main,
+            // backgroundColor: theme.palette.primary.main,
+            backgroundColor: "white",
             top: 0,
             boxShadow: "none",
             transition: "transform 0.3s ease, background-color 0.3s ease",
             "&:hover": {
               transform: "translateY(-5px)",
-              backgroundColor: theme.palette.primary.dark,
+              // backgroundColor: theme.palette.primary.dark,
+              backgroundColor: "#F0F0F0",
             },
           }}
         >
@@ -411,7 +414,7 @@ const SplashPage = () => {
                 offset={-70}
                 duration={500}
               >
-                <Button sx={{ mx: 2, color: "white" }}>Home</Button>
+                <Button sx={{ mx: 2, color: "#5A7BB8e" }}>Home</Button>
               </Link>
               <Link
                 activeClass="active"
@@ -421,7 +424,7 @@ const SplashPage = () => {
                 offset={-70}
                 duration={500}
               >
-                <Button sx={{ mx: 2, color: "white" }}>How It Works</Button>
+                <Button sx={{ mx: 2, color: "#5A7BB8e" }}>How It Works</Button>
               </Link>
               <Link
                 activeClass="active"
@@ -431,7 +434,7 @@ const SplashPage = () => {
                 offset={-70}
                 duration={500}
               >
-                <Button sx={{ mx: 2, color: "white" }}>Gallery</Button>
+                <Button sx={{ mx: 2, color: "#5A7BB8e" }}>Gallery</Button>
               </Link>
               <Link
                 activeClass="active"
@@ -441,7 +444,7 @@ const SplashPage = () => {
                 offset={-70}
                 duration={500}
               >
-                <Button sx={{ mx: 2, color: "white" }}>Reviews</Button>
+                <Button sx={{ mx: 2, color: "#5A7BB8e" }}>Reviews</Button>
               </Link>
             </Toolbar>
           </Container>
