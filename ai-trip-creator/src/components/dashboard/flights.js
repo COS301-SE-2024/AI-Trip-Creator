@@ -112,7 +112,7 @@ const Flights = () => {
         const flightOffers = await getFlightOffers(
           "DUR",
           "CPT",
-          "2024-08-16",
+          "2024-08-13",
           1,
           10,
         );
