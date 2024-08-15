@@ -341,28 +341,15 @@ const ImageCarousel = () => {
   );
 };
 
-const SplashPage = () => {
-  const [openLogin, setOpenLogin] = useState(false);
-  const [openSignup, setOpenSignup] = useState(false);
+const SplashPage = ({ setIsLoggedIn }) => {
+  const [visibleLogin, setVisibleLogin] = useState(false);
+  const [visibleSignup, setVisibleSignup] = useState(false);
 
-  const handleLoginOpen = () => {
-    setOpenLogin(true);
-  };
-
-  const handleLoginClose = () => {
-    setOpenLogin(false);
-  };
-
-  const handleSignupOpen = () => {
-    setOpenSignup(true);
-  };
-
-  const handleSignupClose = () => {
-    setOpenSignup(false);
-  };
-
-  const { toggleTheme } = useTheme();
-
+  const openLogin = () => setVisibleLogin(true);
+  const closeLogin = () => setVisibleLogin(false);
+  const openSignup = () => setVisibleSignup(true);
+  const closeSignup = () => setVisibleSignup(false);
+  
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -491,7 +478,7 @@ const SplashPage = () => {
               variant="contained"
               color="primary"
               size="large"
-              onClick={handleSignupOpen}
+              onClick={openSignup}
               sx={{ mr: 2 }}
             >
               Get Started
@@ -500,7 +487,7 @@ const SplashPage = () => {
               variant="outlined"
               color="inherit"
               size="large"
-              onClick={handleLoginOpen}
+              onClick={openLogin}
               sx = {{ 
                 mr:2, 
                 width:"120px", 
@@ -514,6 +501,45 @@ const SplashPage = () => {
             </Button>
           </Container>
         </Box>
+        {visibleLogin && (
+        <Dialog open={visibleLogin} onClose={closeLogin}>
+          <DialogTitle>Login</DialogTitle>
+          <DialogContent>
+            <Login
+              setIsLoggedIn={setIsLoggedIn}
+              closeLogin={closeLogin}
+              openSignup={openSignup}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {visibleSignup && (
+        <Dialog open={visibleSignup} onClose={closeSignup}>
+          <DialogTitle>Signup</DialogTitle>
+          <DialogContent>
+            <Signup closeSignup={closeSignup} openLogin={openLogin} />
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {(visibleLogin || visibleSignup) && (
+        <Box
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            background: "rgba(0, 0, 0, 0.5)",
+            zIndex: 500,
+          }}
+          onClick={() => {
+            closeLogin();
+            closeSignup();
+          }}
+        />
+      )}
         
 
         {/* How It Works Section */}
@@ -629,19 +655,19 @@ const SplashPage = () => {
           </Container>
         </Box>
 
-        <Dialog open={openLogin} onClose={handleLoginClose}>
+        {/* <Dialog open={openLogin} onClose={closeLogin}>
           <DialogTitle>Login</DialogTitle>
           <DialogContent>
             <Login />
           </DialogContent>
         </Dialog>
 
-        <Dialog open={openSignup} onClose={handleSignupClose}>
+        <Dialog open={openSignup} onClose={closeSignup}>
           <DialogTitle>Signup</DialogTitle>
           <DialogContent>
             <Signup />
           </DialogContent>
-        </Dialog>
+        </Dialog> */}
       </Box>
     </ThemeProvider>
   );
