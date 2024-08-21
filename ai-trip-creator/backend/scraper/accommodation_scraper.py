@@ -106,9 +106,11 @@ def fetch_accommodation_details(url):
         return {
             'name': name,
             'description': description,
+            'link': url,
             'rating': rating,
             'image': image,
-            'price': price
+            'price': price,
+            
             
         }
     else:
@@ -116,12 +118,20 @@ def fetch_accommodation_details(url):
         return None
 
 def get_accommodation_details(location):
+    logging.debug(f"Extracting links for location: {location}")
     accommodations = extract_links(location)
     if not accommodations:
+        logging.warning(f"No accommodations found for location: {location}")
         return []
     accommodation_details = []
     for accommodation in accommodations:
+        logging.debug(f"Fetching details for accommodation: {accommodation['name']}")
         details = fetch_accommodation_details(accommodation['link'])
         if details:
             accommodation_details.append(details)
+            
+        else:
+             logging.warning(f"Failed to fetch details for {accommodation['name']}")
+    logging.debug(f"Fetched details for {len(accommodation_details)} accommodations.")
+      
     return accommodation_details

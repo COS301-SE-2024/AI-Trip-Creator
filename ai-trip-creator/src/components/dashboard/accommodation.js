@@ -20,8 +20,8 @@ import {
 import { FaFilter, FaSearch } from "react-icons/fa";
 import Sidebar from "./sidebar";
 import { db } from "../../firebase/firebase-config";
-import { collection, doc, setDoc } from "firebase/firestore";
-import { getAuth } from "firebase/auth"; // Import getAuth
+import { collection, doc, setDoc, getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 const Accommodation = () => {
   const [query, setQuery] = useState("");
@@ -47,11 +47,13 @@ const Accommodation = () => {
     }
   }, [location]);
 
+  const db = getFirestore();
+
   const handleSearch = async (searchQuery = query) => {
     setLoading(true);
     try {
-      const auth = getAuth(); // Get the current auth instance
-      const user = auth.currentUser; // Get the current user
+      const auth = getAuth();
+      const user = auth.currentUser;
       if (!user) {
         throw new Error("User is not authenticated");
       }
@@ -61,40 +63,45 @@ const Accommodation = () => {
       const response = await fetch(
         `http://localhost:5000/api/search?query=${searchQuery}`,
       );
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.error || `HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
+      const data = await response.json();
       setSearchResults(data.results);
       setFilteredResults(data.results);
       setError("");
 
-      // Write accommodations data to Firestore under the city document
-      const cityDocRef = doc(db, "Accommodation", searchQuery);
-      const cityData = {
-        accommodations: data.results.map((accommodation) => ({
+      data.results.forEach(async (accommodation, index) => {
+        const accommodationId = accommodation.id || `acc_${index}`;
+        const docRef = doc(db, "Accommodation", accommodationId);
+        const accommodationData = {
           name: accommodation.name,
           description: accommodation.description,
+          link: accommodation.link,
           price: accommodation.price,
           rating: accommodation.rating,
           image: accommodation.image,
-        })),
-      };
+          city: searchQuery,
+        };
 
-      try {
-        await setDoc(cityDocRef, cityData, { merge: true });
-        console.log(`Successfully wrote accommodations for ${searchQuery}`);
-      } catch (firestoreError) {
-        console.error(
-          `Error writing accommodations to Firestore for ${searchQuery}:`,
-          firestoreError,
-        );
-      }
+        try {
+          await setDoc(docRef, accommodationData);
+          console.log(
+            `Successfully wrote accommodation ${accommodation.name} to Firestore`,
+          );
+        } catch (firestoreError) {
+          console.error(
+            `Error writing accommodation ${accommodation.name} to Firestore:`,
+            firestoreError,
+          );
+        }
+      });
     } catch (error) {
       console.error("Error fetching search results:", error);
-      setError("Failed to fetch accommodation data. Please try again.");
+      setError(
+        `Failed to fetch accommodation data: ${error.message}. Please try again.`,
+      );
     } finally {
       setLoading(false);
     }
