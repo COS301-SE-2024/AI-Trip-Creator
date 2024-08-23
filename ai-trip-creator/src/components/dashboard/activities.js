@@ -17,7 +17,13 @@ import {
   CardContent,
   CircularProgress,
 } from "@mui/material";
-import { FaFilter, FaSearch, FaStar, FaHeart } from "react-icons/fa";
+import {
+  FaFilter,
+  FaSearch,
+  FaStar,
+  FaMapMarkedAlt,
+  FaHeart,
+} from "react-icons/fa";
 import Sidebar from "./sidebar";
 import {
   getFirestore,
@@ -28,7 +34,7 @@ import {
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-const Accommodation = () => {
+const Activities = () => {
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [filteredResults, setFilteredResults] = useState([]);
@@ -36,21 +42,22 @@ const Accommodation = () => {
   const [filters, setFilters] = useState({
     price: [0, 5000],
     rating: "",
+    category: "",
   });
   const [filterVisible, setFilterVisible] = useState(false);
   const [sortOption, setSortOption] = useState("");
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(null); // Track user authentication state
-  const [booked, setBooked] = useState({}); // Track booked state for each accommodation
+  const [user, setUser] = useState(null);
+  const [booked, setBooked] = useState({});
   const location = useLocation();
 
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user); // Set user state on auth state change
+      setUser(user);
     });
 
-    return () => unsubscribe(); // Clean up subscription on unmount
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {
@@ -73,11 +80,8 @@ const Accommodation = () => {
       console.log("Authenticated user:", user.uid);
 
       const db = getFirestore();
-      const accommodationsRef = collection(db, "Accommodation");
-      const q = firestoreQuery(
-        accommodationsRef,
-        where("city", "==", searchQuery),
-      );
+      const activitiesRef = collection(db, "Activities");
+      const q = firestoreQuery(activitiesRef, where("city", "==", searchQuery));
       const querySnapshot = await getDocs(q);
 
       const results = [];
@@ -90,13 +94,13 @@ const Accommodation = () => {
         setFilteredResults(results);
         setError("");
       } else {
-        setError(`No accommodations found for "${searchQuery}"`);
+        setError(`No activities found for "${searchQuery}"`);
         setSearchResults([]);
         setFilteredResults([]);
       }
     } catch (error) {
       console.error("Error fetching search results from Firestore:", error);
-      setError("Failed to fetch accommodation data. Please try again.");
+      setError("Failed to fetch activities data. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -125,7 +129,10 @@ const Accommodation = () => {
       const meetsRating = filters.rating
         ? result.rating >= Number(filters.rating)
         : true;
-      return meetsPrice && meetsRating;
+      const meetsCategory = filters.category
+        ? result.category === filters.category
+        : true;
+      return meetsPrice && meetsRating && meetsCategory;
     });
 
     // apply sorting
@@ -191,7 +198,7 @@ const Accommodation = () => {
           <Box display="flex" flexDirection="column" gap={2}>
             <TextField
               fullWidth
-              label="Search accommodations"
+              label="Search activities"
               variant="outlined"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -239,7 +246,6 @@ const Accommodation = () => {
                 >
                   <MenuItem value="priceAsc">Price: Low to High</MenuItem>
                   <MenuItem value="priceDesc">Price: High to Low</MenuItem>
-                  <MenuItem value="ratingDesc">Rating: High to Low</MenuItem>
                 </Select>
               </FormControl>
               <FormControl component="fieldset" sx={{ mb: 2 }}>
@@ -254,24 +260,16 @@ const Accommodation = () => {
                 />
               </FormControl>
               <FormControl fullWidth sx={{ mb: 2 }}>
-                <InputLabel htmlFor="rating-select">Minimum Rating</InputLabel>
+                <InputLabel htmlFor="category-select">Category</InputLabel>
                 <Select
-                  name="rating"
-                  value={filters.rating}
+                  name="category"
+                  value={filters.category}
                   onChange={handleFilterChange}
-                  inputProps={{ id: "rating-select" }}
+                  inputProps={{ id: "category-select" }}
                 >
                   <MenuItem value="">Any</MenuItem>
-                  <MenuItem value="1">1</MenuItem>
-                  <MenuItem value="2">2</MenuItem>
-                  <MenuItem value="3">3</MenuItem>
-                  <MenuItem value="4">4</MenuItem>
-                  <MenuItem value="5">5</MenuItem>
-                  <MenuItem value="6">6</MenuItem>
-                  <MenuItem value="7">7</MenuItem>
-                  <MenuItem value="8">8</MenuItem>
-                  <MenuItem value="9">9</MenuItem>
-                  <MenuItem value="10">10</MenuItem>
+                  <MenuItem value="Restaurant">Restaurant</MenuItem>
+                  <MenuItem value="Things to Do">Things to Do</MenuItem>
                 </Select>
               </FormControl>
               <Button
@@ -289,80 +287,47 @@ const Accommodation = () => {
           {loading ? (
             <CircularProgress />
           ) : (
-            filteredResults.map((accommodation, index) => (
+            filteredResults.map((activity, index) => (
               <Card key={index} sx={{ maxWidth: 345, mb: 1 }}>
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image={accommodation.image}
-                  alt={accommodation.name}
-                />
                 <CardContent>
                   <Typography gutterBottom variant="h5" component="div">
-                    {accommodation.name}
+                    {activity.name}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {accommodation.description} <a href="#">See more</a>
+                    {activity.category} - {activity.sub_category}{" "}
+                    <FaMapMarkedAlt /> {activity.address}
                   </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {activity.description}
+                  </Typography>
+
                   <Box
                     sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      mt: 2,
+                      textAlign: "left",
+                      flexGrow: 1,
                     }}
                   >
-                    <Box
+                    <Typography
+                      variant="body1"
+                      color="text.primary"
+                      sx={{ fontWeight: "bold" }}
+                    >
+                      R{activity.price} /person
+                    </Typography>
+                    <Button
+                      variant="contained"
                       sx={{
+                        mt: "2px",
+                        backgroundColor: booked[index] ? "green" : "black",
+                        color: "white",
                         display: "flex",
                         alignItems: "center",
                         gap: 1,
                       }}
+                      onClick={() => handleBookNowClick(index)}
                     >
-                      <Box
-                        sx={{
-                          backgroundColor: "green",
-                          color: "white",
-                          p: 1,
-                          borderRadius: "4px",
-                        }}
-                      >
-                        {accommodation.rating}
-                      </Box>
-
-                      <Typography variant="body1" color="text.primary">
-                        {getReviewComment(accommodation.rating)} Rating
-                      </Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        textAlign: "right",
-                        flexGrow: 1,
-                      }}
-                    >
-                      <Typography
-                        variant="body1"
-                        color="text.primary"
-                        sx={{ fontWeight: "bold" }}
-                      >
-                        R{accommodation.price}
-                        /night
-                      </Typography>
-                      <Button
-                        variant="contained"
-                        sx={{
-                          mt: "2px",
-                          backgroundColor: booked[index] ? "green" : "black",
-                          color: "white",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1,
-                        }}
-                        onClick={() => handleBookNowClick(index)}
-                      >
-                        {booked[index] ? "Saved for later" : "Save for later"}
-                      </Button>
-                    </Box>
+                      {booked[index] ? "Saved for later" : "Save for later"}
+                    </Button>
                   </Box>
                 </CardContent>
               </Card>
@@ -379,4 +344,4 @@ const Accommodation = () => {
   );
 };
 
-export default Accommodation;
+export default Activities;
