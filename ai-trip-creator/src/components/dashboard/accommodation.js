@@ -17,10 +17,15 @@ import {
   CardContent,
   CircularProgress,
 } from "@mui/material";
-import { FaFilter, FaSearch, FaStar } from "react-icons/fa";
+import { FaFilter, FaSearch, FaStar, FaHeart } from "react-icons/fa";
 import Sidebar from "./sidebar";
-import { db } from "../../firebase/firebase-config";
-import { collection, doc, getDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  query as firestoreQuery,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const Accommodation = () => {
@@ -36,6 +41,7 @@ const Accommodation = () => {
   const [sortOption, setSortOption] = useState("");
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null); // Track user authentication state
+  const [booked, setBooked] = useState({}); // Track booked state for each accommodation
   const location = useLocation();
 
   useEffect(() => {
@@ -66,27 +72,27 @@ const Accommodation = () => {
 
       console.log("Authenticated user:", user.uid);
 
-      const cityDocRef = doc(
-        db,
-        "Accommodation",
-        searchQuery.toLowerCase().replace(/\s+/g, ""),
+      const db = getFirestore();
+      const accommodationsRef = collection(db, "Accommodation");
+      const q = firestoreQuery(
+        accommodationsRef,
+        where("city", "==", searchQuery),
       );
-      const cityDocSnapshot = await getDoc(cityDocRef);
+      const querySnapshot = await getDocs(q);
 
-      if (cityDocSnapshot.exists()) {
-        const cityData = cityDocSnapshot.data();
-        const accommodations = cityData.accommodations || [];
+      const results = [];
+      querySnapshot.forEach((doc) => {
+        results.push(doc.data());
+      });
 
-        setSearchResults(accommodations);
-        setFilteredResults(accommodations);
+      if (results.length > 0) {
+        setSearchResults(results);
+        setFilteredResults(results);
         setError("");
-
-        console.log(`Successfully read accommodations for ${searchQuery}`);
       } else {
-        console.warn(`No accommodations found for ${searchQuery}`);
+        setError(`No accommodations found for "${searchQuery}"`);
         setSearchResults([]);
         setFilteredResults([]);
-        setError("No accommodations found. Please try a different search.");
       }
     } catch (error) {
       console.error("Error fetching search results from Firestore:", error);
@@ -136,6 +142,19 @@ const Accommodation = () => {
 
   const handleFilterApply = () => {
     setFilteredResults(applyFiltersAndSorting());
+  };
+
+  const handleBookNowClick = (index) => {
+    setBooked((prevBooked) => ({
+      ...prevBooked,
+      [index]: !prevBooked[index],
+    }));
+  };
+
+  const getReviewComment = (rating) => {
+    if (rating >= 8) return "Good";
+    if (rating >= 6) return "Average";
+    return "Poor";
   };
 
   return (
@@ -266,20 +285,12 @@ const Accommodation = () => {
           )}
         </Box>
 
-        <Box
-          sx={{
-            mt: 2,
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
-            gap: 2,
-          }}
-        >
+        <Box sx={{ mt: 1 }}>
           {loading ? (
             <CircularProgress />
           ) : (
             filteredResults.map((accommodation, index) => (
-              <Card key={index} sx={{ maxWidth: 300 }}>
+              <Card key={index} sx={{ maxWidth: 345, mb: 1 }}>
                 <CardMedia
                   component="img"
                   height="140"
@@ -291,22 +302,76 @@ const Accommodation = () => {
                     {accommodation.name}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {accommodation.description}
+                    {accommodation.description} <a href="#">See more</a>
                   </Typography>
-                  <Typography variant="body1" color="text.primary">
-                    from R{accommodation.price}/per night
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    style={{ display: "flex", alignItems: "center" }}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      mt: 2,
+                    }}
                   >
-                    Rating: {accommodation.rating}
-                    <FaStar color="gold" style={{ marginRight: "4px" }} />
-                  </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          backgroundColor: "green",
+                          color: "white",
+                          p: 1,
+                          borderRadius: "4px",
+                        }}
+                      >
+                        {accommodation.rating}
+                      </Box>
+
+                      <Typography variant="body1" color="text.primary">
+                        {getReviewComment(accommodation.rating)} Rating
+                      </Typography>
+                    </Box>
+                    <Box
+                      sx={{
+                        textAlign: "right",
+                        flexGrow: 1,
+                      }}
+                    >
+                      <Typography
+                        variant="body1"
+                        color="text.primary"
+                        sx={{ fontWeight: "bold" }}
+                      >
+                        R{accommodation.price}
+                        /night
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          mt: "2px",
+                          backgroundColor: booked[index] ? "green" : "black",
+                          color: "white",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                        }}
+                        onClick={() => handleBookNowClick(index)}
+                      >
+                        {booked[index] ? "Saved for later" : "Save for later"}
+                      </Button>
+                    </Box>
+                  </Box>
                 </CardContent>
               </Card>
             ))
+          )}
+          {error && (
+            <Typography variant="body1" color="error">
+              {error}
+            </Typography>
           )}
         </Box>
       </Box>
