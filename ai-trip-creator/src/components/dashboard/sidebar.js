@@ -23,6 +23,7 @@ import {
   FaQuestion,
   FaCog,
   FaSignOutAlt,
+  FaRunning,
 } from "react-icons/fa";
 
 const Sidebar = () => {
@@ -117,6 +118,11 @@ const Sidebar = () => {
           <FaBed style={{ marginRight: "10px" }} />{" "}
           {/* Example: Replace with your own icon component */}
           <ListItemText primary="Accommodation" />
+        </ListItem>
+        <ListItem button component={Link} to="/activities">
+          <FaRunning style={{ marginRight: "10px" }} />{" "}
+          {/* Example: Replace with your own icon component */}
+          <ListItemText primary="Things to do" />
         </ListItem>
         <Divider sx={{ my: 2, borderColor: "#34495e" }} />
         <ListItem button component={Link} to="/profile">
