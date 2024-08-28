@@ -16,8 +16,11 @@ import {
   CardMedia,
   CardContent,
   CircularProgress,
+  Grid,
+  Autocomplete,
+  Alert,
 } from "@mui/material";
-import { FaFilter, FaSearch, FaStar, FaHeart } from "react-icons/fa";
+import { FaFilter, FaSearch } from "react-icons/fa";
 import Sidebar from "./sidebar";
 import {
   getFirestore,
@@ -27,6 +30,44 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+const allowedCities = [
+  "Pretoria",
+  "Johannesburg",
+  "Cape Town",
+  "Durban",
+  "Gqeberha",
+];
+
+const getClosestCity = (input) => {
+  return allowedCities.reduce(
+    (closest, city) => {
+      const distance = getLevenshteinDistance(
+        input.toLowerCase(),
+        city.toLowerCase(),
+      );
+      return distance < closest.distance ? { city, distance } : closest;
+    },
+    { city: "", distance: Infinity },
+  ).city;
+};
+
+const getLevenshteinDistance = (a, b) => {
+  const matrix = Array.from({ length: b.length + 1 }, (_, i) => [i]).concat(
+    Array.from({ length: a.length + 1 }, () => []),
+  );
+  for (let i = 1; i <= a.length; i++) matrix[0][i] = i;
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      matrix[i][j] = Math.min(
+        matrix[i - 1][j] + 1,
+        matrix[i][j - 1] + 1,
+        matrix[i - 1][j - 1] + (b[i - 1] === a[j - 1] ? 0 : 1),
+      );
+    }
+  }
+  return matrix[b.length][a.length];
+};
 
 const Accommodation = () => {
   const [query, setQuery] = useState("");
@@ -42,6 +83,7 @@ const Accommodation = () => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null); // Track user authentication state
   const [booked, setBooked] = useState({}); // Track booked state for each accommodation
+  const [alert, setAlert] = useState("");
   const location = useLocation();
 
   useEffect(() => {
@@ -59,7 +101,7 @@ const Accommodation = () => {
 
     if (destinationParam) {
       setQuery(destinationParam);
-      handleSearch(destinationParam.toLowerCase().replace(/\s+/g, ""));
+      handleSearch(destinationParam);
     }
   }, [location, user]);
 
@@ -76,7 +118,7 @@ const Accommodation = () => {
       const accommodationsRef = collection(db, "Accommodation");
       const q = firestoreQuery(
         accommodationsRef,
-        where("city", "==", searchQuery),
+        where("city", "==", searchQuery.toLowerCase().replace(/\s+/g, "")),
       );
       const querySnapshot = await getDocs(q);
 
@@ -90,9 +132,15 @@ const Accommodation = () => {
         setFilteredResults(results);
         setError("");
       } else {
-        setError(`No accommodations found for "${searchQuery}"`);
+        const closestCity = getClosestCity(searchQuery);
+        setError(
+          `No accommodations found for "${searchQuery}". Did you mean "${closestCity}"?`,
+        );
         setSearchResults([]);
         setFilteredResults([]);
+        setAlert(closestCity);
+        setQuery(closestCity);
+        handleSearch(closestCity);
       }
     } catch (error) {
       console.error("Error fetching search results from Firestore:", error);
@@ -289,57 +337,72 @@ const Accommodation = () => {
           {loading ? (
             <CircularProgress />
           ) : (
-            filteredResults.map((accommodation, index) => (
-              <Card key={index} sx={{ maxWidth: 345, mb: 1 }}>
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image={accommodation.image}
-                  alt={accommodation.name}
-                />
-                <CardContent>
-                  <Typography gutterBottom variant="h5" component="div">
-                    {accommodation.name}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {accommodation.description} <a href="#">See more</a>
-                  </Typography>
-                  <Box
-                    sx={{
+            <Grid container spacing={2}>
+              {filteredResults.map((accommodation, index) => (
+                <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                  <Card
+                    style={{
+                      marginBottom: "20px",
+                      height: "100%",
                       display: "flex",
+                      flexDirection: "column",
                       justifyContent: "space-between",
-                      alignItems: "center",
-                      mt: 2,
                     }}
                   >
-                    <Box
-                      sx={{
+                    <CardMedia
+                      component="img"
+                      height="140"
+                      image={accommodation.image}
+                      alt={accommodation.name}
+                    />
+                    <CardContent
+                      style={{
+                        flexGrow: 1,
                         display: "flex",
-                        alignItems: "center",
-                        gap: 1,
+                        flexDirection: "column",
                       }}
                     >
+                      <Typography
+                        gutterBottom
+                        variant="h5"
+                        component="div"
+                        style={{ flexGrow: 1 }}
+                      >
+                        {accommodation.name}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {accommodation.description} <a href="#">See more</a>
+                      </Typography>
                       <Box
                         sx={{
-                          backgroundColor: "green",
-                          color: "white",
-                          p: 1,
-                          borderRadius: "4px",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
                         }}
                       >
-                        {accommodation.rating}
-                      </Box>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              backgroundColor: "green",
+                              color: "white",
+                              p: 1,
+                              borderRadius: "4px",
+                            }}
+                          >
+                            {accommodation.rating}
+                          </Box>
 
-                      <Typography variant="body1" color="text.primary">
-                        {getReviewComment(accommodation.rating)} Rating
-                      </Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        textAlign: "right",
-                        flexGrow: 1,
-                      }}
-                    >
+                          <Typography variant="body1" color="text.primary">
+                            {getReviewComment(accommodation.rating)} Rating
+                          </Typography>
+                        </Box>
+                      </Box>
                       <Typography
                         variant="body1"
                         color="text.primary"
@@ -348,32 +411,39 @@ const Accommodation = () => {
                         R{accommodation.price}
                         /night
                       </Typography>
+                    </CardContent>
+                    <Box
+                      style={{
+                        padding: "16px",
+                        borderTop: "1px solid #ddd",
+                        display: "flex",
+                        justifyContent: "center",
+                      }}
+                    >
                       <Button
                         variant="contained"
                         sx={{
-                          mt: "2px",
                           backgroundColor: booked[index] ? "green" : "black",
                           color: "white",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1,
+                          width: "100%", // Make the button full width
                         }}
                         onClick={() => handleBookNowClick(index)}
                       >
-                        {booked[index] ? "Saved for later" : "Save for later"}
+                        {booked[index] ? "Saved" : "Save for later"}
                       </Button>
                     </Box>
-                  </Box>
-                </CardContent>
-              </Card>
-            ))
-          )}
-          {error && (
-            <Typography variant="body1" color="error">
-              {error}
-            </Typography>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
           )}
         </Box>
+
+        {error && (
+          <Typography variant="body2" color="error">
+            {error}
+          </Typography>
+        )}
       </Box>
     </Box>
   );
