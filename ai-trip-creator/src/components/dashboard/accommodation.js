@@ -121,10 +121,18 @@ const Accommodation = () => {
         where("city", "==", searchQuery.toLowerCase().replace(/\s+/g, "")),
       );
       const querySnapshot = await getDocs(q);
-
+      const seenNames = new Set();
       const results = [];
-      querySnapshot.forEach((doc) => {
+
+      /*querySnapshot.forEach((doc) => {
         results.push(doc.data());
+      });*/
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        if (!seenNames.has(data.name.toLowerCase())) {
+          seenNames.add(data.name.toLowerCase());
+          results.push(data);
+        }
       });
 
       if (results.length > 0) {
@@ -371,7 +379,7 @@ const Accommodation = () => {
                         {accommodation.name}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        {accommodation.description} <a href="#">See more</a>
+                        {accommodation.description} <a href="#">Book now</a>
                       </Typography>
                       <Box
                         sx={{
