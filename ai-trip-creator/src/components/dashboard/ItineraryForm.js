@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { setGlobalAIText } from './globalData'; 
 import { db, app } from "../../firebase/firebase-config";
 import { getVertexAI, getGenerativeModel } from "firebase/vertexai-preview";
-
+import "./dashboard.css";
 import {
   Button,
   FormControl,

@@ -730,12 +730,17 @@ const Profile = () => {
           "& .MuiDrawer-paper": {
             boxSizing: "border-box",
             width: 240,
+
           },
         }}
       >
         <Sidebar />
       </Drawer>
-      <Box flexGrow={1} p={3} sx={{ ml: isSmUp ? "240px" : "0" }}>
+      <Box flexGrow={1} p={3} sx=
+      {{ ml: isSmUp ? "240px" : "0",
+        bgcolor: isDarkMode ? '#0000007a ' : '#ffffff'
+      }}
+      >
         <Box p={3} sx={{ minHeight: "100vh" }}>
           <h1>My Profile</h1>
           {loading ? (
@@ -934,9 +939,7 @@ const Profile = () => {
           )}
         </Box>
         <Container maxWidth="lg" sx={{ mt: 5 }}>
-          <Typography variant="h4" color="primary" gutterBottom>
-            Analytics Dashboard
-          </Typography>
+          <h1>Analytic Dashboard</h1>
           <Typography variant="body1" paragraph>
             Welcome to your analytics dashboard. Here you can view insights about user activity and trip creation.
           </Typography>
@@ -945,7 +948,7 @@ const Profile = () => {
           </Typography>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
-              <Paper elevation={3} sx={{ p: 2, bgcolor: isDarkMode ? "#7d7f7c" : "#ffffff" }}>
+              <Paper elevation={3} sx={{ p: 2, bgcolor: isDarkMode ? "#424242" : "#ffffff" }}>
                 <Typography variant="h6" gutterBottom>
                   Travel Trends
                 </Typography>
@@ -958,7 +961,7 @@ const Profile = () => {
               </Paper>
             </Grid>
             <Grid item xs={12} md={6}>
-              <Paper elevation={3} sx={{ p: 2, bgcolor: isDarkMode ? "#7d7f7c" : "#ffffff" }}>
+              <Paper elevation={3} sx={{ p: 2, bgcolor: isDarkMode ? "#424242" : "#ffffff" }}>
                 <Typography variant="h6" gutterBottom>
                   Popular Destinations
                 </Typography>
@@ -971,7 +974,7 @@ const Profile = () => {
               </Paper>
             </Grid>
             <Grid item xs={12}>
-              <Paper elevation={3} sx={{ p: 2, bgcolor: isDarkMode ? "#7d7f7c" : "#ffffff" }}>
+              <Paper elevation={3} sx={{ p: 2, bgcolor: isDarkMode ? "#424242" : "#ffffff" }}>
                 <Typography variant="h6" gutterBottom>
                   User Activity
                 </Typography>
