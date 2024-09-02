@@ -64,7 +64,7 @@ const Dashboard = ({ itinerary, generateItinerary }) => {
           <Grid container spacing={3}>
             {/* Placeholder for an Analytics Component 1 */}
             <Grid item xs={12} md={6}>
-              <Paper elevation={3} sx={{ p: 2, bgcolor: isDarkMode ? '#7d7f7c ' : '#ffffff'}}>
+              <Paper elevation={3} sx={{ p: 2, bgcolor: isDarkMode ? '#424242 ' : '#ffffff'}}>
                 <Typography variant="h6" gutterBottom>
                   Travel Trends
                 </Typography>
@@ -88,7 +88,7 @@ const Dashboard = ({ itinerary, generateItinerary }) => {
 
             {/* Placeholder for an Analytics Component 2 */}
             <Grid item xs={12} md={6}>
-              <Paper elevation={3} sx={{ p: 2, bgcolor: isDarkMode ? '#7d7f7c ' : '#ffffff' }}>
+              <Paper elevation={3} sx={{ p: 2, bgcolor: isDarkMode ? '#424242 ' : '#ffffff' }}>
                 <Typography variant="h6" gutterBottom>
                   Popular Destinations
                 </Typography>
@@ -112,7 +112,7 @@ const Dashboard = ({ itinerary, generateItinerary }) => {
 
             {/* Placeholder for an Analytics Component 3 */}
             <Grid item xs={12}>
-              <Paper elevation={3} sx={{ p: 2, bgcolor: isDarkMode ? '#7d7f7c ' : '#ffffff' }}>
+              <Paper elevation={3} sx={{ p: 2, bgcolor: isDarkMode ? '#424242 ' : '#ffffff' }}>
                 <Typography variant="h6" gutterBottom>
                   User Activity
                 </Typography>
