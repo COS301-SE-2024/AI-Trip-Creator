@@ -16,6 +16,7 @@ import {
   CardMedia,
   CardContent,
   CircularProgress,
+  useTheme,
 } from "@mui/material";
 import { FaFilter, FaSearch, FaStar, FaHeart } from "react-icons/fa";
 import Sidebar from "./sidebar";
@@ -29,6 +30,8 @@ import {
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const Accommodation = () => {
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [filteredResults, setFilteredResults] = useState([]);
@@ -158,7 +161,9 @@ const Accommodation = () => {
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex", 
+      bgcolor: isDarkMode ? '#0000007a ' : '#ffffff'
+    }}>
       <Sidebar
         sx={{
           width: "250px",
