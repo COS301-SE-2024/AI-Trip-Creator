@@ -16,6 +16,7 @@ import {
   CardMedia,
   CardContent,
   CircularProgress,
+  useTheme,
 } from "@mui/material";
 import {
   FaFilter,
@@ -33,8 +34,11 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import "./dashboard.css";
 
 const Activities = () => {
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [filteredResults, setFilteredResults] = useState([]);
