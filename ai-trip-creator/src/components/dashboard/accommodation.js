@@ -296,7 +296,7 @@ const Accommodation = () => {
             <CircularProgress />
           ) : (
             filteredResults.map((accommodation, index) => (
-              <Card key={index} sx={{ maxWidth: 345, mb: 1 }}>
+              <Card key={index} sx={{ maxWidth: 345, mb: 1,backgroundColor: isDarkMode ? "#424242" : "#ffffff" }}>
                 <CardMedia
                   component="img"
                   height="140"

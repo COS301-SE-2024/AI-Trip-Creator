@@ -259,7 +259,7 @@ button.theme-toggle:hover {
   --background-color: var(--background-color-dark);
   --text-color: var(--text-color-dark);
   --primary-color: var(--primary-color-dark);
-  --secondary-color: var(--secondary-color-dark);
+ --secondary-color: var(--secondary-color-dark);
   --card-background: var(--card-background-dark);
   --heading1-color: var(--heading1-color-dark);
 }

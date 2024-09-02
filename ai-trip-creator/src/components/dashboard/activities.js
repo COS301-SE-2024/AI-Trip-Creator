@@ -169,7 +169,9 @@ const Activities = () => {
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex",
+      bgcolor: isDarkMode ? 'rgba(0, 0, 0, 0.477)' : '#ffffff'
+    }}>
       <Sidebar
         sx={{
           width: "250px",
@@ -292,11 +294,11 @@ const Activities = () => {
             <CircularProgress />
           ) : (
             filteredResults.map((activity, index) => (
-              <Card key={index} sx={{ maxWidth: 345, mb: 1 }}>
+              <Card key={index} sx={{ maxWidth: 345, mb: 1}}>
                 <CardContent>
                   <Typography gutterBottom variant="h5" component="div">
                     {activity.name}
-                  </Typography>
+                  </Typography> 
                   <Typography variant="body2" color="text.secondary">
                     {activity.category} - {activity.sub_category}{" "}
                     <FaMapMarkedAlt /> {activity.address}
