@@ -28,6 +28,7 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import "./dashboard.css";
 
 const Accommodation = () => {
   const theme = useTheme();

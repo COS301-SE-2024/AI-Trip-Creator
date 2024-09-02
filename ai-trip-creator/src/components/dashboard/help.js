@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Sidebar from "./sidebar";
 import ChatbotComponent from "./chatbot/chatbot";
+import "./dashboard.css";
 
 const Help = () => {
   const [isChatbotVisible, setChatbotVisible] = useState(false);
