@@ -162,8 +162,9 @@ const Accommodation = () => {
   };
 
   return (
+    
     <Box sx={{ display: "flex", 
-      bgcolor: isDarkMode ? '#0000007a ' : '#ffffff'
+       bgcolor: isDarkMode ? '#0000007a' : '#ffffff'
     }}>
       <Sidebar
         sx={{
@@ -185,6 +186,8 @@ const Accommodation = () => {
           p: 2,
           display: "flex",
           flexDirection: "column",
+          bgcolor: isDarkMode ? 'rgba(0, 0, 0, 0.477) ' : '#ffffff',
+
         }}
       >
         <Box

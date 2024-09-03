@@ -230,7 +230,8 @@ button.theme-toggle:hover {
   --secondary-color-light: #6c757d;
   --heading1-color-light: #004ba8;
 
-  --background-color-dark: rgba(0, 0, 0, 0.477);
+  /* --background-color-dark: rgba(0, 0, 0, 0.477); */
+  --background-color-dark: #0000007a;
   --text-color-dark: #e0e0e0;
   --primary-color-dark: #3e78b2a3;
   --secondary-color-dark: #9aa0a6;
