@@ -18,9 +18,8 @@ import {
   CircularProgress,
   Grid,
   Autocomplete,
-  Alert,
 } from "@mui/material";
-import { FaFilter, FaSearch } from "react-icons/fa";
+import { FaFilter, FaSearch, FaHeart, FaRegHeart } from "react-icons/fa";
 import Sidebar from "./sidebar";
 import {
   getFirestore,
@@ -124,9 +123,6 @@ const Accommodation = () => {
       const seenNames = new Set();
       const results = [];
 
-      /*querySnapshot.forEach((doc) => {
-        results.push(doc.data());
-      });*/
       querySnapshot.forEach((doc) => {
         const data = doc.data();
         if (!seenNames.has(data.name.toLowerCase())) {
@@ -244,213 +240,183 @@ const Accommodation = () => {
             gap: 2,
           }}
         >
-          <Box display="flex" flexDirection="column" gap={2}>
-            <TextField
-              fullWidth
-              label="Search accommodations"
-              variant="outlined"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyPress={(e) => {
-                if (e.key === "Enter") {
-                  handleSearch();
-                }
-              }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => handleSearch(query)}>
-                      <FaSearch />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              sx={{ flexGrow: 1, minWidth: "200px" }}
-            />
-            <Button
-              variant="outlined"
-              startIcon={<FaFilter />}
-              onClick={() => setFilterVisible(!filterVisible)}
-            >
-              Toggle Filters
-            </Button>
-          </Box>
+          <Autocomplete
+            freeSolo
+            options={allowedCities}
+            value={query}
+            onChange={(event, newValue) => {
+              setQuery(newValue || "");
+              handleSearch(newValue || "");
+            }}
+            onInputChange={(event, newInputValue) => {
+              setQuery(newInputValue);
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                fullWidth
+                label="Search accommodations"
+                variant="outlined"
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => handleSearch(query)}>
+                        <FaSearch />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{ flexGrow: 1, minWidth: "200px" }}
+              />
+            )}
+          />
+          <Button
+            variant="outlined"
+            startIcon={<FaFilter />}
+            onClick={() => setFilterVisible(!filterVisible)}
+          >
+            Toggle Filters
+          </Button>
+        </Box>
 
-          {filterVisible && (
-            <Box
-              sx={{
-                border: "1px solid #ddd",
-                borderRadius: "4px",
-                p: 2,
-                mt: 2,
-                backgroundColor: "#fff",
-              }}
-            >
-              <FormControl fullWidth sx={{ mb: 2 }}>
-                <InputLabel htmlFor="sort-by-select">Sort By</InputLabel>
-                <Select
-                  value={sortOption}
-                  onChange={handleSortChange}
-                  inputProps={{ id: "sort-by-select" }}
-                >
-                  <MenuItem value="priceAsc">Price: Low to High</MenuItem>
-                  <MenuItem value="priceDesc">Price: High to Low</MenuItem>
-                  <MenuItem value="ratingDesc">Rating: High to Low</MenuItem>
-                </Select>
-              </FormControl>
-              <FormControl component="fieldset" sx={{ mb: 2 }}>
-                <Typography>Price Range</Typography>
-                <Slider
-                  value={filters.price}
-                  onChange={handleFilterChange}
-                  valueLabelDisplay="auto"
-                  min={0}
-                  max={5000}
-                  step={100}
-                />
-              </FormControl>
-              <FormControl fullWidth sx={{ mb: 2 }}>
-                <InputLabel htmlFor="rating-select">Minimum Rating</InputLabel>
-                <Select
-                  name="rating"
-                  value={filters.rating}
-                  onChange={handleFilterChange}
-                  inputProps={{ id: "rating-select" }}
-                >
-                  <MenuItem value="">Any</MenuItem>
-                  <MenuItem value="1">1</MenuItem>
-                  <MenuItem value="2">2</MenuItem>
-                  <MenuItem value="3">3</MenuItem>
-                  <MenuItem value="4">4</MenuItem>
-                  <MenuItem value="5">5</MenuItem>
-                  <MenuItem value="6">6</MenuItem>
-                  <MenuItem value="7">7</MenuItem>
-                  <MenuItem value="8">8</MenuItem>
-                  <MenuItem value="9">9</MenuItem>
-                  <MenuItem value="10">10</MenuItem>
-                </Select>
-              </FormControl>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleFilterApply}
+        {filterVisible && (
+          <Box
+            sx={{
+              border: "1px solid #ddd",
+              borderRadius: "4px",
+              p: 2,
+              mt: 2,
+              backgroundColor: "#fff",
+            }}
+          >
+            <FormControl fullWidth sx={{ mb: 2 }}>
+              <InputLabel htmlFor="sort-by-select">Sort By</InputLabel>
+              <Select
+                value={sortOption}
+                onChange={handleSortChange}
+                inputProps={{ id: "sort-by-select" }}
               >
+                <MenuItem value="priceAsc">Price: Low to High</MenuItem>
+                <MenuItem value="priceDesc">Price: High to Low</MenuItem>
+                <MenuItem value="ratingDesc">Rating: High to Low</MenuItem>
+              </Select>
+            </FormControl>
+            <Typography gutterBottom>Price Range:</Typography>
+            <Slider
+              value={filters.price}
+              onChange={handleFilterChange}
+              valueLabelDisplay="auto"
+              min={0}
+              max={5000}
+              sx={{ width: "100%" }}
+            />
+            <FormControl fullWidth sx={{ mt: 2 }}>
+              <InputLabel htmlFor="rating-filter">Rating</InputLabel>
+              <Select
+                value={filters.rating}
+                onChange={handleFilterChange}
+                name="rating"
+                inputProps={{ id: "rating-filter" }}
+              >
+                <MenuItem value="">All</MenuItem>
+                <MenuItem value="8">8 and above</MenuItem>
+                <MenuItem value="6">6 and above</MenuItem>
+                <MenuItem value="4">4 and above</MenuItem>
+              </Select>
+            </FormControl>
+            <Box sx={{ mt: 2 }}>
+              <Button variant="contained" onClick={handleFilterApply}>
                 Apply Filters
               </Button>
             </Box>
-          )}
-        </Box>
+          </Box>
+        )}
 
-        <Box sx={{ mt: 1 }}>
-          {loading ? (
-            <CircularProgress />
-          ) : (
-            <Grid container spacing={2}>
-              {filteredResults.map((accommodation, index) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                  <Card
-                    style={{
-                      marginBottom: "20px",
-                      height: "100%",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <CardMedia
-                      component="img"
-                      height="140"
-                      image={accommodation.image}
-                      alt={accommodation.name}
-                    />
-                    <CardContent
-                      style={{
-                        flexGrow: 1,
-                        display: "flex",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <Typography
-                        gutterBottom
-                        variant="h5"
-                        component="div"
-                        style={{ flexGrow: 1 }}
-                      >
-                        {accommodation.name}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {accommodation.description} <a href="#">Book now</a>
-                      </Typography>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 1,
-                          }}
-                        >
-                          <Box
-                            sx={{
-                              backgroundColor: "green",
-                              color: "white",
-                              p: 1,
-                              borderRadius: "4px",
-                            }}
-                          >
-                            {accommodation.rating}
-                          </Box>
-
-                          <Typography variant="body1" color="text.primary">
-                            {getReviewComment(accommodation.rating)} Rating
-                          </Typography>
-                        </Box>
-                      </Box>
-                      <Typography
-                        variant="body1"
-                        color="text.primary"
-                        sx={{ fontWeight: "bold" }}
-                      >
-                        R{accommodation.price}
-                        /night
-                      </Typography>
-                    </CardContent>
-                    <Box
-                      style={{
-                        padding: "16px",
-                        borderTop: "1px solid #ddd",
-                        display: "flex",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <Button
-                        variant="contained"
-                        sx={{
-                          backgroundColor: booked[index] ? "green" : "black",
-                          color: "white",
-                          width: "100%", // Make the button full width
-                        }}
-                        onClick={() => handleBookNowClick(index)}
-                      >
-                        {booked[index] ? "Saved" : "Save for later"}
-                      </Button>
-                    </Box>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-          )}
-        </Box>
+        <Typography variant="h6" sx={{ mt: 2 }} color="textSecondary">
+          Search Results for: {query}
+        </Typography>
 
         {error && (
-          <Typography variant="body2" color="error">
+          <Typography color="error" sx={{ mt: 2 }}>
             {error}
           </Typography>
+        )}
+
+        {loading ? (
+          <CircularProgress sx={{ mt: 4 }} />
+        ) : (
+          <Grid container spacing={2} sx={{ mt: 2 }}>
+            {filteredResults.map((accommodation, index) => (
+              <Grid key={index} item xs={12} sm={6} md={4}>
+                <Card
+                  style={{
+                    marginBottom: "20px",
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <CardMedia
+                    component="img"
+                    alt={accommodation.name}
+                    height="150"
+                    image={accommodation.image}
+                  />
+                  <CardContent>
+                    <Typography variant="h6">{accommodation.name}</Typography>
+                    <Typography variant="body2" color="textSecondary" sx={{}}>
+                      {accommodation.description}
+                      <a href="{accomodation.link}">Booking.com</a>
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      fontWeight="bold"
+                      sx={{ display: "flex", alignItems: "center" }}
+                    >
+                      R{accommodation.price}/night
+                    </Typography>
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      <Box
+                        sx={{
+                          backgroundColor:
+                            accommodation.rating >= 8
+                              ? "green"
+                              : accommodation.rating >= 6
+                              ? "orange"
+                              : "red",
+                          color: "#fff",
+                          padding: "2px ",
+                          borderRadius: "4px",
+                          marginRight: "8px",
+                        }}
+                      >
+                        {accommodation.rating}
+                      </Box>
+                      <Typography variant="body2">
+                        {getReviewComment(accommodation.rating)}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                      <IconButton
+                        onClick={() => handleBookNowClick(index)}
+                        sx={{
+                          color: booked[index] ? "red" : "grey",
+                          backgroundColor: "transparent",
+                          "&:hover": {
+                            backgroundColor: "transparent",
+                          },
+                        }}
+                      >
+                        {booked[index] ? <FaHeart /> : <FaRegHeart />}
+                      </IconButton>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
         )}
       </Box>
     </Box>
