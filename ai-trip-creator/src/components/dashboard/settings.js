@@ -119,7 +119,7 @@ const Settings = () => {
             position: "relative",
             marginLeft: "-115px",
             marginTop: "10px",
-            margingBottom: "20px",
+            marginBottom: "20px",
             overflowY: "auto",
             width: "100%",
         }}>Settings</h1>
@@ -131,16 +131,12 @@ const Settings = () => {
             borderColor="grey.300"
             borderRadius="8px"
           >
-            <Typography variant="h5" gutterBottom>
-              Account Settings
-            </Typography>
-            <Typography variant="body1">
+            <h2 style={{marginTop: "7px"}}>Account Settings</h2>
+            <Typography variant="body1" sx={{mt: "-8px", mb: "8px"}}>
               Update your account details and preferences below.
             </Typography>
             <form onSubmit={handlePasswordChange}>
-              <Typography variant="h6" gutterBottom>
-                Change Password
-              </Typography>
+              <h2>Change Password</h2>
               <TextField
                 fullWidth
                 label="Current Password"
@@ -174,9 +170,7 @@ const Settings = () => {
             borderColor="grey.300"
             borderRadius="8px"
           >
-            <Typography variant="h5" gutterBottom>
-              Theme Preferences
-            </Typography>
+            <h2 style={{marginTop: "7px"}}>Theme Preferences</h2>
             <Typography variant="body1">
               Press the 'Toggle Theme' button to switch between light mode/dark
               mode.
@@ -224,9 +218,7 @@ const Settings = () => {
             borderColor="grey.300"
             borderRadius="8px"
           >
-            <Typography variant="h5" gutterBottom>
-              App Version
-            </Typography>
+            <h2 style={{marginTop: "7px"}}>App Version</h2>
             <Typography variant="body1">
               You are currently using version 1.0.0 of the AI Trip Creator app.
             </Typography>
@@ -239,9 +231,7 @@ const Settings = () => {
             borderColor="grey.300"
             borderRadius="8px"
           >
-            <Typography variant="h5" gutterBottom>
-              Account Deletion
-            </Typography>
+            <h2 style={{marginTop: "7px"}}>Account Deletion</h2>
             <Typography variant="body1">
               Once deleted, your account and all associated data will be
               permanently removed. Please proceed with caution.
