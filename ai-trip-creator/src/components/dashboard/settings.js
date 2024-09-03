@@ -24,7 +24,6 @@ import {
   EmailAuthProvider,
   deleteUser,
 } from "firebase/auth";
-
 import "./dashboard.css";
 
 const Settings = () => {
@@ -117,11 +116,12 @@ const Settings = () => {
         <Container>
           <h1  
           style={{
-          marginLeft: "-130px",
-
-          margingBottom: "20px",
-          overflowY: "auto",
-          width: "100%",
+            position: "relative",
+            marginLeft: "-115px",
+            marginTop: "10px",
+            margingBottom: "20px",
+            overflowY: "auto",
+            width: "100%",
         }}>Settings</h1>
 
           <Box
