@@ -140,11 +140,11 @@ const Accommodation = () => {
         setError(
           `No accommodations found for "${searchQuery}". Did you mean "${closestCity}"?`,
         );
+
         setSearchResults([]);
         setFilteredResults([]);
         setAlert(closestCity);
-        setQuery(closestCity);
-        handleSearch(closestCity);
+        //setQuery(closestCity);
       }
     } catch (error) {
       console.error("Error fetching search results from Firestore:", error);
