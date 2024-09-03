@@ -250,15 +250,17 @@ const Accommodation = () => {
                   value={sortOption}
                   onChange={handleSortChange}
                   inputProps={{ id: "sort-by-select" }}
+                  sx= {{color: isDarkMode ? "#ffffff" : "#000000"}}
                 >
-                  <MenuItem value="priceAsc">Price: Low to High</MenuItem>
-                  <MenuItem value="priceDesc">Price: High to Low</MenuItem>
-                  <MenuItem value="ratingDesc">Rating: High to Low</MenuItem>
+                  <MenuItem value="priceAsc" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>Price: Low to High</MenuItem>
+                  <MenuItem value="priceDesc" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>Price: High to Low</MenuItem>
+                  <MenuItem value="ratingDesc" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>Rating: High to Low</MenuItem>
                 </Select>
               </FormControl>
               <FormControl component="fieldset" sx={{ mb: 2 }}>
                 <Typography>Price Range</Typography>
                 <Slider
+                  sx= {{color: isDarkMode ? "#ffffff" : "#000000"}}
                   value={filters.price}
                   onChange={handleFilterChange}
                   valueLabelDisplay="auto"
@@ -270,22 +272,23 @@ const Accommodation = () => {
               <FormControl fullWidth sx={{ mb: 2 }}>
                 <InputLabel htmlFor="rating-select">Minimum Rating</InputLabel>
                 <Select
+                  sx= {{color: isDarkMode ? "#ffffff" : "#000000"}}
                   name="rating"
                   value={filters.rating}
                   onChange={handleFilterChange}
                   inputProps={{ id: "rating-select" }}
                 >
-                  <MenuItem value="">Any</MenuItem>
-                  <MenuItem value="1">1</MenuItem>
-                  <MenuItem value="2">2</MenuItem>
-                  <MenuItem value="3">3</MenuItem>
-                  <MenuItem value="4">4</MenuItem>
-                  <MenuItem value="5">5</MenuItem>
-                  <MenuItem value="6">6</MenuItem>
-                  <MenuItem value="7">7</MenuItem>
-                  <MenuItem value="8">8</MenuItem>
-                  <MenuItem value="9">9</MenuItem>
-                  <MenuItem value="10">10</MenuItem>
+                  <MenuItem value="" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>Any</MenuItem>
+                  <MenuItem value="1" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>1</MenuItem>
+                  <MenuItem value="2" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>2</MenuItem>
+                  <MenuItem value="3" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>3</MenuItem>
+                  <MenuItem value="4" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>4</MenuItem>
+                  <MenuItem value="5" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>5</MenuItem>
+                  <MenuItem value="6" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>6</MenuItem>
+                  <MenuItem value="7" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>7</MenuItem>
+                  <MenuItem value="8" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>8</MenuItem>
+                  <MenuItem value="9" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>9</MenuItem>
+                  <MenuItem value="10" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>10</MenuItem>
                 </Select>
               </FormControl>
               <Button
