@@ -736,13 +736,14 @@ const Profile = () => {
       >
         <Sidebar />
       </Drawer>
-      <Box flexGrow={1} p={3} sx=
+      <Box flexGrow={1} p={3} 
+      sx=
       {{ ml: isSmUp ? "240px" : "0",
        
       }}
       >
         <Box p={3} sx={{ minHeight: "50vh" }}>
-          <h1 classname="main-heading">My Profile</h1>
+          <h1 style={{marginTop: "-20px"}}>My Profile</h1>
           {loading ? (
             <Box display="flex" justifyContent="center" alignItems="center" height="50vh">
               <CircularProgress />

@@ -163,8 +163,7 @@ const Accommodation = () => {
 
   return (
     
-    <Box sx={{ display: "flex", 
-       bgcolor: isDarkMode ? '#0000007a' : '#ffffff'
+    <Box sx={{ display: "flex",
     }}>
       <Sidebar
         sx={{
