@@ -241,7 +241,7 @@ const Accommodation = () => {
                 borderRadius: "4px",
                 p: 2,
                 mt: 2,
-                backgroundColor: "#fff",
+                backgroundColor: isDarkMode ? "#424242" : "#ffffff",
               }}
             >
               <FormControl fullWidth sx={{ mb: 2 }}>
