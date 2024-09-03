@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Sidebar from "./sidebar";
-//import { useTheme } from "../themeContext/themeContext";
+import { useTheme } from "../themeContext/themeContext";
 import {
   Button,
   TextField,
@@ -15,7 +15,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  useTheme,
+  // useTheme,
 } from "@mui/material";
 import {
   getAuth,
@@ -25,10 +25,12 @@ import {
   deleteUser,
 } from "firebase/auth";
 
+import "./dashboard.css";
+
 const Settings = () => {
-  const theme = useTheme();
-  const isDarkMode = theme.palette.mode === "dark";
-  // const { toggleTheme } = useTheme();
+  // const theme = useTheme();
+  // const isDarkMode = theme.palette.mode === "dark";
+  const { toggleTheme } = useTheme();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [language, setLanguage] = useState("en"); // Default language
@@ -67,6 +69,10 @@ const Settings = () => {
     // Implement the logic to change the language in your app
   };
 
+  const handleToggle = () => {
+    toggleTheme();
+  };
+
   const handleDeleteAccount = async () => {
     setOpenConfirmDialog(false);
     setError("");
@@ -90,7 +96,7 @@ const Settings = () => {
   };
 
   return (
-    <Box sx={{ display: "flex", height: "100vh", bgcolor: isDarkMode ? '#0000007a' : '#ffffff' }}>
+    <Box sx={{ display: "flex", height: "100vh"}}>
       <Sidebar
         style={{
           position: "fixed",
@@ -178,8 +184,8 @@ const Settings = () => {
             <Button
               variant="contained"
               color="primary"
-              onClick={useTheme}
-              sx={{ margin: "20px 0", }}
+              onClick={toggleTheme}
+              sx={{ margin: "20px 0"}}
             >
               Toggle Theme
             </Button>
