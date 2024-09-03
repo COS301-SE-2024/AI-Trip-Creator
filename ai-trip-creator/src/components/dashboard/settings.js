@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Sidebar from "./sidebar";
-import { useTheme } from "../themeContext/themeContext";
+//import { useTheme } from "../themeContext/themeContext";
 import {
   Button,
   TextField,
@@ -15,6 +15,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  useTheme,
 } from "@mui/material";
 import {
   getAuth,
@@ -25,7 +26,9 @@ import {
 } from "firebase/auth";
 
 const Settings = () => {
-  const { toggleTheme } = useTheme();
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
+  // const { toggleTheme } = useTheme();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [language, setLanguage] = useState("en"); // Default language
@@ -87,7 +90,7 @@ const Settings = () => {
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh" }}>
+    <Box sx={{ display: "flex", height: "100vh", bgcolor: isDarkMode ? '#0000007a' : '#ffffff' }}>
       <Sidebar
         style={{
           position: "fixed",
@@ -106,9 +109,14 @@ const Settings = () => {
         }}
       >
         <Container>
-          <Typography variant="h4" gutterBottom>
-            Settings
-          </Typography>
+          <h1  
+          style={{
+          marginLeft: "-130px",
+
+          margingBottom: "20px",
+          overflowY: "auto",
+          width: "100%",
+        }}>Settings</h1>
 
           <Box
             mb={4}
@@ -170,8 +178,8 @@ const Settings = () => {
             <Button
               variant="contained"
               color="primary"
-              onClick={toggleTheme}
-              sx={{ margin: "20px 0" }}
+              onClick={useTheme}
+              sx={{ margin: "20px 0", }}
             >
               Toggle Theme
             </Button>
@@ -277,7 +285,7 @@ const Settings = () => {
           </Dialog>
         </Container>
       </div>
-    </div>
+    </Box>
   );
 };
 
