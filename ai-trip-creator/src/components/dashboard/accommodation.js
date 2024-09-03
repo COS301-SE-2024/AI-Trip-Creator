@@ -199,6 +199,7 @@ const Accommodation = () => {
             <TextField
               fullWidth
               label="Search accommodations"
+              color = "primary"
               variant="outlined"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -207,7 +208,7 @@ const Accommodation = () => {
                   handleSearch();
                 }
               }}
-              InputProps={{
+              InputProps={{ 
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton onClick={() => handleSearch(query)}>
@@ -216,7 +217,13 @@ const Accommodation = () => {
                   </InputAdornment>
                 ),
               }}
-              sx={{ flexGrow: 1, minWidth: "200px" }}
+              sx={{ 
+                flexGrow: 1, 
+                minWidth: "200px",
+                input: {
+                  color: isDarkMode ? "#ffffff" : "#000000",
+                },
+              }}
             />
             <Button
               variant="outlined"
