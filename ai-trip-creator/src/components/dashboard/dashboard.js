@@ -14,7 +14,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import Sidebar from "./sidebar";
-// import "./dashboard.css";
+ import "./dashboard.css";
 
 const Dashboard = ({ itinerary, generateItinerary }) => {
   const theme = useTheme();

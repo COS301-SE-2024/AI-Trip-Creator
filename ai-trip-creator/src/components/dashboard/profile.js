@@ -738,11 +738,11 @@ const Profile = () => {
       </Drawer>
       <Box flexGrow={1} p={3} sx=
       {{ ml: isSmUp ? "240px" : "0",
-        bgcolor: isDarkMode ? '#0000007a ' : '#ffffff'
+       
       }}
       >
-        <Box p={3} sx={{ minHeight: "100vh" }}>
-          <h1>My Profile</h1>
+        <Box p={3} sx={{ minHeight: "50vh" }}>
+          <h1 classname="main-heading">My Profile</h1>
           {loading ? (
             <Box display="flex" justifyContent="center" alignItems="center" height="50vh">
               <CircularProgress />
@@ -752,10 +752,12 @@ const Profile = () => {
               sx={{
                 backgroundColor: isDarkMode ? "#424242" : "#ffffff",
                 borderRadius: "16px",
+                marginLeft: "200px",
+                width: "900px",
                 boxShadow: isDarkMode
                   ? "0px 4px 20px rgba(0, 0, 0, 0.5)"
                   : "0px 4px 20px rgba(0, 0, 0, 0.1)",
-                padding: "24px",
+                padding: "19px",
               }}
             >
               <CardContent>
