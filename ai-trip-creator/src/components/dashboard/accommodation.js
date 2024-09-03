@@ -185,7 +185,6 @@ const Accommodation = () => {
           p: 2,
           display: "flex",
           flexDirection: "column",
-          bgcolor: isDarkMode ? 'rgba(0, 0, 0, 0.477) ' : '#ffffff',
 
         }}
       >
