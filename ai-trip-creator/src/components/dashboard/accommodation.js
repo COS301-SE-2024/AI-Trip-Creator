@@ -307,11 +307,17 @@ const Accommodation = () => {
             <CircularProgress />
           ) : (
             filteredResults.map((accommodation, index) => (
-              <Card key={index} 
+              <Card  key={index} 
               sx={{ 
                 maxWidth: 345, 
+                borderRadius: "8px",
                 mb: 1,backgroundColor: isDarkMode ? "#424242" : "#ffffff",
-                
+                "&:hover": {
+                      transform: "scale(1.02)",
+                      transitionDuration: "0.3s",
+                      
+                      // boxShadow: "0 3px 5px #424242",
+                    },
                }}>
                 <CardMedia
                   component="img"
@@ -320,7 +326,7 @@ const Accommodation = () => {
                   alt={accommodation.name}
                 />
                 <CardContent>
-                  <Typography gutterBottom variant="h5" component="div">
+                  <Typography gutterBottom variant="h5" component="div" sx={{fontWeight: 'bold', color: isDarkMode ? "#e0e0e0" : "#333333", fontFamily: 'Poppins'}}>
                     {accommodation.name}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
@@ -352,7 +358,13 @@ const Accommodation = () => {
                         {accommodation.rating}
                       </Box>
 
-                      <Typography variant="body1" color="text.primary">
+                      <Typography variant="body1" color={
+                        getReviewComment(accommodation.rating) === "Good"
+                          ? "#00A800"
+                          : getReviewComment(accommodation.rating) === "Average"
+                            ? "#FFD700"
+                            : "#FF7400"
+                      }>
                         {getReviewComment(accommodation.rating)} Rating
                       </Typography>
                     </Box>
@@ -365,7 +377,7 @@ const Accommodation = () => {
                       <Typography
                         variant="body1"
                         color="text.primary"
-                        sx={{ fontWeight: "bold" }}
+                        sx={{ fontWeight: "bold", color: isDarkMode ? "#e0e0e0" : "#333333"}}
                       >
                         R{accommodation.price}
                         /night
