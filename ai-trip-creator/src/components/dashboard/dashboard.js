@@ -43,7 +43,7 @@ const Dashboard = ({ itinerary, generateItinerary }) => {
         
         sx={{ 
           ml: isSmUp ? "240px" : "0",
-          bgcolor: isDarkMode ? '#0000007a ' : '#ffffff'
+          //bgcolor: isDarkMode ? '#0000007a ' : '#ffffff'
          }}
       >
         <Container maxWidth="lg">
