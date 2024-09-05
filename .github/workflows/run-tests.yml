@@ -1,0 +1,25 @@
+name: Run Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test:
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2.3.2
+
+      - name: Install Dependencies
+        run: |
+          cd ai-trip-creator
+          npm install
+
+      - name: Run Unit Tests
+        run: |
+          cd ai-trip-creator
+          npm test
