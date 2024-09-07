@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Sidebar from "./sidebar";
+import "./dashboard.css";
 import { useTheme } from "../themeContext/themeContext";
 import {
   Button,
@@ -106,9 +107,10 @@ const Settings = () => {
         }}
       >
         <Container>
-          <Typography variant="h4" gutterBottom>
+          {/* <Typography variant="h4" gutterBottom>
             Settings
-          </Typography>
+          </Typography> */}
+          <h1>Settings</h1>
 
           <Box
             mb={4}

@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Box, Typography } from '@mui/material';
 import {exportVariable} from './ItineraryForm';
 import { getGlobalAIText } from './globalData'; 
+import "./dashboard.css";
 
 function ItineraryDisplay({ itinerary }) {
 
