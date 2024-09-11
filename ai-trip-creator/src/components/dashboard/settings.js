@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Sidebar from "./sidebar";
+import "./dashboard.css";
 import { useTheme } from "../themeContext/themeContext";
 import {
   Button,
@@ -114,6 +115,12 @@ const Settings = () => {
         }}
       >
         <Container>
+
+          {/* <Typography variant="h4" gutterBottom>
+            Settings
+          </Typography> */}
+          <h1>Settings</h1>
+
           <h1  
           style={{
             position: "relative",
@@ -123,6 +130,7 @@ const Settings = () => {
             overflowY: "auto",
             width: "100%",
         }}>Settings</h1>
+
 
           <Box
             mb={4}

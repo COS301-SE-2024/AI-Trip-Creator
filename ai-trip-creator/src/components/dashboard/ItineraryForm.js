@@ -1,8 +1,10 @@
-
 import React, { useState } from 'react';
 import { setGlobalAIText } from './globalData'; 
 import { db, app } from "../../firebase/firebase-config";
 import { getVertexAI, getGenerativeModel } from "firebase/vertexai-preview";
+
+import { Button, FormControl, InputLabel, MenuItem, Select, Typography, Box, Card, CardContent, CardMedia, Grid, Chip, Paper, TextField, Autocomplete, ToggleButton, ToggleButtonGroup,
+
 import "./dashboard.css";
 import {
   Button,
@@ -22,6 +24,7 @@ import {
   Autocomplete,
   ToggleButton,
   ToggleButtonGroup,
+
   Slider,
   Rating,
 } from '@mui/material';
@@ -33,28 +36,19 @@ import durbanImg from './images/durban.jpeg';
 import gqerberhaImg from './images/Gqerberha.jpg';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc, setDoc,collection, query, where, getDocs } from "firebase/firestore";
-
+import "./dashboard.css";
 
 let exportVariable = "def";
-
-// // Initialize the Vertex AI service
+    
  const vertexAI = getVertexAI(app);
 
-// // Initialize the generative model with a model that supports your use case
-// // Gemini 1.5 models are versatile and can be used with all API capabilities
  const model = getGenerativeModel(vertexAI, { model: "gemini-1.5-flash" });
 
  const fetchDocumentById = async (docId) => {
   try {
-    // Reference to the Firestore collection and document
-    //const docRef = db.collection('examplName').doc(docId);
-
-
     const prefsDocRef = doc(db, "Preferences", docId);
     const prefsDocSnap = await getDoc(prefsDocRef);
-    // Fetch the document
     
-
     if (!prefsDocSnap.exists) {
       console.log('No such document!');
       return;
@@ -70,40 +64,26 @@ let exportVariable = "def";
     return activities;
   } catch (error) {
     console.error('Error getting document', error);
-    return ["Outdoor",
-      "Indoor",
-      "Shopping",
-      "Amusement Park",
-      "Historical",
-      "Art",
-      "Beach",
-      "Adventure",
-      "Luxury",
-      "Culture",
-      "Food",
+    return ["Outdoor","Indoor","Shopping","Amusement Park","Historical","Art","Beach","Adventure","Luxury","Culture","Food",
       "Nightlife",
     ];
   }
-
 };
 
+  // Function to update family size and adjust the group size slider accordingly
+  
 
 const fetchFilteredActivities = async (activitiesArray) => {
   try {
-    // Reference to the Firestore collection
     const activitiesCollection = collection(db, "Activities");
-
-    // Create a query to filter documents
     const q = query(
       activitiesCollection,
       where("city", "==", "Cape Town"),
       where("sub_category", "in", activitiesArray)
     );
 
-    // Execute the query
     const querySnapshot = await getDocs(q);
 
-    // Process the results
     let activities = [];
     querySnapshot.forEach((doc) => {
       activities.push({ id: doc.id, ...doc.data() });
@@ -228,57 +208,48 @@ const fetchFilteredActivities = async (activitiesArray) => {
     return activities;
   }
 };
-
-// Call the function with the document ID you want to fetch
-
-
-// Call the function to fetch the document with userId = 2
 //fetchDocumentByUserId('9CFwYt87JCRRLe8XKF8mY5TEcSu2');
-
-
-
 
 function ItineraryForm({ onGenerateItinerary }) {
  
-
- let globalAI_Text = "";
-  const [preferences, setPreferences] = useState({
+let globalAI_Text = "";
+const [preferences, setPreferences] = useState({
     currentLocation: '',
     destination: '',
     duration: '',
-    interests: [],
     travelDate: null,
-    budget: '',
-    priority: '',
+    budgetRange: [0, 10000],
+    interests: [],
     groupSize: 1,
-    itineraryText: '',
+    priority: 'Budget',
+    travelerCategory: '',
   });
+
+  const [familySize, setFamilySize] = useState({ adults: 2, kids: 0 });
+
+  const handleFamilyChange = (event) => {
+    const { name, value } = event.target;
+    setFamilySize((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    // Set the group size slider based on the number of adults + kids
+    handleGroupSizeChange(null, parseInt(familySize.adults) + parseInt(familySize.kids));
+  };
+
+
+  // const [preferences, setPreferences] = useState({currentLocation: '', destination: '', duration: '', interests: [], travelDate: null, budget: '', priority: '',
+  //   groupSize: 1,
+  //   itineraryText: '',
+  // });
 
   const [responseText, setResponseText] = useState("");
   async function run() {
-   
-    //console.log('Activities:', a);
-  
-  
-   //try await in data retrieve statement
-    // Provide a prompt that contains text
     //let acts = fetchFilteredActivities(await fetchDocumentById('9CFwYt87JCRRLe8XKF8mY5TEcSu2') );
-    const acts = ["Outdoor",
-      "Indoor",
-      "Shopping",
-      "Amusement Park",
-      "Historical",
-      "Art",
-      "Beach",
-      "Adventure",
-      "Luxury",
-      "Culture",
-      "Food",
+    const acts = ["Outdoor", "Indoor", "Shopping", "Amusement Park", "Historical", "Art", "Beach", "Adventure", "Luxury", "Culture", "Food",
       "Nightlife",
     ];
-  
-  
-  
+
     const Activities = [
       {
           ActivityID: "1839618f-d6cb-4f1e-8709-c5f697a28f4b",
@@ -394,14 +365,9 @@ function ItineraryForm({ onGenerateItinerary }) {
     const prompt = "Generate an itinerary for my holiday with the the following data. The Holiday is 2 days long and i would like to eat twice a day. You will"
                     + " make sure the category is restaurant when choosing a place to eat. i am limit to 2-3 activities a day. Ake sure to include price and descripton at each activity.";
     const acts_string = JSON.stringify(Activities, null, 2);
-    // const AI_prompt = {prompt: prompt,
-    //                        activities: acts_string
-    //             };
     const AI_prompt = prompt + "\n\n" + "Activities:\n" + acts_string;
-    // To generate text output, call generateContent with the text input
     const result = await model.generateContent(AI_prompt);
     
-   
     const response = result.response;
     const text = response.text();
     globalAI_Text = text;
@@ -410,15 +376,11 @@ function ItineraryForm({ onGenerateItinerary }) {
     setGlobalAIText(text);
     
     console.log("ResponseText: ", text);
-   
-    //console.log(text);
+  
     setPreferences({
       ...preferences,
      itineraryText: text,
     });
-    
-    //console.log("Response After : ", responseText);
-    //return responseText;
   }
 
   const handleChange = (e) => {
@@ -443,11 +405,50 @@ function ItineraryForm({ onGenerateItinerary }) {
     });
   };
 
+  let exportVariable = "def";
+
+    // Function to update family size and adjust the group size slider accordingly
+    const updateFamilyGroupSize = (adults, kids) => {
+      const total = adults + kids;
+      setPreferences({ ...preferences, groupSize: total });
+    };
+
+    const handleTravelerCategoryChange = (event) => {
+      const { value } = event.target;
+      setPreferences({ ...preferences, travelerCategory: value });
+
+      if (value === 'Family') {
+        setPreferences({ ...preferences, groupSize: 3 }); // default to 2 adults + 1 kid
+      } else {
+        setPreferences({ ...preferences, groupSize: 2 }); // default for Couples or others
+      }
+    };
+
+    const handleAdultsChange = (event) => {
+      const adults = parseInt(event.target.value) || 0;
+      updateFamilyGroupSize(adults, preferences.kids);
+    };
+
+    const handleKidsChange = (event) => {
+      const kids = parseInt(event.target.value) || 0;
+      updateFamilyGroupSize(preferences.adults, kids);
+    };
+
+
   const handlePriorityChange = (event, newPriority) => {
-    setPreferences({
-      ...preferences,
-      priority: newPriority,
-    });
+    setPreferences((prevPreferences) => {
+      const newPreferences = { ...prevPreferences, priority: newPriority };
+
+      if (newPriority === 'Budget') {
+        newPreferences.budgetRange = [0, 30000];
+      } else if (newPriority === 'Comfort') {
+        newPreferences.budgetRange = [3001, 50000];
+      } else {
+        newPreferences.budgetRange = [50001, 100000];
+      }
+
+      return newPreferences;
+    }); 
   };
 
   const handleGroupSizeChange = (event, newValue) => {
@@ -455,20 +456,31 @@ function ItineraryForm({ onGenerateItinerary }) {
       ...preferences,
       groupSize: newValue,
     });
+  };
 
-    
+  const handleBudgetRangeChange = (event, newValue) => {
+    setPreferences((prevPreferences) => {
+    const newPreferences = { ...prevPreferences, budgetRange: newValue };
+
+      // Auto-update priority based on budget range
+      if (newValue[1] <= 30000) {
+        newPreferences.priority = 'Budget';
+      } else if (newValue[1] <= 50000) {
+        newPreferences.priority = 'Comfort';
+      } else {
+        newPreferences.priority = 'Experience';
+      }
+
+      return newPreferences;
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     onGenerateItinerary(preferences);
    //const { currentLocation, destination, duration, interests, travelDate, budget, priority, groupSize } = preferences;
-
      await run();
-
    // console.log("Response submit : ", exportVariable);
-
-
   };
 
   const locations = [
@@ -484,18 +496,33 @@ function ItineraryForm({ onGenerateItinerary }) {
   const budgets = ['Low', 'Medium', 'High'];
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3, p: 2, backgroundColor: '#f5f5f5', borderRadius: 2 }}>
-    <h2>Create Your Itinerary</h2>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={6} md={4}>
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{
+        mt: 3,
+        p: 4,
+        backgroundColor: '#f5f5f5',
+        borderRadius: 2,
+        boxShadow: 1,
+        maxWidth: '900px',
+        margin: 'auto',
+      }}
+    >
+      <Typography variant="h4" gutterBottom align="center">
+        Create Your Itinerary
+      </Typography>
+
+      <Grid container spacing={4} justifyContent="center">
+        <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
-            <InputLabel id="current-location">Current Location</InputLabel>
+            <InputLabel id="current-location">Starting Location</InputLabel>
             <Select
               labelId="current-location"
               name="currentLocation"
               value={preferences.currentLocation}
               onChange={handleChange}
-              label="Current Location"
+              label="Starting Location"
             >
               <MenuItem value="" disabled>
                 Select a location
@@ -508,7 +535,8 @@ function ItineraryForm({ onGenerateItinerary }) {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+
+        <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
             <InputLabel id="destination-label">Destination</InputLabel>
             <Select
@@ -519,7 +547,7 @@ function ItineraryForm({ onGenerateItinerary }) {
               label="Destination"
             >
               <MenuItem value="" disabled>
-                Select a location
+                Select a destination
               </MenuItem>
               {locations
                 .filter((location) => location.name !== preferences.currentLocation)
@@ -531,7 +559,8 @@ function ItineraryForm({ onGenerateItinerary }) {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+
+        <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
             <InputLabel id="duration-label">Duration</InputLabel>
             <Select
@@ -552,68 +581,86 @@ function ItineraryForm({ onGenerateItinerary }) {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          <DatePicker
-            label="Travel Date"
-            value={preferences.travelDate}
-            onChange={handleDateChange}
-            renderInput={(params) => <TextField {...params} fullWidth />}
+
+        <Grid item xs={12} sm={6}>
+          <Typography gutterBottom>Budget Range</Typography>
+          <Slider
+            value={preferences.budgetRange}
+            onChange={handleBudgetRangeChange}
+            valueLabelDisplay="auto"
+            min={1000}
+            max={100000}
+            aria-labelledby="budget-range-slider"
           />
+          <Box mt={2}>
+            <Typography>
+              Selected Range: R{preferences.budgetRange[0]} - R{preferences.budgetRange[1]}
+            </Typography>
+          </Box>
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+
+        <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
-            <InputLabel id="budget-label">Budget</InputLabel>
+            <InputLabel id="traveler-category-label">Traveler Category</InputLabel>
             <Select
-              labelId="budget-label"
-              name="budget"
-              value={preferences.budget}
+              labelId="traveler-category-label"
+              name="travelerCategory"
+              value={preferences.travelerCategory}
               onChange={handleChange}
-              label="Budget"
+              label="Traveler Category"
             >
               <MenuItem value="" disabled>
-                Select a budget
+                Select a category
               </MenuItem>
-              {budgets.map((budget) => (
-                <MenuItem key={budget} value={budget}>
-                  {budget}
-                </MenuItem>
-              ))}
+              <MenuItem value="Family">Family</MenuItem>
+              <MenuItem value="Singles">Singles</MenuItem>
+              <MenuItem value="Group">Group</MenuItem>
+              <MenuItem value="Couples">Couples</MenuItem>
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          <FormControl fullWidth>
-            <Autocomplete
-              multiple
-              options={interests}
-              getOptionLabel={(option) => option}
-              value={preferences.interests}
-              onChange={handleInterestsChange}
-              renderInput={(params) => (
-                <TextField {...params} variant="outlined" label="Interests" placeholder="Select interests" />
-              )}
-              renderTags={(value, getTagProps) =>
-                value.map((option, index) => (
-                  <Chip key={option} label={option} {...getTagProps({ index })} />
-                ))
-              }
+
+        {/* Conditional rendering based on traveler category */}
+        {preferences.travelerCategory === 'Family' ? (
+          <>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Number of Adults"
+                name="adults"
+                value={familySize.adults}
+                onChange={handleFamilyChange}
+                type="number"
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Number of Kids"
+                name="kids"
+                value={familySize.kids}
+                onChange={handleFamilyChange}
+                type="number"
+                fullWidth
+              />
+            </Grid>
+          </>
+        ) : (
+          <Grid item xs={12} sm={6}>
+            <Typography gutterBottom>Group Size</Typography>
+            <Slider
+              value={preferences.groupSize}
+              onChange={handleGroupSizeChange}
+              step={1}
+              marks
+              min={1}
+              max={20}
+              valueLabelDisplay="auto"
+              aria-labelledby="group-size-slider"
             />
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          <Typography gutterBottom>Group Size</Typography>
-          <Slider
-            value={preferences.groupSize}
-            onChange={handleGroupSizeChange}
-            step={1}
-            marks
-            min={1}
-            max={20}
-            valueLabelDisplay="auto"
-            aria-labelledby="group-size-slider"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+          </Grid>
+        )}
+
+        <Grid item xs={12} sm={6}>
           <Typography gutterBottom>Priority</Typography>
           <ToggleButtonGroup
             value={preferences.priority}
@@ -633,75 +680,16 @@ function ItineraryForm({ onGenerateItinerary }) {
             </ToggleButton>
           </ToggleButtonGroup>
         </Grid>
+
         <Grid item xs={12}>
           <Button type="submit" variant="contained" color="primary" fullWidth>
             Generate Itinerary
           </Button>
         </Grid>
       </Grid>
-      <Box mt={4}>
-        <h2>Destinations</h2>
-        <Grid container spacing={2}>
-          {locations.map((location) => (
-            <Grid item xs={12} sm={6} md={4} key={location.name}>
-              <Card>
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image={location.image}
-                  alt={location.name}
-                />
-                <CardContent>
-                  <Typography gutterBottom variant="h6" component="div">
-                    {location.name}
-                  </Typography>
-                  <Button variant="contained" color="secondary" href={`/accommodations?destination=${location.name}`}>
-                    View Accommodations
-                  </Button>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
-    <Grid item xs={12}>
-      <Button type="submit" variant="contained" color="primary" fullWidth>
-        Generate Itinerary
-      </Button>
-    </Grid>
-    <Box mt={4}>
-      <h2>Your Generated Itinerary</h2>
-      <Typography variant="body1" paragraph>
-        {responseText}
-      </Typography>
     </Box>
-    <Box mt={4}>
-      <h2>Destinations</h2>
-      <Grid container spacing={2}>
-        {locations.map((location) => (
-          <Grid item xs={12} sm={6} md={4} key={location.name}>
-            <Card>
-              <CardMedia
-                component="img"
-                height="140"
-                image={location.image}
-                alt={location.name}
-              />
-              <CardContent>
-                <Typography gutterBottom variant="h6" component="div">
-                  {location.name}
-                </Typography>
-                <Button variant="contained" color="secondary" href={`/accommodations?destination=${location.name}`}>
-                  View Accommodations
-                </Button>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-    </Box>
-  </Box>
   );
-}
+};
+
 export {exportVariable};
 export default ItineraryForm;
