@@ -28,7 +28,7 @@ import {
   Autocomplete,
   ToggleButton,
   ToggleButtonGroup,
-
+  useTheme,
   Slider,
   Rating,
 } from '@mui/material';
@@ -499,6 +499,9 @@ const [preferences, setPreferences] = useState({
   const interests = ['Culture', 'Adventure', 'Relaxation', 'Nature', 'Food', 'Shopping', 'Nightlife'];
   const budgets = ['Low', 'Medium', 'High'];
 
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
+
   return (
     <Box
       component="form"
@@ -511,6 +514,7 @@ const [preferences, setPreferences] = useState({
         boxShadow: 1,
         maxWidth: '900px',
         margin: 'auto',
+        backgroundColor: isDarkMode ? "#424242" : "#ffffff",
       }}
     >
       {/* <Typography variant="h4" gutterBottom align="center" 
