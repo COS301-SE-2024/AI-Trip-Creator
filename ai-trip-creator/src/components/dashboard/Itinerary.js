@@ -4,6 +4,7 @@ import Sidebar from "./sidebar";
 import ItineraryForm from "./ItineraryForm";
 import ItineraryDisplay from "./ItineraryDisplay";
 
+
 const Itinerary = () => {
   const [itinerary, setItinerary] = useState(null);
 
@@ -12,7 +13,8 @@ const Itinerary = () => {
   };
 
   return (
-    <div className="dashboard">
+    
+    <div >
       <Sidebar />
       <div className="content">
         <h1>Itinerary</h1>

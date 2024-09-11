@@ -2,7 +2,29 @@ import React, { useState } from 'react';
 import { setGlobalAIText } from './globalData'; 
 import { db, app } from "../../firebase/firebase-config";
 import { getVertexAI, getGenerativeModel } from "firebase/vertexai-preview";
+
 import { Button, FormControl, InputLabel, MenuItem, Select, Typography, Box, Card, CardContent, CardMedia, Grid, Chip, Paper, TextField, Autocomplete, ToggleButton, ToggleButtonGroup,
+
+import "./dashboard.css";
+import {
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Typography,
+  Box,
+  Card,
+  CardContent,
+  CardMedia,
+  Grid,
+  Chip,
+  Paper,
+  TextField,
+  Autocomplete,
+  ToggleButton,
+  ToggleButtonGroup,
+
   Slider,
   Rating,
 } from '@mui/material';
