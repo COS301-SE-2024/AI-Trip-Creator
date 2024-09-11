@@ -682,6 +682,14 @@ const [preferences, setPreferences] = useState({
         <Grid item xs={12} sm={6}>
           <Typography gutterBottom>Priority</Typography>
           <ToggleButtonGroup
+          sx={{
+            "& .MuiToggleButton-root": {
+              "&.Mui-selected": {
+                backgroundColor: "#1976d2",
+                color: "#fff",
+              },
+            },
+          }}
             value={preferences.priority}
             exclusive
             onChange={handlePriorityChange}
