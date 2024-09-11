@@ -16,6 +16,7 @@ import {
   CardMedia,
   CardContent,
   CircularProgress,
+  useTheme,
   Grid,
   Autocomplete,
 } from "@mui/material";
@@ -29,6 +30,7 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import "./dashboard.css";
 
 const allowedCities = [
   "Pretoria",
@@ -69,6 +71,8 @@ const getLevenshteinDistance = (a, b) => {
 };
 
 const Accommodation = () => {
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [filteredResults, setFilteredResults] = useState([]);
@@ -210,7 +214,9 @@ const Accommodation = () => {
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
+    
+    <Box sx={{ display: "flex",
+    }}>
       <Sidebar
         sx={{
           width: "250px",
@@ -231,6 +237,7 @@ const Accommodation = () => {
           p: 2,
           display: "flex",
           flexDirection: "column",
+
         }}
       >
         <Box
@@ -240,6 +247,107 @@ const Accommodation = () => {
             gap: 2,
           }}
         >
+
+          <Box display="flex" flexDirection="column" gap={2}>
+            <TextField
+              fullWidth
+              label="Search accommodations"
+              color = "primary"
+              variant="outlined"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  handleSearch();
+                }
+              }}
+              InputProps={{ 
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => handleSearch(query)}>
+                      <FaSearch />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ 
+                flexGrow: 1, 
+                minWidth: "200px",
+                input: {
+                  color: isDarkMode ? "#ffffff" : "#000000",
+                },
+              }}
+            />
+            <Button
+              variant="outlined"
+              startIcon={<FaFilter />}
+              onClick={() => setFilterVisible(!filterVisible)}
+            >
+              Toggle Filters
+            </Button>
+          </Box>
+
+          {filterVisible && (
+            <Box
+              sx={{
+                border: "1px solid #ddd",
+                borderRadius: "4px",
+                p: 2,
+                mt: 2,
+                backgroundColor: isDarkMode ? "#424242" : "#ffffff",
+              }}
+            >
+              <FormControl fullWidth sx={{ mb: 2 }}>
+                <InputLabel htmlFor="sort-by-select">Sort By</InputLabel>
+                <Select
+                  value={sortOption}
+                  onChange={handleSortChange}
+                  inputProps={{ id: "sort-by-select" }}
+                  sx= {{color: isDarkMode ? "#ffffff" : "#000000"}}
+                >
+                  <MenuItem value="priceAsc" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>Price: Low to High</MenuItem>
+                  <MenuItem value="priceDesc" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>Price: High to Low</MenuItem>
+                  <MenuItem value="ratingDesc" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>Rating: High to Low</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl component="fieldset" sx={{ mb: 2 }}>
+                <Typography>Price Range</Typography>
+                <Slider
+                  sx= {{color: isDarkMode ? "#ffffff" : "#000000"}}
+                  value={filters.price}
+                  onChange={handleFilterChange}
+                  valueLabelDisplay="auto"
+                  min={0}
+                  max={5000}
+                  step={100}
+                />
+              </FormControl>
+              <FormControl fullWidth sx={{ mb: 2 }}>
+                <InputLabel htmlFor="rating-select">Minimum Rating</InputLabel>
+                <Select
+                  sx= {{color: isDarkMode ? "#ffffff" : "#000000"}}
+                  name="rating"
+                  value={filters.rating}
+                  onChange={handleFilterChange}
+                  inputProps={{ id: "rating-select" }}
+                >
+                  <MenuItem value="" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>Any</MenuItem>
+                  <MenuItem value="1" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>1</MenuItem>
+                  <MenuItem value="2" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>2</MenuItem>
+                  <MenuItem value="3" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>3</MenuItem>
+                  <MenuItem value="4" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>4</MenuItem>
+                  <MenuItem value="5" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>5</MenuItem>
+                  <MenuItem value="6" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>6</MenuItem>
+                  <MenuItem value="7" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>7</MenuItem>
+                  <MenuItem value="8" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>8</MenuItem>
+                  <MenuItem value="9" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>9</MenuItem>
+                  <MenuItem value="10" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>10</MenuItem>
+                </Select>
+              </FormControl>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleFilterApply}
           <Autocomplete
             freeSolo
             options={allowedCities}
@@ -337,6 +445,50 @@ const Accommodation = () => {
           Search Results for: {query}
         </Typography>
 
+        <Box sx={{ mt: 1 }}>
+          {loading ? (
+            <CircularProgress />
+          ) : (
+            filteredResults.map((accommodation, index) => (
+              <Card  key={index} 
+              sx={{ 
+                maxWidth: 345, 
+                borderRadius: "8px",
+                mb: 1,backgroundColor: isDarkMode ? "#424242" : "#ffffff",
+                "&:hover": {
+                      transform: "scale(1.02)",
+                      transitionDuration: "0.3s",
+                      
+                      // boxShadow: "0 3px 5px #424242",
+                    },
+               }}>
+                <CardMedia
+                  component="img"
+                  height="140"
+                  image={accommodation.image}
+                  alt={accommodation.name}
+                />
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="div" sx={{fontWeight: 'bold', color: isDarkMode ? "#e0e0e0" : "#333333", fontFamily: 'Poppins'}}>
+                    {accommodation.name}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {accommodation.description} <a href="#">See more</a>
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      mt: 2,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                      }}
         {error && (
           <Typography color="error" sx={{ mt: 2 }}>
             {error}
@@ -394,6 +546,35 @@ const Accommodation = () => {
                       >
                         {accommodation.rating}
                       </Box>
+
+
+                      <Typography variant="body1" color={
+                        getReviewComment(accommodation.rating) === "Good"
+                          ? "#00A800"
+                          : getReviewComment(accommodation.rating) === "Average"
+                            ? "#FFD700"
+                            : "#FF7400"
+                      }>
+                        {getReviewComment(accommodation.rating)} Rating
+                      </Typography>
+                    </Box>
+                    <Box
+                      sx={{
+                        textAlign: "right",
+                        flexGrow: 1,
+                      }}
+                    >
+                      <Typography
+                        variant="body1"
+                        color="text.primary"
+                        sx={{ fontWeight: "bold", color: isDarkMode ? "#e0e0e0" : "#333333"}}
+                      >
+                        R{accommodation.price}
+                        /night
+                      </Typography>
+                      <Button
+                        variant="contained"
+
                       <Typography variant="body2">
                         {getReviewComment(accommodation.rating)}
                       </Typography>
