@@ -788,6 +788,9 @@ const Profile = () => {
                       </Button>
                     </Box>
                     <TextField
+                      sx={{input: {
+                        color: isDarkMode ? "#ffffff" : "#000000",
+                      },}}
                       label="Name"
                       name="name"
                       value={user.name}
@@ -924,7 +927,7 @@ const Profile = () => {
                     </Box>
                     <Box mt={-3} mb={5}>
                       <h3>Activities</h3>
-                      <List>
+                      <List sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>
                         {selectedActivities.map((activity) => (
                           <ListItem key={activity}>{activity}</ListItem>
                         ))}
