@@ -525,7 +525,7 @@ const [preferences, setPreferences] = useState({
         Create Your Itinerary
       </Typography> */}
 
-      <h2>Create Your Itinerary</h2>
+      <h2 style={{size: "45px" ,textAlign: "center"}}>Create Your Itinerary</h2>
 
       <Grid container spacing={4} justifyContent="center">
         <Grid item xs={12} sm={6}>
