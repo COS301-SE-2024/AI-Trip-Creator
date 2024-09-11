@@ -532,17 +532,18 @@ const [preferences, setPreferences] = useState({
           <FormControl fullWidth>
             <InputLabel id="current-location">Starting Location</InputLabel>
             <Select
+             sx={{color: isDarkMode ? "#ffffff" : "#000000"}}
               labelId="current-location"
               name="currentLocation"
               value={preferences.currentLocation}
               onChange={handleChange}
               label="Starting Location"
             >
-              <MenuItem value="" disabled>
+              <MenuItem sx={{color: isDarkMode ? "#ffffff" : "#000000"}} value="" disabled>
                 Select a location
               </MenuItem>
               {locations.map((location) => (
-                <MenuItem key={location.name} value={location.name}>
+                <MenuItem sx={{color: isDarkMode ? "#ffffff" : "#000000"}} key={location.name} value={location.name}>
                   {location.name}
                 </MenuItem>
               ))}
@@ -554,19 +555,20 @@ const [preferences, setPreferences] = useState({
           <FormControl fullWidth>
             <InputLabel id="destination-label">Destination</InputLabel>
             <Select
+              sx={{color: isDarkMode ? "#ffffff" : "#000000"}}
               labelId="destination-label"
               name="destination"
               value={preferences.destination}
               onChange={handleChange}
               label="Destination"
             >
-              <MenuItem value="" disabled>
+              <MenuItem sx={{color: isDarkMode ? "#ffffff" : "#000000"}} value="" disabled>
                 Select a destination
               </MenuItem>
               {locations
                 .filter((location) => location.name !== preferences.currentLocation)
                 .map((location) => (
-                  <MenuItem key={location.name} value={location.name}>
+                  <MenuItem sx={{color: isDarkMode ? "#ffffff" : "#000000"}} key={location.name} value={location.name}>
                     {location.name}
                   </MenuItem>
                 ))}
@@ -578,17 +580,18 @@ const [preferences, setPreferences] = useState({
           <FormControl fullWidth>
             <InputLabel id="duration-label">Duration</InputLabel>
             <Select
+              sx={{color: isDarkMode ? "#ffffff" : "#000000"}}
               labelId="duration-label"
               name="duration"
               value={preferences.duration}
               onChange={handleChange}
               label="Duration"
             >
-              <MenuItem value="" disabled>
+              <MenuItem sx={{color: isDarkMode ? "#ffffff" : "#000000"}} value="" disabled>
                 Select a duration
               </MenuItem>
               {durations.map((duration) => (
-                <MenuItem key={duration} value={duration}>
+                <MenuItem sx={{color: isDarkMode ? "#ffffff" : "#000000"}} key={duration} value={duration}>
                   {duration}
                 </MenuItem>
               ))}
@@ -617,19 +620,21 @@ const [preferences, setPreferences] = useState({
           <FormControl fullWidth>
             <InputLabel id="traveler-category-label">Traveler Category</InputLabel>
             <Select
+              sx={{color: isDarkMode ? "#ffffff" : "#000000"}}
               labelId="traveler-category-label"
               name="travelerCategory"
               value={preferences.travelerCategory}
               onChange={handleChange}
               label="Traveler Category"
             >
-              <MenuItem value="" disabled>
+              <MenuItem sx={{color: isDarkMode ? "#ffffff" : "#000000"}} value="" disabled>
                 Select a category
               </MenuItem>
-              <MenuItem value="Family">Family</MenuItem>
-              <MenuItem value="Singles">Singles</MenuItem>
-              <MenuItem value="Group">Group</MenuItem>
-              <MenuItem value="Couples">Couples</MenuItem>
+              <MenuItem value="Family" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>Family</MenuItem>
+              <MenuItem value="Singles" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>Singles</MenuItem>
+              <MenuItem value="Couples" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>Couples</MenuItem>
+              <MenuItem value="Group" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>Other</MenuItem>
+
             </Select>
           </FormControl>
         </Grid>
