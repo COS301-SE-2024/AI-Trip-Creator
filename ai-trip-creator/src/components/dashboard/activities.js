@@ -16,6 +16,7 @@ import {
   CardMedia,
   CardContent,
   CircularProgress,
+  useTheme,
 } from "@mui/material";
 import {
   FaFilter,
@@ -33,8 +34,11 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import "./dashboard.css";
 
 const Activities = () => {
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === "dark";
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [filteredResults, setFilteredResults] = useState([]);
@@ -165,7 +169,9 @@ const Activities = () => {
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex",
+     
+    }}>
       <Sidebar
         sx={{
           width: "250px",
@@ -216,7 +222,13 @@ const Activities = () => {
                   </InputAdornment>
                 ),
               }}
-              sx={{ flexGrow: 1, minWidth: "200px" }}
+              sx={{ 
+                flexGrow: 1, 
+                minWidth: "200px", 
+                input: {
+                  color: isDarkMode ? "#ffffff" : "#000000",
+                },
+              }}
             />
             <Button
               variant="outlined"
@@ -234,23 +246,26 @@ const Activities = () => {
                 borderRadius: "4px",
                 p: 2,
                 mt: 2,
-                backgroundColor: "#fff",
+                // backgroundColor: "#fff",
+                backgroundColor: isDarkMode ? "#424242" : "#ffffff",
               }}
             >
               <FormControl fullWidth sx={{ mb: 2 }}>
                 <InputLabel htmlFor="sort-by-select">Sort By</InputLabel>
                 <Select
+                  sx= {{color: isDarkMode ? "#ffffff" : "#000000"}}
                   value={sortOption}
                   onChange={handleSortChange}
                   inputProps={{ id: "sort-by-select" }}
                 >
-                  <MenuItem value="priceAsc">Price: Low to High</MenuItem>
-                  <MenuItem value="priceDesc">Price: High to Low</MenuItem>
+                  <MenuItem value="priceAsc" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>Price: Low to High</MenuItem>
+                  <MenuItem value="priceDesc" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>Price: High to Low</MenuItem>
                 </Select>
               </FormControl>
               <FormControl component="fieldset" sx={{ mb: 2 }}>
                 <Typography>Price Range</Typography>
                 <Slider
+                  sx= {{color: isDarkMode ? "#ffffff" : "#000000"}}
                   value={filters.price}
                   onChange={handleFilterChange}
                   valueLabelDisplay="auto"
@@ -262,14 +277,15 @@ const Activities = () => {
               <FormControl fullWidth sx={{ mb: 2 }}>
                 <InputLabel htmlFor="category-select">Category</InputLabel>
                 <Select
+                sx= {{color: isDarkMode ? "#ffffff" : "#000000"}}
                   name="category"
                   value={filters.category}
                   onChange={handleFilterChange}
                   inputProps={{ id: "category-select" }}
                 >
-                  <MenuItem value="">Any</MenuItem>
-                  <MenuItem value="Restaurant">Restaurant</MenuItem>
-                  <MenuItem value="Things to Do">Things to Do</MenuItem>
+                  <MenuItem value="" sx= {{color: isDarkMode ? "#ffffff" : "#000000"}}>Any</MenuItem>
+                  <MenuItem value="Restaurant" sx= {{color: isDarkMode ? "#ffffff" : "#000000"}}>Restaurant</MenuItem>
+                  <MenuItem value="Things to Do" sx= {{color: isDarkMode ? "#ffffff" : "#000000"}}>Things to Do</MenuItem>
                 </Select>
               </FormControl>
               <Button
@@ -288,11 +304,11 @@ const Activities = () => {
             <CircularProgress />
           ) : (
             filteredResults.map((activity, index) => (
-              <Card key={index} sx={{ maxWidth: 345, mb: 1 }}>
+              <Card key={index} sx={{ maxWidth: 345, mb: 1}}>
                 <CardContent>
                   <Typography gutterBottom variant="h5" component="div">
                     {activity.name}
-                  </Typography>
+                  </Typography> 
                   <Typography variant="body2" color="text.secondary">
                     {activity.category} - {activity.sub_category}{" "}
                     <FaMapMarkedAlt /> {activity.address}

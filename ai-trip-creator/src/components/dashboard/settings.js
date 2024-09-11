@@ -15,6 +15,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  // useTheme,
 } from "@mui/material";
 import {
   getAuth,
@@ -23,8 +24,11 @@ import {
   EmailAuthProvider,
   deleteUser,
 } from "firebase/auth";
+import "./dashboard.css";
 
 const Settings = () => {
+  // const theme = useTheme();
+  // const isDarkMode = theme.palette.mode === "dark";
   const { toggleTheme } = useTheme();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -64,6 +68,10 @@ const Settings = () => {
     // Implement the logic to change the language in your app
   };
 
+  const handleToggle = () => {
+    toggleTheme();
+  };
+
   const handleDeleteAccount = async () => {
     setOpenConfirmDialog(false);
     setError("");
@@ -87,7 +95,7 @@ const Settings = () => {
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh" }}>
+    <Box sx={{ display: "flex", height: "100vh"}}>
       <Sidebar
         style={{
           position: "fixed",
@@ -106,9 +114,15 @@ const Settings = () => {
         }}
       >
         <Container>
-          <Typography variant="h4" gutterBottom>
-            Settings
-          </Typography>
+          <h1  
+          style={{
+            position: "relative",
+            marginLeft: "-115px",
+            marginTop: "10px",
+            marginBottom: "20px",
+            overflowY: "auto",
+            width: "100%",
+        }}>Settings</h1>
 
           <Box
             mb={4}
@@ -117,16 +131,12 @@ const Settings = () => {
             borderColor="grey.300"
             borderRadius="8px"
           >
-            <Typography variant="h5" gutterBottom>
-              Account Settings
-            </Typography>
-            <Typography variant="body1">
+            <h2 style={{marginTop: "7px"}}>Account Settings</h2>
+            <Typography variant="body1" sx={{mt: "-8px", mb: "8px"}}>
               Update your account details and preferences below.
             </Typography>
             <form onSubmit={handlePasswordChange}>
-              <Typography variant="h6" gutterBottom>
-                Change Password
-              </Typography>
+              <h2>Change Password</h2>
               <TextField
                 fullWidth
                 label="Current Password"
@@ -160,9 +170,7 @@ const Settings = () => {
             borderColor="grey.300"
             borderRadius="8px"
           >
-            <Typography variant="h5" gutterBottom>
-              Theme Preferences
-            </Typography>
+            <h2 style={{marginTop: "7px"}}>Theme Preferences</h2>
             <Typography variant="body1">
               Press the 'Toggle Theme' button to switch between light mode/dark
               mode.
@@ -171,7 +179,7 @@ const Settings = () => {
               variant="contained"
               color="primary"
               onClick={toggleTheme}
-              sx={{ margin: "20px 0" }}
+              sx={{ margin: "20px 0"}}
             >
               Toggle Theme
             </Button>
@@ -210,9 +218,7 @@ const Settings = () => {
             borderColor="grey.300"
             borderRadius="8px"
           >
-            <Typography variant="h5" gutterBottom>
-              App Version
-            </Typography>
+            <h2 style={{marginTop: "7px"}}>App Version</h2>
             <Typography variant="body1">
               You are currently using version 1.0.0 of the AI Trip Creator app.
             </Typography>
@@ -225,9 +231,7 @@ const Settings = () => {
             borderColor="grey.300"
             borderRadius="8px"
           >
-            <Typography variant="h5" gutterBottom>
-              Account Deletion
-            </Typography>
+            <h2 style={{marginTop: "7px"}}>Account Deletion</h2>
             <Typography variant="body1">
               Once deleted, your account and all associated data will be
               permanently removed. Please proceed with caution.
@@ -277,7 +281,7 @@ const Settings = () => {
           </Dialog>
         </Container>
       </div>
-    </div>
+    </Box>
   );
 };
 
