@@ -509,9 +509,15 @@ const [preferences, setPreferences] = useState({
         margin: 'auto',
       }}
     >
-      <Typography variant="h4" gutterBottom align="center">
+      {/* <Typography variant="h4" gutterBottom align="center" 
+      sx ={{
+        fontFamily: "Poppins",
+        fontWeight: "10px",
+      }}>
         Create Your Itinerary
-      </Typography>
+      </Typography> */}
+
+      <h2>Create Your Itinerary</h2>
 
       <Grid container spacing={4} justifyContent="center">
         <Grid item xs={12} sm={6}>
