@@ -600,23 +600,6 @@ const [preferences, setPreferences] = useState({
         </Grid>
 
         <Grid item xs={12} sm={6}>
-          <Typography gutterBottom>Budget Range</Typography>
-          <Slider
-            value={preferences.budgetRange}
-            onChange={handleBudgetRangeChange}
-            valueLabelDisplay="auto"
-            min={1000}
-            max={100000}
-            aria-labelledby="budget-range-slider"
-          />
-          <Box mt={2}>
-            <Typography>
-              Selected Range: R{preferences.budgetRange[0]} - R{preferences.budgetRange[1]}
-            </Typography>
-          </Box>
-        </Grid>
-
-        <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
             <InputLabel id="traveler-category-label">Traveler Category</InputLabel>
             <Select
@@ -637,6 +620,23 @@ const [preferences, setPreferences] = useState({
 
             </Select>
           </FormControl>
+        </Grid>
+
+        <Grid item xs={12} sm={6}>
+          <Typography gutterBottom>Budget Range</Typography>
+          <Slider
+            value={preferences.budgetRange}
+            onChange={handleBudgetRangeChange}
+            valueLabelDisplay="auto"
+            min={1000}
+            max={100000}
+            aria-labelledby="budget-range-slider"
+          />
+          <Box mt={2}>
+            <Typography>
+              Selected Range: R{preferences.budgetRange[0]} - R{preferences.budgetRange[1]}
+            </Typography>
+          </Box>
         </Grid>
 
         {/* Conditional rendering based on traveler category */}
