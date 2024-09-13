@@ -5,6 +5,9 @@ import React, { useEffect, useState } from 'react';
 import { Button, Box, Typography } from '@mui/material';
 import {exportVariable} from './ItineraryForm';
 import { getGlobalAIText } from './globalData'; 
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm'; // For GitHub Flavored Markdown (e.g., tables, strikethroughs)
+
 import "./dashboard.css";
 
 function ItineraryDisplay({ itinerary }) {
@@ -69,9 +72,14 @@ function ItineraryDisplay({ itinerary }) {
       <Typography variant="h6"><strong>Destination:</strong> {itinerary.destination}</Typography>
       <Typography variant="h6"><strong>Duration:</strong> {itinerary.duration} ({durationDetails})</Typography>
       <Typography variant="h6"><strong>Interests:</strong> {interestsDetails}</Typography>
-      <Typography variant="h6"><strong>Itinerary:</strong> {globalAIText || 'Loading...'}</Typography>
+      {/* <Typography variant="h6"><strong>Itinerary:</strong> {globalAIText || 'Loading...'}</Typography> */}
       {/* <Typography variant="h6"><strong>Itinerary:</strong></Typography>
       <Box>{formattedAIText || 'Loading...'}</Box> */}
+
+    <Box mt={2}>
+        {/* Render the AI-generated itinerary using ReactMarkdown */}
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>{globalAIText || 'Loading...'}</ReactMarkdown>
+      </Box>
       <Button variant="contained" color="secondary" href={`/accommodations?destination=${itinerary.destination}`}>
         View Accommodations
       </Button>
