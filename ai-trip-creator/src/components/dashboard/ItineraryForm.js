@@ -367,8 +367,25 @@ const [preferences, setPreferences] = useState({
         sub_category: "Culture"
     }
   ];
-    const prompt = "Generate an itinerary for my holiday with the the following data. The Holiday is 2 days long and i would like to eat twice a day. You will"
-                    + " make sure the category is restaurant when choosing a place to eat. i am limit to 2-3 activities a day. Ake sure to include price and descripton at each activity.";
+
+
+  const currentLocation = preferences.currentLocation;
+  const destination = preferences.destination;
+  const travelerCategory = preferences.travelerCategory;
+  const interests = preferences.interests;
+  const groupSize = preferences.groupSize;
+  const priority = preferences.priority;
+
+
+
+    // const prompt = "Generate an itinerary for my holiday with the the following data. The Holiday is 2 days long and i would like to eat twice a day. You will"
+    //                 + " make sure the category is restaurant when choosing a place to eat. i am limit to 2-3 activities a day. Ake sure to include price and descripton at each activity.";
+    
+    const prompt = "Generate an itinerary for my holiday with the the following data. The holiday should accommodate for the start location at " 
+                    + currentLocation + " and the destination is " + destination + ". The travelor category is "
+                    + travelerCategory + ". The group size is " + groupSize + ". The interests are as follows " +
+                    interests + ". And the priority of the trip is " + priority + ".";
+    
     const acts_string = JSON.stringify(Activities, null, 2);
     const AI_prompt = prompt + "\n\n" + "Activities:\n" + acts_string;
     const result = await model.generateContent(AI_prompt);
