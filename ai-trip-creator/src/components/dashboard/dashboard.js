@@ -1,15 +1,44 @@
 import React, { useState } from "react";
-import { collection, query, where, getDocs } from "firebase/firestore";
 import { FaPaperPlane } from "react-icons/fa";
-import Sidebar from "./sidebar";
-import { db } from "../../firebase/firebase-config";
 import { Card, CardContent, Typography, Button, Box } from "@mui/material";
+// Import ChatGroq and ChatPromptTemplate from langchain
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { ChatGroq } from "@langchain/groq"; // Correct the package name if needed
+import Sidebar from "./sidebar";
+import { GROQ_API_KEY } from "../../firebase/firebase-config";
+
+const llm = new ChatGroq({
+  apiKey: GROQ_API_KEY, // Replace with your actual API key  // make more secure
+  model: "llama3-8b-8192",
+  maxTokens: undefined,
+  maxRetries: 2,
+});
+
+const prompt = ChatPromptTemplate.fromMessages([
+  [
+    "system",
+    "you are a trip advisor chat that helps a user based on the questions they are asking. If they ask to generate an itinerary, you should ask various questions to understand their preferences and generate a custom itinerary for them. Only generate an itinerary if you are 95% certain you can generate a satisfactory itinerary. If you are not sure, ask for more information. Remember about things like festivals, restaurants, group size, if children are present, budget, and more.",
+  ],
+  ["human", "{input}"],
+]);
+
+const chain = prompt.pipe(llm);
 
 const Dashboard = () => {
   const [userInput, setUserInput] = useState("");
   const [responses, setResponses] = useState([]);
   const [showCards, setShowCards] = useState(true);
 
+  // Initialize ChatGroq
+  
+
+  // Define the prompt template
+ 
+
+  // Create the pipeline for the chat prompt and the AI model
+  
+
+  // Handle user input submission
   const handleInputChange = (e) => {
     setUserInput(e.target.value);
     if (e.target.value.trim() !== "") {
@@ -20,65 +49,29 @@ const Dashboard = () => {
   const handleSubmit = async () => {
     if (userInput.trim() === "") return;
 
+    // Add user's input to the responses state
     setResponses([...responses, { type: "user", text: userInput }]);
 
-    const aiResponse = await fetch("https://api.gemini.ai/v1/ask", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ question: userInput }),
-    });
-    const aiData = await aiResponse.json();
+    try {
+      // Interact with the ChatGroq AI
+      let response = await chain.invoke({
+        input: userInput,
+      });
 
-    const city = aiData.city;
-    const itinerary = await generateItinerary(city);
-
-    setResponses([...responses, { type: "bot", text: itinerary }]);
-    setUserInput("");
-  };
-
-  const generateItinerary = async (city) => {
-    if (
-      !["Johannesburg", "Cape Town", "Pretoria", "Durban", "Qherbeha"].includes(
-        city,
-      )
-    ) {
-      return "Sorry, we only support specific cities.";
+      // Add the AI response to the responses state
+      setResponses((prevResponses) => [
+        ...prevResponses,
+        { type: "bot", text: response.content }, // Use response.content to get the AI's message
+      ]);
+    } catch (error) {
+      console.error("Error communicating with the AI API:", error);
+      setResponses((prevResponses) => [
+        ...prevResponses,
+        { type: "bot", text: "Sorry, there was an error processing your request." },
+      ]);
     }
 
-    const accommodationRef = collection(db, "accommodation");
-    const activitiesRef = collection(db, "activities");
-
-    const accommodationQuery = query(
-      accommodationRef,
-      where("city", "==", city),
-    );
-    const activitiesQuery = query(activitiesRef, where("city", "==", city));
-
-    const [accommodationSnapshot, activitiesSnapshot] = await Promise.all([
-      getDocs(accommodationQuery),
-      getDocs(activitiesQuery),
-    ]);
-
-    const accommodations = accommodationSnapshot.docs.map((doc) => doc.data());
-    const activities = activitiesSnapshot.docs.map((doc) => doc.data());
-
-    return (
-      `Here are some options for ${city}:\n\n` +
-      `**Accommodation:**\n${accommodations
-        .map(
-          (ac) =>
-            `${ac.name} - ${ac.description}, Price: ${ac.price}, Rating: ${ac.rating}`,
-        )
-        .join("\n")}\n\n` +
-      `**Activities:**\n${activities
-        .map(
-          (ac) =>
-            `${ac.name} - ${ac.description}, Price: ${ac.price}, Rating: ${ac.rating}`,
-        )
-        .join("\n")}`
-    );
+    setUserInput("");
   };
 
   return (
@@ -115,19 +108,17 @@ const Dashboard = () => {
               <Card sx={{ minWidth: 150, backgroundColor: "#e1f5fe" }}>
                 <CardContent sx={{ padding: 1 }}>
                   <Typography variant="body2" sx={{ margin: 0 }}>
-                    Use the chatbot to get travel recommendations and itinerary
-                    suggestions.
+                    Chat with the AI to plan your trip.
                   </Typography>
                   <Typography variant="body2" sx={{ margin: 0 }}>
-                    Example Input: "What are some activities to do in Cape
-                    Town?"
+                    Example Input: "What are some activities to do in Cape Town?"
                   </Typography>
                 </CardContent>
               </Card>
               <Card sx={{ minWidth: 150, backgroundColor: "#fff3e0" }}>
                 <CardContent sx={{ padding: 2 }}>
                   <Typography variant="body2" sx={{ margin: 0 }}>
-                    Ask for accommodation options in your desired city.
+                    Ask any questions related to your trip.
                   </Typography>
                   <Typography variant="body2" sx={{ margin: 0 }}>
                     Example Input: "Find me a hotel in Durban."

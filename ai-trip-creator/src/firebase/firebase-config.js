@@ -13,10 +13,12 @@ const firebaseConfig = {
   appId: "1:300004223652:web:a2b08dffaeb9f9b44fd431",
   measurementId: "G-K1EFHGGM1S",
 };
-
+const GROQ_API_KEY = "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"
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 // const db = getProfileDB(app);
 const firestore = getFirestore(app);
 const db = getFirestore(app);
-export { auth, firestore,db, app};
+export { auth, firestore,db, app, GROQ_API_KEY };
+
+
