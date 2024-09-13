@@ -481,10 +481,13 @@ const [preferences, setPreferences] = useState({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    onGenerateItinerary(preferences);
    //const { currentLocation, destination, duration, interests, travelDate, budget, priority, groupSize } = preferences;
      await run();
    // console.log("Response submit : ", exportVariable);
+    onGenerateItinerary({
+      ...preferences,
+      itineraryText: exportVariable, // Pass the generated AI text
+    });
   };
 
   const locations = [

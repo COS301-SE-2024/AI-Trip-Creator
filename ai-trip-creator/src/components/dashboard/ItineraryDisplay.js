@@ -11,15 +11,24 @@ function ItineraryDisplay({ itinerary }) {
 
   const [globalAIText, setGlobalAIText] = useState('');
 
-  useEffect(() => {
-    // Fetch the globalAIText when the component mounts
-    const fetchData = async () => {
-      const text = getGlobalAIText();
-      setGlobalAIText(text);
-    };
+  // This code works as well. The only issue is that the itinerary is not passed to the subscript operator at the end of the function
+  // useEffect(() => {
+  //   // Fetch the globalAIText when the component mounts
+  //   const fetchData = async () => {
+  //     const text = getGlobalAIText();
+  //     setGlobalAIText(text);
+  //   };
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
+
+  useEffect(() => {
+    // Directly set the AI-generated itinerary from the passed itinerary prop
+    if (itinerary.itineraryText) {
+      setGlobalAIText(itinerary.itineraryText);
+    }
+  }, [itinerary]);
+
   const getDetails = () => {
     const details = {
       '1-3 days': 'A short and sweet trip with the highlights of the city.',
