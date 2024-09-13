@@ -29,6 +29,12 @@ function ItineraryDisplay({ itinerary }) {
     }
   }, [itinerary]);
 
+  const formattedAIText = globalAIText.split('\n').map((line, index) => (
+    <Typography key={index} variant="body1" paragraph>
+      {line}
+    </Typography>
+  ));
+
   const getDetails = () => {
     const details = {
       '1-3 days': 'A short and sweet trip with the highlights of the city.',
@@ -64,6 +70,8 @@ function ItineraryDisplay({ itinerary }) {
       <Typography variant="h6"><strong>Duration:</strong> {itinerary.duration} ({durationDetails})</Typography>
       <Typography variant="h6"><strong>Interests:</strong> {interestsDetails}</Typography>
       <Typography variant="h6"><strong>Itinerary:</strong> {globalAIText || 'Loading...'}</Typography>
+      {/* <Typography variant="h6"><strong>Itinerary:</strong></Typography>
+      <Box>{formattedAIText || 'Loading...'}</Box> */}
       <Button variant="contained" color="secondary" href={`/accommodations?destination=${itinerary.destination}`}>
         View Accommodations
       </Button>
