@@ -5,5 +5,5 @@ build/
 
 
 ai-trip-creator/src/serviceAccountKey.json
-ai-trip-creator/firebase/firebase-config.js
+ai-trip-creator/src/firebase/firebase-config.js
 ai-trip-creator/serviceAccountKey.json
