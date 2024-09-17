@@ -1,4 +1,3 @@
-//import React from 'react';
 import React, { useEffect, useState } from "react";
 import {
   Button,
@@ -13,35 +12,32 @@ import { exportVariable } from "./ItineraryForm";
 import { getGlobalAIText } from "./globalData";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm"; // For GitHub Flavored Markdown (e.g., tables, strikethroughs)
-
+import Slider from "react-slick"; // Import Slider from react-slick
+import { FaFilter, FaSearch, FaStar, FaHeart } from "react-icons/fa";
 import "./dashboard.css";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import {
+  getFirestore,
+  collection,
+  query as firestoreQuery,
+  where,
+  getDocs,
+} from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 function ItineraryDisplay({ itinerary }) {
   const [globalAIText, setGlobalAIText] = useState("");
-
-  // This code works as well. The only issue is that the itinerary is not passed to the subscript operator at the end of the function
-  // useEffect(() => {
-  //   // Fetch the globalAIText when the component mounts
-  //   const fetchData = async () => {
-  //     const text = getGlobalAIText();
-  //     setGlobalAIText(text);
-  //   };
-
-  //   fetchData();
-  // }, []);
+  const [accommodations, setAccommodations] = useState([]);
 
   useEffect(() => {
     // Directly set the AI-generated itinerary from the passed itinerary prop
     if (itinerary.itineraryText) {
       setGlobalAIText(itinerary.itineraryText);
     }
+    const destinationParam = itinerary.destination;
+    handleSearch(destinationParam.toLowerCase().replace(/\s+/g, ""));
   }, [itinerary]);
-
-  const formattedAIText = globalAIText.split("\n").map((line, index) => (
-    <Typography key={index} variant="body1" paragraph>
-      {line}
-    </Typography>
-  ));
 
   const getDetails = () => {
     const details = {
@@ -74,8 +70,62 @@ function ItineraryDisplay({ itinerary }) {
 
   const { durationDetails, interestsDetails } = getDetails();
   const itineraryByDays = globalAIText
-    .split(/(?=Day \d+:)/g) // Regex to split the text at each "Day X:" occurrence
+    .split(/(?=Day \d+:)/g)
     .filter((day) => day.trim() !== "");
+
+  // Carousel settings
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    responsive: [
+      {
+        breakpoint: 960,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  };
+
+  // Accommodations
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSearch = async (searchQuery) => {
+    setLoading(true);
+    try {
+      const db = getFirestore();
+      const accommodationsRef = collection(db, "Accommodation");
+      const q = firestoreQuery(
+        accommodationsRef,
+        where("city", "==", searchQuery),
+      );
+      const querySnapshot = await getDocs(q);
+
+      const results = [];
+      querySnapshot.forEach((doc) => {
+        if (results.length < 12) results.push(doc.data());
+      });
+
+      if (results.length > 0) {
+        setAccommodations(results);
+        setError("");
+      } else {
+        setError(`No accommodations found for "${searchQuery}"`);
+        setAccommodations([]);
+      }
+    } catch (error) {
+      console.error("Error fetching search results from Firestore:", error);
+      setError("Failed to fetch accommodation data. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Box>
       <Typography variant="h4" gutterBottom>
@@ -90,20 +140,16 @@ function ItineraryDisplay({ itinerary }) {
       <Typography variant="h6">
         <strong>Interests:</strong> {interestsDetails}
       </Typography>
-      {/* <Typography variant="h6"><strong>Itinerary:</strong> {globalAIText || 'Loading...'}</Typography> */}
-      {/* <Typography variant="h6"><strong>Itinerary:</strong></Typography>
-      <Box>{formattedAIText || 'Loading...'}</Box> */}
 
       <Grid container spacing={2} mt={2}>
-        {/* Loop through the split itinerary days and display each in its own card */}
         {itineraryByDays.map((dayText, index) => (
           <Grid item xs={12} md={6} key={index}>
             <Card>
-              {index === 0 && ( // Only show the image for the first card
+              {index === 0 && (
                 <CardMedia
                   component="img"
                   height="200"
-                  image="https://www.sa-venues.com/things-to-do/gauteng/gallery/1/1.jpg"
+                  image="https://www.sa-venues.com/things-to-do/gauteng/gallery/12/1.jpg"
                   alt="info Image"
                 />
               )}
@@ -116,31 +162,62 @@ function ItineraryDisplay({ itinerary }) {
           </Grid>
         ))}
       </Grid>
-      <br></br>
+      <br />
       <Card mt={2}>
         <CardContent>
-          <Button
-            sx={{ mt: 1 }}
-            variant="outlined"
-            color="secondary"
-            href={`/accommodations?destination=${itinerary.destination}`}
-          >
-            Find Accommodations
-          </Button>
+          {/* Accommodation Carousel */}
+          <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
+            Recommended Accommodations
+          </Typography>
+          {loading ? (
+            <Typography>Loading accommodations...</Typography>
+          ) : error ? (
+            <Typography color="error">{error}</Typography>
+          ) : (
+            <Slider {...settings}>
+              {accommodations.map((accommodation, index) => (
+                <Box key={index} p={2}>
+                  <Card>
+                    <CardMedia
+                      component="img"
+                      height="150"
+                      image={accommodation.image}
+                      alt={accommodation.name}
+                    />
+                    <CardContent>
+                      <Typography variant="h8">{accommodation.name}</Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        <FaStar color="#FFD700" size={15} /> {"   "}
+                        {accommodation.rating}
+                        <br />
+                        {`R${accommodation.price}/night`} <br />
+                        click to book accomodation
+                      </Typography>
+
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        href={accommodation.link}
+                        target="_blank"
+                        fullWidth
+                      >
+                        Book Now
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </Box>
+              ))}
+            </Slider>
+          )}
         </CardContent>
       </Card>
 
-      <br></br>
+      <br />
       <Card mt={2}>
         <CardContent>
-          <Button
-            sx={{ mt: 1 }}
-            variant="outlined"
-            color="secondary"
-            href={`/flights?destination=${itinerary.destination}`}
-          >
+          <Typography sx={{ mt: 1 }} variant="outlined" color="secondary">
             Flight options
-          </Button>
+          </Typography>
         </CardContent>
       </Card>
     </Box>
