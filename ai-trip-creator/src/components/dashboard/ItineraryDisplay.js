@@ -5,21 +5,39 @@ import React, { useEffect, useState } from 'react';
 import { Button, Box, Typography } from '@mui/material';
 import {exportVariable} from './ItineraryForm';
 import { getGlobalAIText } from './globalData'; 
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm'; // For GitHub Flavored Markdown (e.g., tables, strikethroughs)
+
 import "./dashboard.css";
 
 function ItineraryDisplay({ itinerary }) {
 
   const [globalAIText, setGlobalAIText] = useState('');
 
-  useEffect(() => {
-    // Fetch the globalAIText when the component mounts
-    const fetchData = async () => {
-      const text = getGlobalAIText();
-      setGlobalAIText(text);
-    };
+  // This code works as well. The only issue is that the itinerary is not passed to the subscript operator at the end of the function
+  // useEffect(() => {
+  //   // Fetch the globalAIText when the component mounts
+  //   const fetchData = async () => {
+  //     const text = getGlobalAIText();
+  //     setGlobalAIText(text);
+  //   };
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
+
+  useEffect(() => {
+    // Directly set the AI-generated itinerary from the passed itinerary prop
+    if (itinerary.itineraryText) {
+      setGlobalAIText(itinerary.itineraryText);
+    }
+  }, [itinerary]);
+
+  const formattedAIText = globalAIText.split('\n').map((line, index) => (
+    <Typography key={index} variant="body1" paragraph>
+      {line}
+    </Typography>
+  ));
+
   const getDetails = () => {
     const details = {
       '1-3 days': 'A short and sweet trip with the highlights of the city.',
@@ -54,7 +72,14 @@ function ItineraryDisplay({ itinerary }) {
       <Typography variant="h6"><strong>Destination:</strong> {itinerary.destination}</Typography>
       <Typography variant="h6"><strong>Duration:</strong> {itinerary.duration} ({durationDetails})</Typography>
       <Typography variant="h6"><strong>Interests:</strong> {interestsDetails}</Typography>
-      <Typography variant="h6"><strong>Itinerary:</strong> {globalAIText || 'Loading...'}</Typography>
+      {/* <Typography variant="h6"><strong>Itinerary:</strong> {globalAIText || 'Loading...'}</Typography> */}
+      {/* <Typography variant="h6"><strong>Itinerary:</strong></Typography>
+      <Box>{formattedAIText || 'Loading...'}</Box> */}
+
+    <Box mt={2}>
+        {/* Render the AI-generated itinerary using ReactMarkdown */}
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>{globalAIText || 'Loading...'}</ReactMarkdown>
+      </Box>
       <Button variant="contained" color="secondary" href={`/accommodations?destination=${itinerary.destination}`}>
         View Accommodations
       </Button>

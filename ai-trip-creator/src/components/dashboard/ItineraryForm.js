@@ -11,6 +11,7 @@ import { getVertexAI, getGenerativeModel } from "firebase/vertexai-preview";
 
 import "./dashboard.css";
 import {
+  FormHelperText,
   Button,
   FormControl,
   InputLabel,
@@ -366,8 +367,25 @@ const [preferences, setPreferences] = useState({
         sub_category: "Culture"
     }
   ];
-    const prompt = "Generate an itinerary for my holiday with the the following data. The Holiday is 2 days long and i would like to eat twice a day. You will"
-                    + " make sure the category is restaurant when choosing a place to eat. i am limit to 2-3 activities a day. Ake sure to include price and descripton at each activity.";
+
+
+  const currentLocation = preferences.currentLocation;
+  const destination = preferences.destination;
+  const travelerCategory = preferences.travelerCategory;
+  const interests = preferences.interests;
+  const groupSize = preferences.groupSize;
+  const priority = preferences.priority;
+
+
+
+    // const prompt = "Generate an itinerary for my holiday with the the following data. The Holiday is 2 days long and i would like to eat twice a day. You will"
+    //                 + " make sure the category is restaurant when choosing a place to eat. i am limit to 2-3 activities a day. Ake sure to include price and descripton at each activity.";
+    
+    const prompt = "Generate an itinerary for my holiday with the the following data. The holiday should accommodate for the start location at " 
+                    + currentLocation + " and the destination is " + destination + ". The travelor category is "
+                    + travelerCategory + ". The group size is " + groupSize + ". The interests are as follows " +
+                    interests + ". And the priority of the trip is " + priority + ".";
+    
     const acts_string = JSON.stringify(Activities, null, 2);
     const AI_prompt = prompt + "\n\n" + "Activities:\n" + acts_string;
     const result = await model.generateContent(AI_prompt);
@@ -446,7 +464,7 @@ const [preferences, setPreferences] = useState({
       if (newPriority === 'Budget') {
         newPreferences.budgetRange = [0, 30000];
       } else if (newPriority === 'Comfort') {
-        newPreferences.budgetRange = [3001, 50000];
+        newPreferences.budgetRange = [30001, 50000];
       } else {
         newPreferences.budgetRange = [50001, 100000];
       }
@@ -481,10 +499,13 @@ const [preferences, setPreferences] = useState({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    onGenerateItinerary(preferences);
    //const { currentLocation, destination, duration, interests, travelDate, budget, priority, groupSize } = preferences;
      await run();
    // console.log("Response submit : ", exportVariable);
+    onGenerateItinerary({
+      ...preferences,
+      itineraryText: exportVariable, // Pass the generated AI text
+    });
   };
 
   const locations = [
@@ -529,7 +550,7 @@ const [preferences, setPreferences] = useState({
 
       <Grid container spacing={4} justifyContent="center">
         <Grid item xs={12} sm={6}>
-          <FormControl fullWidth>
+          <FormControl required fullWidth>
             <InputLabel id="current-location">Starting Location</InputLabel>
             <Select
              sx={{color: isDarkMode ? "#ffffff" : "#000000"}}
@@ -552,7 +573,7 @@ const [preferences, setPreferences] = useState({
         </Grid>
 
         <Grid item xs={12} sm={6}>
-          <FormControl fullWidth>
+          <FormControl required fullWidth>
             <InputLabel id="destination-label">Destination</InputLabel>
             <Select
               sx={{color: isDarkMode ? "#ffffff" : "#000000"}}
@@ -577,7 +598,7 @@ const [preferences, setPreferences] = useState({
         </Grid>
 
         <Grid item xs={12} sm={6}>
-          <FormControl fullWidth>
+          <FormControl required fullWidth>
             <InputLabel id="duration-label">Duration</InputLabel>
             <Select
               sx={{color: isDarkMode ? "#ffffff" : "#000000"}}
@@ -600,7 +621,7 @@ const [preferences, setPreferences] = useState({
         </Grid>
 
         <Grid item xs={12} sm={6}>
-          <FormControl fullWidth>
+          <FormControl required fullWidth>
             <InputLabel id="traveler-category-label">Traveler Category</InputLabel>
             <Select
               sx={{color: isDarkMode ? "#ffffff" : "#000000"}}
@@ -617,8 +638,27 @@ const [preferences, setPreferences] = useState({
               <MenuItem value="Singles" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>Singles</MenuItem>
               <MenuItem value="Couples" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>Couples</MenuItem>
               <MenuItem value="Group" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>Other</MenuItem>
-
             </Select>
+          </FormControl>
+        </Grid>
+
+        <Grid item xs={12} sm={6}>
+          <FormControl required fullWidth>
+            <Autocomplete
+              multiple
+              options={interests}
+              getOptionLabel={(option) => option}
+              value={preferences.interests}
+              onChange={handleInterestsChange}
+              renderInput={(params) => (
+                <TextField {...params} variant="outlined" label="Interests" placeholder="Select interests" />
+              )}
+              renderTags={(value, getTagProps) =>
+                value.map((option, index) => (
+                  <Chip key={option} label={option} {...getTagProps({ index })} />
+                ))
+              }
+            />
           </FormControl>
         </Grid>
 
