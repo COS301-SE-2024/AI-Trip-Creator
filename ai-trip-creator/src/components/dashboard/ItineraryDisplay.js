@@ -403,14 +403,14 @@ function ItineraryDisplay({ itinerary }) {
                       <CardContent>
                         <Typography variant="body2" sx={{ mb: 1 }}>
                           {firstSegment.departure.iataCode} <FaPlaneDeparture />
-                          {"  ---------------------------   "}
+                          {"  ------------------------------ "}
                           <FaPlaneArrival />
                           {lastSegment.arrival.iataCode}
                           <br />
                           <strong>Departure:</strong> {departureTime} |{" "}
                           <strong>Arrival:</strong> {arrivalTime}
                           <br />
-                          Live Price:ZAR {totalPriceInZar}
+                          <strong>Live Price: </strong>ZAR {totalPriceInZar}
                         </Typography>
                       </CardContent>
                     </Card>
@@ -421,6 +421,37 @@ function ItineraryDisplay({ itinerary }) {
           )}
         </CardContent>
       </Card>
+      <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
+        <Button
+          sx={{
+            color: "purple",
+            borderColor: "purple",
+            "&:hover": {
+              borderColor: "purple",
+              backgroundColor: "rgba(128, 0, 128, 0.1)", // Light purple hover effect
+            },
+          }}
+          variant="outlined"
+          href={`/Itinerary?`}
+        >
+          Return to Form
+        </Button>
+
+        <Button
+          sx={{
+            color: "green",
+            borderColor: "green",
+            "&:hover": {
+              borderColor: "green",
+              backgroundColor: "rgba(0, 128, 0, 0.1)", // Light green hover effect
+            },
+          }}
+          variant="outlined"
+          href={`/flights?destination=${itinerary.destination}`}
+        >
+          Save Itinerary
+        </Button>
+      </Box>
     </Box>
   );
 }
