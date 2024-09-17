@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { Card, CardContent, Typography, Button, Box } from "@mui/material";
-// Import ChatGroq and ChatPromptTemplate from langchain
 import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { ChatGroq } from "@langchain/groq"; // Correct the package name if needed
+import { ChatGroq } from "@langchain/groq";
 import Sidebar from "./sidebar";
 import { GROQ_API_KEY } from "../../firebase/firebase-config";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const llm = new ChatGroq({
-  apiKey: GROQ_API_KEY, // Replace with your actual API key  // make more secure
+  apiKey: GROQ_API_KEY,
   model: "llama3-8b-8192",
   maxTokens: undefined,
   maxRetries: 2,
@@ -17,7 +18,7 @@ const llm = new ChatGroq({
 const prompt = ChatPromptTemplate.fromMessages([
   [
     "system",
-    "you are a trip advisor chat that helps a user based on the questions they are asking. If they ask to generate an itinerary, you should ask various questions to understand their preferences and generate a custom itinerary for them. Only generate an itinerary if you are 95% certain you can generate a satisfactory itinerary. If you are not sure, ask for more information. Remember about things like festivals, restaurants, group size, if children are present, budget, and more.",
+    "you are a trip advisor that helps a user based on the questions they are asking. You remember all the information given to you. If they ask to generate an itinerary, you should ask various questions to understand their preferences and generate a custom itinerary for them and dont repeat the questions. If you are not sure, ask for more information. Remember about things like festivals, restaurants, group size, if children are present, budget, and more.",
   ],
   ["human", "{input}"],
 ]);
@@ -29,16 +30,6 @@ const Dashboard = () => {
   const [responses, setResponses] = useState([]);
   const [showCards, setShowCards] = useState(true);
 
-  // Initialize ChatGroq
-  
-
-  // Define the prompt template
- 
-
-  // Create the pipeline for the chat prompt and the AI model
-  
-
-  // Handle user input submission
   const handleInputChange = (e) => {
     setUserInput(e.target.value);
     if (e.target.value.trim() !== "") {
@@ -49,19 +40,16 @@ const Dashboard = () => {
   const handleSubmit = async () => {
     if (userInput.trim() === "") return;
 
-    // Add user's input to the responses state
     setResponses([...responses, { type: "user", text: userInput }]);
 
     try {
-      // Interact with the ChatGroq AI
       let response = await chain.invoke({
         input: userInput,
       });
 
-      // Add the AI response to the responses state
       setResponses((prevResponses) => [
         ...prevResponses,
-        { type: "bot", text: response.content }, // Use response.content to get the AI's message
+        { type: "bot", text: response.content },
       ]);
     } catch (error) {
       console.error("Error communicating with the AI API:", error);
@@ -146,7 +134,13 @@ const Dashboard = () => {
                 alignSelf: response.type === "user" ? "flex-end" : "flex-start",
               }}
             >
-              {response.text}
+              {response.type === "user" ? (
+                response.text
+              ) : (
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {response.text}
+                </ReactMarkdown>
+              )}
             </Box>
           ))}
         </Box>
