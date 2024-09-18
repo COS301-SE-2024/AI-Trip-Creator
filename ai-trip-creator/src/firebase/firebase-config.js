@@ -13,12 +13,12 @@ const firebaseConfig = {
   appId: "1:300004223652:web:a2b08dffaeb9f9b44fd431",
   measurementId: "G-K1EFHGGM1S",
 };
-const OPENAI_API_KEY = "";
+const OPENAI = "";
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 // const db = getProfileDB(app);
 const firestore = getFirestore(app);
 const db = getFirestore(app);
-export { auth, firestore,db, app, OPENAI_API_KEY };
+export { auth, firestore,db, app, OPENAI };
 
 
