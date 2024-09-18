@@ -12,16 +12,18 @@ import { exportVariable } from "./ItineraryForm";
 import { getGlobalAIText } from "./globalData";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm"; // For GitHub Flavored Markdown (e.g., tables, strikethroughs)
-import Slider from "react-slick"; // Import Slider from react-slick
+import Slider from "react-slick";
+import Checkbox from "@mui/material/Checkbox";
+import { green } from "@mui/material/colors";
 import {
   FaFilter,
   FaSearch,
   FaStar,
   FaHeart,
+  FaRegHeart,
   FaPlaneDeparture,
   FaPlaneArrival,
 } from "react-icons/fa";
-import "./dashboard.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import {
@@ -34,7 +36,6 @@ import {
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 const client_id = "rwfsFIbmTtMXDAAjzXKCBcR6lZZirbin";
 const client_secret = "RGeFEPqnTMNFKNjd";
-
 const convertPriceToZar = (price, fromCurrency) => {
   if (fromCurrency === "EUR") {
     const exchangeRate = 19.21; // Hardcoded exchange rate from EUR to ZAR
@@ -132,7 +133,8 @@ function ItineraryDisplay({ itinerary }) {
   const [globalAIText, setGlobalAIText] = useState("");
   const [accommodations, setAccommodations] = useState([]);
   const [flights, setFlights] = useState([]);
-
+  const [currentDate, setCurrentDate] = useState("");
+  const [randomNum, setRandomNum] = useState("");
   useEffect(() => {
     // Directly set the AI-generated itinerary from the passed itinerary prop
     if (itinerary.itineraryText) {
@@ -143,6 +145,7 @@ function ItineraryDisplay({ itinerary }) {
     const fetchData = async () => {
       try {
         const date = new Date().toISOString().split("T")[0];
+        setCurrentDate(date);
         const loc = itinerary.currentLocation.toLowerCase();
         const des = itinerary.destination.toLowerCase();
         let originLocation;
@@ -248,6 +251,14 @@ function ItineraryDisplay({ itinerary }) {
   };
 
   // Accommodations
+  const [liked, setLiked] = useState({});
+
+  const handleLikeClick = (index) => {
+    setLiked((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -282,9 +293,30 @@ function ItineraryDisplay({ itinerary }) {
     }
   };
 
+  function getRandomNumber(min = 2, max = 3006) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function getImageUrl() {
+    const randomNum = getRandomNumber();
+    return `https://www.sa-venues.com/things-to-do/gauteng/gallery/${randomNum}/1.jpg`;
+  }
+  const fallbackImageUrl =
+    "https://www.sa-venues.com/things-to-do/gauteng/gallery/9/1.jpg";
+
   return (
-    <Box>
-      <Typography variant="h4" gutterBottom>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        overflowX: "hidden",
+        padding: "16px",
+        maxWidth: "calc(100vw - 240px)",
+        marginLeft: "240px",
+      }}
+    >
+      <h1>Itinerary</h1>
+      {/*<Typography variant="h4" gutterBottom>
         Your Itinerary
       </Typography>
       <Typography variant="h6">
@@ -295,29 +327,62 @@ function ItineraryDisplay({ itinerary }) {
       </Typography>
       <Typography variant="h6">
         <strong>Interests:</strong> {interestsDetails}
-      </Typography>
+      </Typography>*/}
 
-      <Grid container spacing={2} mt={2}>
-        {itineraryByDays.map((dayText, index) => (
-          <Grid item xs={12} md={6} key={index}>
-            <Card>
-              {index === 0 && (
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image="https://www.sa-venues.com/things-to-do/gauteng/gallery/12/1.jpg"
-                  alt="info Image"
-                />
-              )}
-              <CardContent>
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                  {dayText}
-                </ReactMarkdown>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+        <Grid container spacing={2} sx={{ maxWidth: 800 }}>
+          {" "}
+          {/* Set a maxWidth to control the container width */}
+          {itineraryByDays.map((dayText, index) => (
+            <Grid item xs={12} key={index}>
+              {" "}
+              {/* Each card takes full width inside the grid */}
+              <Card sx={{ position: "relative" }}>
+                {index === 0 && (
+                  <>
+                    <CardMedia
+                      component="img"
+                      height="400"
+                      image={getImageUrl()}
+                      alt={getImageUrl()}
+                      onError={(e) => {
+                        e.target.src = fallbackImageUrl; // Set fallback image if the primary image fails to load
+                      }}
+                    />
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        bottom: 0, // Position text at the bottom of the image
+                        left: 0,
+                        width: "100%",
+                        backgroundColor: "rgba(0, 0, 0, 0.5)", // Optional dark overlay for contrast
+                        color: "white",
+                        padding: 2,
+                        "& *": {
+                          color: "white !important", // Ensure all nested elements have white text
+                        },
+                      }}
+                    >
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {dayText}
+                      </ReactMarkdown>
+                      <Typography>Created {currentDate}</Typography>
+                    </Box>
+                  </>
+                )}
+                {index !== 0 && (
+                  <CardContent>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {dayText}
+                    </ReactMarkdown>
+                  </CardContent>
+                )}
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+
       <br />
       <Card mt={2}>
         <CardContent>
@@ -340,14 +405,39 @@ function ItineraryDisplay({ itinerary }) {
                       image={accommodation.image}
                       alt={accommodation.name}
                     />
-                    <CardContent>
-                      <Typography variant="h8">{accommodation.name}</Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        <FaStar color="#FFD700" size={15} /> {"   "}
-                        {accommodation.rating}
-                        <br />
-                        {`from R${accommodation.price}/night`} <br />
-                        click to book accomodation
+                    <CardContent sx={{ position: "relative" }}>
+                      <Typography variant="h8">
+                        {accommodation.name}{" "}
+                        <Box
+                          component="span"
+                          onClick={() => handleLikeClick(index)}
+                          sx={{
+                            position: "absolute",
+
+                            right: 30,
+                            cursor: "pointer",
+                            zIndex: 1,
+                          }}
+                        >
+                          {liked[index] ? (
+                            <FaHeart color="red" size={20} />
+                          ) : (
+                            <FaRegHeart color="gray" size={20} />
+                          )}
+                        </Box>
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ display: "flex", alignItems: "center" }}
+                      >
+                        <Box component="span" sx={{ flex: 1 }}>
+                          <FaStar color="#FFD700" size={15} /> {"   "}
+                          {accommodation.rating}
+                          <br />
+                          {`from R${accommodation.price}/night`} <br />
+                          click to book accommodation
+                        </Box>
                       </Typography>
 
                       <Button
@@ -356,6 +446,7 @@ function ItineraryDisplay({ itinerary }) {
                         href={accommodation.link}
                         target="_blank"
                         fullWidth
+                        sx={{ mt: 2 }}
                       >
                         Book Now
                       </Button>
@@ -393,7 +484,14 @@ function ItineraryDisplay({ itinerary }) {
                 const totalPriceInZar = flight.priceInZar;
 
                 return (
-                  <Grid item xs={12} sm={6} md={4} key={index}>
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={4}
+                    key={index}
+                    sx={{ position: "relative" }}
+                  >
                     <Card
                       sx={{
                         boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
@@ -413,6 +511,23 @@ function ItineraryDisplay({ itinerary }) {
                           <strong>Live Price: </strong>ZAR {totalPriceInZar}
                         </Typography>
                       </CardContent>
+                      <Box
+                        component="span"
+                        onClick={() => handleLikeClick(index)}
+                        sx={{
+                          position: "absolute",
+                          bottom: 10,
+                          right: 10,
+                          cursor: "pointer",
+                          zIndex: 1,
+                        }}
+                      >
+                        {liked[index] ? (
+                          <FaHeart color="red" size={20} />
+                        ) : (
+                          <FaRegHeart color="gray" size={20} />
+                        )}
+                      </Box>
                     </Card>
                   </Grid>
                 );
@@ -421,7 +536,7 @@ function ItineraryDisplay({ itinerary }) {
           )}
         </CardContent>
       </Card>
-      <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
+      <Box sx={{ mt: 2, display: "flex", gap: 2, justifyContent: "center" }}>
         <Button
           sx={{
             color: "purple",
