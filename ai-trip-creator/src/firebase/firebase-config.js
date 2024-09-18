@@ -15,12 +15,12 @@ const firebaseConfig = {
 };
 
 
-const BEAT = "";
+const OPEN_AI_KEY = "";
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 // const db = getProfileDB(app);
 const firestore = getFirestore(app);
 const db = getFirestore(app);
-export { auth, firestore,db, app, BEAT};
+export { auth, firestore,db, app, OPEN_AI_KEY};
 
 
