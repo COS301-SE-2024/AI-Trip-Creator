@@ -1,29 +1,17 @@
 import React, { useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { Card, CardContent, Typography, Button, Box } from "@mui/material";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { ChatGroq } from "@langchain/groq";
 import Sidebar from "./sidebar";
-import { GROQ_API_KEY } from "../../firebase/firebase-config";
+import OpenAI from 'openai';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { OPENAI_API_KEY } from "../../firebase/firebase-config";
 
-const llm = new ChatGroq({
-  apiKey: GROQ_API_KEY,
-  model: "llama3-8b-8192",
-  maxTokens: undefined,
-  maxRetries: 2,
+// Initialize the OpenAI client
+const openai = new OpenAI({
+  apiKey: OPENAI_API_KEY,
+  dangerouslyAllowBrowser: true
 });
-
-const prompt = ChatPromptTemplate.fromMessages([
-  [
-    "system",
-    "you are a trip advisor that helps a user based on the questions they are asking. You remember all the information given to you. If they ask to generate an itinerary, you should ask various questions to understand their preferences and generate a custom itinerary for them and dont repeat the questions. If you are not sure, ask for more information. Remember about things like festivals, restaurants, group size, if children are present, budget, and more.",
-  ],
-  ["human", "{input}"],
-]);
-
-const chain = prompt.pipe(llm);
 
 const Dashboard = () => {
   const [userInput, setUserInput] = useState("");
@@ -40,22 +28,43 @@ const Dashboard = () => {
   const handleSubmit = async () => {
     if (userInput.trim() === "") return;
 
-    setResponses([...responses, { type: "user", text: userInput }]);
+    // Add user's input to the responses state
+    const newMessage = { type: "user", text: userInput };
+    setResponses([...responses, newMessage]);
 
     try {
-      let response = await chain.invoke({
-        input: userInput,
+      // Create an array of messages from the current responses state
+      const messages = [
+        {
+          role: "system",
+          content: "You are a helpful trip advisor AI. Remember the user's preferences, and avoid asking repetitive questions. When giving itineraries, make sure to personalize based on the given preferences, such as group size, budget, and specific interests."
+        },
+        ...responses.map((response) => ({
+          role: response.type === "user" ? "user" : "assistant",
+          content: response.text
+        })),
+        { role: "user", content: userInput }
+      ];
+
+      // Interact with OpenAI GPT-4 model
+      const response = await openai.chat.completions.create({
+        model: "gpt-4",
+        messages: messages,
+        max_tokens: 1000
       });
 
+      const botMessage = response.choices[0].message.content;
+
+      // Add the AI response to the responses state
       setResponses((prevResponses) => [
         ...prevResponses,
-        { type: "bot", text: response.content },
+        { type: "bot", text: botMessage }
       ]);
     } catch (error) {
-      console.error("Error communicating with the AI API:", error);
+      console.error("Error communicating with the OpenAI API:", error);
       setResponses((prevResponses) => [
         ...prevResponses,
-        { type: "bot", text: "Sorry, there was an error processing your request." },
+        { type: "bot", text: "Sorry, there was an error processing your request." }
       ]);
     }
 
