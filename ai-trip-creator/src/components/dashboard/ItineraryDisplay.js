@@ -229,8 +229,8 @@ function ItineraryDisplay({ itinerary }) {
 
   const { durationDetails, interestsDetails } = getDetails();
   const itineraryByDays = globalAIText
-    // .split(/(?=\*\*Day \d+:)/g)
-    // .filter((day) => day.trim() !== "");
+    .split(/(?=\*\*Day \d+:)/g)
+    .filter((day) => day.trim() !== "");
 
   
 
