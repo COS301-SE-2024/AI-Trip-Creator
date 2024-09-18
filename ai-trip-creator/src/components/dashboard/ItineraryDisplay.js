@@ -32,13 +32,14 @@ import {
   query as firestoreQuery,
   where,
   getDocs,
+  addDoc,
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 const client_id = "rwfsFIbmTtMXDAAjzXKCBcR6lZZirbin";
 const client_secret = "RGeFEPqnTMNFKNjd";
 const convertPriceToZar = (price, fromCurrency) => {
   if (fromCurrency === "EUR") {
-    const exchangeRate = 19.21; // Hardcoded exchange rate from EUR to ZAR
+    const exchangeRate = 19.21;
     return price * exchangeRate;
   } else {
     console.warn(`Conversion from ${fromCurrency} to ZAR is not supported.`);
@@ -175,7 +176,7 @@ function ItineraryDisplay({ itinerary }) {
         } else if (des === "gqeberha") {
           destinationLocation = "PLZ";
         } else {
-          console.error("Unknown location: " + loc);
+          console.error("Unknown destination: " + des);
         }
 
         const flightOffers = await getFlightOffers(
@@ -232,8 +233,6 @@ function ItineraryDisplay({ itinerary }) {
     .split(/(?=\*\*Day \d+:)/g)
     .filter((day) => day.trim() !== "");
 
-  
-
   // Carousel settings
   const settings = {
     dots: true,
@@ -253,13 +252,24 @@ function ItineraryDisplay({ itinerary }) {
   };
 
   // Accommodations
-  const [liked, setLiked] = useState({});
+  const [liked, setLiked] = useState(Array(accommodations.length).fill(false));
+  const [likedflight, setLikedflight] = useState(
+    Array(flights.length).fill(false),
+  );
 
   const handleLikeClick = (index) => {
-    setLiked((prev) => ({
-      ...prev,
-      [index]: !prev[index],
-    }));
+    setLiked((prevLiked) => {
+      const newLiked = [...prevLiked];
+      newLiked[index] = !newLiked[index];
+      return newLiked;
+    });
+  };
+  const handleLikeFlightClick = (index) => {
+    setLikedflight((prevLiked) => {
+      const newLiked = [...prevLiked];
+      newLiked[index] = !newLiked[index];
+      return newLiked;
+    });
   };
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -305,6 +315,48 @@ function ItineraryDisplay({ itinerary }) {
   }
   const fallbackImageUrl =
     "https://www.sa-venues.com/things-to-do/gauteng/gallery/9/1.jpg";
+  //saving itinerary
+  const saveItineraryToFirestore = async (itinerary) => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) {
+      console.error("User is not authenticated.");
+      return;
+    }
+
+    const db = getFirestore();
+    const likedAccommodations = accommodations.filter(
+      (_, index) => liked[index],
+    );
+    const likedFlights = flights.filter((_, index) => likedflight[index]);
+
+    if (likedAccommodations.length === 0) {
+      console.log("No accommodations to save.");
+    }
+    if (likedFlights.length === 0) {
+      console.log("No Flights to save.");
+    }
+
+    try {
+      const itineraryDoc = {
+        uid: user.uid,
+        destination: itinerary.destination,
+        duration: itinerary.duration,
+        createdAt: currentDate,
+        itineraryText: itinerary.itineraryText,
+        flights: likedFlights,
+        accommodations: likedAccommodations,
+        image: getImageUrl(),
+        altimage: fallbackImageUrl,
+      };
+
+      await addDoc(collection(db, "Itinerary"), itineraryDoc);
+      console.log("Itinerary saved successfully!");
+    } catch (error) {
+      console.error("Error saving itinerary to Firestore:", error);
+    }
+  };
 
   return (
     <Box
@@ -515,7 +567,7 @@ function ItineraryDisplay({ itinerary }) {
                       </CardContent>
                       <Box
                         component="span"
-                        onClick={() => handleLikeClick(index)}
+                        onClick={() => handleLikeFlightClick(index)}
                         sx={{
                           position: "absolute",
                           bottom: 10,
@@ -524,7 +576,7 @@ function ItineraryDisplay({ itinerary }) {
                           zIndex: 1,
                         }}
                       >
-                        {liked[index] ? (
+                        {likedflight[index] ? (
                           <FaHeart color="red" size={20} />
                         ) : (
                           <FaRegHeart color="gray" size={20} />
@@ -564,7 +616,7 @@ function ItineraryDisplay({ itinerary }) {
             },
           }}
           variant="outlined"
-          href={`/flights?destination=${itinerary.destination}`}
+          onClick={() => saveItineraryToFirestore(itinerary)}
         >
           Save Itinerary
         </Button>
