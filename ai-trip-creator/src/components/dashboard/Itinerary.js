@@ -4,7 +4,6 @@ import Sidebar from "./sidebar";
 import ItineraryForm from "./ItineraryForm";
 import ItineraryDisplay from "./ItineraryDisplay";
 
-
 const Itinerary = () => {
   const [itinerary, setItinerary] = useState(null);
 
@@ -13,11 +12,22 @@ const Itinerary = () => {
   };
 
   return (
-    
-    <div >
+    <div
+      style={{
+        display: "flex",
+        height: "100vh",
+        overflowX: "hidden",
+      }}
+    >
       <Sidebar />
-      <div className="content">
-        <h1>Itinerary</h1>
+      <div
+        style={{
+          flex: 1,
+          padding: "20px",
+          overflowY: "auto",
+          boxSizing: "border-box",
+        }}
+      >
         {!itinerary ? (
           <ItineraryForm onGenerateItinerary={generateItinerary} />
         ) : (
