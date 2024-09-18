@@ -229,8 +229,10 @@ function ItineraryDisplay({ itinerary }) {
 
   const { durationDetails, interestsDetails } = getDetails();
   const itineraryByDays = globalAIText
-    .split(/(?=Day \d+:)/g)
+    .split(/(?=\*\*Day \d+:)/g)
     .filter((day) => day.trim() !== "");
+
+  
 
   // Carousel settings
   const settings = {
