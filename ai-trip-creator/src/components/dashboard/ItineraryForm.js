@@ -447,7 +447,7 @@ function ItineraryForm({ onGenerateItinerary }) {
       interests +
       ". And the priority of the trip is " +
       priority +
-      ".";
+      ". ";
 
     const acts_string = JSON.stringify(Activities, null, 2);
     const AI_prompt = prompt + "\n\n" + "Activities:\n" + acts_string;
