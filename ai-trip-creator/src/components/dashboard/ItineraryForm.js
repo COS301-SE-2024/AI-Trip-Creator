@@ -423,6 +423,8 @@ function ItineraryForm({ onGenerateItinerary }) {
     const currentLocation = preferences.currentLocation;
     const destination = preferences.destination;
     const travelerCategory = preferences.travelerCategory;
+    const duration = preferences.duration;
+    const budgetRange = preferences.budgetRange;
     const interests = preferences.interests;
     const groupSize = preferences.groupSize;
     const priority = preferences.priority;
@@ -437,10 +439,14 @@ function ItineraryForm({ onGenerateItinerary }) {
       destination +
       ". The travelor category is " +
       travelerCategory +
+      ". The duration of the trip is " +
+      duration +
       ". The group size is " +
       groupSize +
       ". The interests are as follows " +
       interests +
+      ". The budget range of the trip is " +
+      budgetRange +
       ". And the priority of the trip is " +
       priority +
       ".";
