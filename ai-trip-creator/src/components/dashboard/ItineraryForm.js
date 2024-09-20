@@ -445,8 +445,6 @@ function ItineraryForm({ onGenerateItinerary }) {
       groupSize +
       ". The interests are as follows " +
       interests +
-      ". The budget range of the trip is " +
-      budgetRange +
       ". And the priority of the trip is " +
       priority +
       ".";
@@ -581,15 +579,31 @@ function ItineraryForm({ onGenerateItinerary }) {
   ];
 
   const durations = ["1-3 days", "4-7 days", "8-14 days", "15+ days"];
+  // const interests = [
+  //   "Culture",
+  //   "Adventure",
+  //   "Relaxation",
+  //   "Nature",
+  //   "Food",
+  //   "Shopping",
+  //   "Nightlife",
+  // ];
+
   const interests = [
-    "Culture",
-    "Adventure",
-    "Relaxation",
-    "Nature",
-    "Food",
+    "Outdoor",
+    "Indoor",
     "Shopping",
+    "Amusement Park",
+    "Historical",
+    "Art",
+    "Beach",
+    "Adventure",
+    "Luxury",
+    "Culture",
+    "Food",
     "Nightlife",
   ];
+
   const budgets = ["Low", "Medium", "High"];
 
   const theme = useTheme();
