@@ -35,6 +35,14 @@ import {
   addDoc,
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+import johannesburgImg from "./destinations/johannesburg.jpeg";
+import pretoriaImg from "./destinations/Pretoria.jpeg";
+import capetownImg from "./destinations/capetown.jpeg";
+import durbanImg from "./destinations/durban.jpeg";
+// import gqerberhaImg from "./destinations/gqerberha.jpg"; 
+import gqerberhaImg from "./images/Gqerberha.jpg";
+
 const client_id = "rwfsFIbmTtMXDAAjzXKCBcR6lZZirbin";
 const client_secret = "RGeFEPqnTMNFKNjd";
 const convertPriceToZar = (price, fromCurrency) => {
@@ -130,17 +138,51 @@ const getFlightOffers = async (
     return null;
   }
 };
+
+
 function ItineraryDisplay({ itinerary }) {
   const [globalAIText, setGlobalAIText] = useState("");
   const [accommodations, setAccommodations] = useState([]);
   const [flights, setFlights] = useState([]);
   const [currentDate, setCurrentDate] = useState("");
   const [randomNum, setRandomNum] = useState("");
+
+  // const destinationImages = {
+  //   durban: durbanImg,
+  //   johannesburg: johannesburgImg,
+  //   capetown: capetownImg,
+  //   pretoria: pretoriaImg,
+  //   gqeberha: gqerberhaImg,
+  // };
+
+  // const destinationImage = destinationImages[destinationKey] || fallbackImageUrl;
+  const des = itinerary.destination.toLowerCase();
+  let destinationImage
+  if (des === "johannesburg") {
+    destinationImage = johannesburgImg;
+  } else if (des === "pretoria") {
+    destinationImage = pretoriaImg;
+  } else if (des === "durban") {
+    destinationImage = durbanImg;
+  } else if (des === "cape town" || des === "capetown") {
+    destinationImage = capetownImg;
+  } else if (des === "gqeberha") {
+    destinationImage = gqerberhaImg;
+  } else {
+    destinationImage = fallbackImageUrl;
+  }
+  
+  
   useEffect(() => {
     // Directly set the AI-generated itinerary from the passed itinerary prop
     if (itinerary.itineraryText) {
       setGlobalAIText(itinerary.itineraryText);
     }
+
+    
+
+    const destinationKey = itinerary.destination.toLowerCase();
+    
     const destinationParam = itinerary.destination;
     handleSearch(destinationParam.toLowerCase().replace(/\s+/g, ""));
     const fetchData = async () => {
@@ -313,6 +355,9 @@ function ItineraryDisplay({ itinerary }) {
     const randomNum = getRandomNumber();
     return `https://www.sa-venues.com/things-to-do/gauteng/gallery/${randomNum}/1.jpg`;
   }
+
+
+
   const fallbackImageUrl =
     "https://www.sa-venues.com/things-to-do/gauteng/gallery/9/1.jpg";
   //saving itinerary
@@ -397,8 +442,9 @@ function ItineraryDisplay({ itinerary }) {
                     <CardMedia
                       component="img"
                       height="400"
-                      image={getImageUrl()}
-                      alt={getImageUrl()}
+                      image={destinationImage}
+                      // image={getImageUrl()}
+                       alt={getImageUrl()}
                       onError={(e) => {
                         e.target.src = fallbackImageUrl; // Set fallback image if the primary image fails to load
                       }}
