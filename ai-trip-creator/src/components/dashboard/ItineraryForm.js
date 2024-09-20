@@ -423,6 +423,8 @@ function ItineraryForm({ onGenerateItinerary }) {
     const currentLocation = preferences.currentLocation;
     const destination = preferences.destination;
     const travelerCategory = preferences.travelerCategory;
+    const duration = preferences.duration;
+    const budgetRange = preferences.budgetRange;
     const interests = preferences.interests;
     const groupSize = preferences.groupSize;
     const priority = preferences.priority;
@@ -437,13 +439,15 @@ function ItineraryForm({ onGenerateItinerary }) {
       destination +
       ". The travelor category is " +
       travelerCategory +
+      ". The duration of the trip is " +
+      duration +
       ". The group size is " +
       groupSize +
       ". The interests are as follows " +
       interests +
       ". And the priority of the trip is " +
       priority +
-      ".";
+      ". ";
 
     const acts_string = JSON.stringify(Activities, null, 2);
     const AI_prompt = prompt + "\n\n" + "Activities:\n" + acts_string;
@@ -575,15 +579,31 @@ function ItineraryForm({ onGenerateItinerary }) {
   ];
 
   const durations = ["1-3 days", "4-7 days", "8-14 days", "15+ days"];
+  // const interests = [
+  //   "Culture",
+  //   "Adventure",
+  //   "Relaxation",
+  //   "Nature",
+  //   "Food",
+  //   "Shopping",
+  //   "Nightlife",
+  // ];
+
   const interests = [
-    "Culture",
-    "Adventure",
-    "Relaxation",
-    "Nature",
-    "Food",
+    "Outdoor",
+    "Indoor",
     "Shopping",
+    "Amusement Park",
+    "Historical",
+    "Art",
+    "Beach",
+    "Adventure",
+    "Luxury",
+    "Culture",
+    "Food",
     "Nightlife",
   ];
+
   const budgets = ["Low", "Medium", "High"];
 
   const theme = useTheme();
