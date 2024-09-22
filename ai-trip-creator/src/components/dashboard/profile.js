@@ -506,7 +506,7 @@ const Profile = () => {
                       </List>
                     </Box>
                     <Box mt={4}>
-                      <Typography variant="h6">My Itineraries</Typography>
+                      <h3>My Itineraries</h3>
                       {itineraries.length > 0 ? (
                         <Box display="flex" flexWrap="wrap" gap={2}>
                           {itineraries.map((itinerary, index) => {

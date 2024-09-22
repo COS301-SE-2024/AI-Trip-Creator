@@ -23,7 +23,6 @@ import {
   FaMapMarkedAlt,
 } from "react-icons/fa";
 import { AiOutlineStar, AiOutlineMenu } from "react-icons/ai";
-import getLPTheme  from "./getLPTheme";
 import { Link } from "react-scroll";
 import CssBaseline from '@mui/material/CssBaseline';
 
@@ -365,7 +364,7 @@ const SplashPage = ({ setIsLoggedIn }) => {
                 fontSize: "4rem",
                 fontWeight: 700,
                 lineHeight: 1.2,
-                // color: theme.palette.primary.main,
+                 color: theme.palette.primary.main,
                 color: "#5A7BB8",
                 textShadow: "2px 2px 4px rgba(0, 0, 0, 0.3)",
               }}
@@ -379,14 +378,14 @@ const SplashPage = ({ setIsLoggedIn }) => {
         <AppBar
           position="sticky"
           sx={{
-            // backgroundColor: theme.palette.primary.main,
+           backgroundColor: theme.palette.primary.main,
             backgroundColor: "white",
             top: 0,
             boxShadow: "none",
             transition: "transform 0.3s ease, background-color 0.3s ease",
             "&:hover": {
               transform: "translateY(-5px)",
-              // backgroundColor: theme.palette.primary.dark,
+              backgroundColor: theme.palette.primary.dark,
               backgroundColor: "#F0F0F0",
             },
           }}
