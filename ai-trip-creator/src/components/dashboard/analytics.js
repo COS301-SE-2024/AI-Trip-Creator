@@ -858,6 +858,11 @@ import { getAnalytics, logEvent } from "firebase/analytics"; // Firebase Analyti
 import { TimeSpentContext } from "../TimeContext/TimeSpentContext"; // Import the context
 import "./dashboard.css";
 
+import { MdCardTravel } from "react-icons/md";
+import { MdOutlineTravelExplore } from "react-icons/md";
+import { IoIosTimer } from "react-icons/io";
+
+
 const Analytics = () => {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark";
@@ -978,9 +983,15 @@ const Analytics = () => {
                 elevation={3}
                 sx={{ p: 2, bgcolor: isDarkMode ? "#424242" : "#ffffff" }}
               >
-                <Typography variant="h6" gutterBottom>
+                {/*<Typography variant="h6" gutterBottom>
                   Travel Trends
-                </Typography>
+                </Typography> */}
+                <Box display="flex" alignItems="center" mb={1}>
+                    <MdCardTravel style={{ marginRight: "13px", fontSize: 30, color: "#318CE7" }} />
+                    <Typography variant="h6" gutterBottom>
+                        Travel Trends
+                    </Typography>
+                </Box>
                 {travelTrends.length > 0 ? (
                   <Box
                     display="flex"
@@ -1008,14 +1019,22 @@ const Analytics = () => {
             </Grid>
 
             {/* Popular Destinations Slideshow */}
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6} >
               <Paper
                 elevation={3}
                 sx={{ p: 2, bgcolor: isDarkMode ? "#424242" : "#ffffff" }}
               >
-                <Typography variant="h6" gutterBottom>
+                
+                {/*<Typography variant="h6" gutterBottom>
                   Popular Destinations
-                </Typography>
+                </Typography> */}
+
+                <Box display="flex" alignItems="center" mb={1}>
+                    <MdOutlineTravelExplore style={{ marginRight: "13px", fontSize: 30, color: "#318CE7" }} />
+                    <Typography variant="h6" gutterBottom>
+                        Popular Destinations
+                    </Typography>
+                </Box>
                 {popularDestinations.length > 0 ? (
                   <Box
                     display="flex"
@@ -1042,7 +1061,7 @@ const Analytics = () => {
               </Paper>
             </Grid>
           </Grid>
-
+        
           <h2>User Analytics</h2>
 
           <Grid container spacing={3}>
@@ -1052,9 +1071,15 @@ const Analytics = () => {
                 elevation={3}
                 sx={{ p: 2, bgcolor: isDarkMode ? "#424242" : "#ffffff" }}
               >
-                <Typography variant="h6" gutterBottom>
+                {/* <Typography variant="h6" gutterBottom>
                   Time Spent on Page
-                </Typography>
+                </Typography> */}
+                <Box display="flex" alignItems="center" mt={1}>
+                    <IoIosTimer style={{ marginRight: "13px", fontSize: 30, color: "#818589" }} />
+                    <Typography variant="h6" gutterBottom>
+                        Time Spent on Page
+                    </Typography>
+                </Box>
                 <Typography variant="body1" mt={1} sx={{fontSize: "18px", fontFamily: "Poppins"}}>
                   You have spent {timeSpent.toFixed(2)} seconds on this page.
                 </Typography>
@@ -1067,9 +1092,15 @@ const Analytics = () => {
                 elevation={3}
                 sx={{ p: 2, bgcolor: isDarkMode ? "#424242" : "#ffffff" }}
               >
-                <Typography variant="h6" gutterBottom>
+                {/* <Typography variant="h6" gutterBottom>
                   Total Time Spent on Application
-                </Typography>
+                </Typography> */}
+                <Box display="flex" alignItems="center" mt={1}>
+                    <IoIosTimer style={{ marginRight: "13px", fontSize: 30, color: "#818589" }} />
+                    <Typography variant="h6" gutterBottom>
+                        Total Time Spent on Application
+                    </Typography>
+                </Box>
                 <Typography variant="body1" mt={1} sx={{fontSize: "18px", fontFamily: "Poppins"}}>
                   You have spent {totalTimeSpent.toFixed(2)} seconds on this application.
                 </Typography>
