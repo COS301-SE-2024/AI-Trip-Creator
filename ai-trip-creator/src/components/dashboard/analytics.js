@@ -419,24 +419,22 @@ const Analytics = () => {
   const isDarkMode = theme.palette.mode === "dark";
   const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
 
-  // States for Travel Trends and Popular Destinations Slideshows
   const [travelTrends, setTravelTrends] = useState([]);
   const [popularDestinations, setPopularDestinations] = useState([]);
   const [currentTrendIndex, setCurrentTrendIndex] = useState(0);
   const [currentDestinationIndex, setCurrentDestinationIndex] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  // Fetch data from Firebase collections
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Fetch travel trends from the 'travelTrends' collection
+        // Fetch travel trends 
         const travelTrendsSnapshot = await getDocs(collection(db, "travelTrends"));
         const travelTrendsList = travelTrendsSnapshot.docs.map(doc => doc.data());
         setTravelTrends(travelTrendsList);
 
-        // Fetch popular destinations from the 'popularDestinations' collection
+        // Fetch popular destinations 
         const popularDestinationsSnapshot = await getDocs(collection(db, "popularDestinations"));
         const popularDestinationsList = popularDestinationsSnapshot.docs.map(doc => doc.data());
         setPopularDestinations(popularDestinationsList);
@@ -499,9 +497,7 @@ const Analytics = () => {
       >
         <Container maxWidth="lg">
           <h1>Analytics Dashboard</h1>
-          <Typography variant="h5" color="textSecondary" gutterBottom>
-            Analytics
-          </Typography>
+          <h2>Analytics</h2>
 
           <Grid container spacing={3}>
             {/* Travel Trends Slideshow */}
@@ -529,7 +525,7 @@ const Analytics = () => {
                         objectFit: "cover",
                       }}
                     />
-                    <Typography variant="body1" mt={2}>
+                    <Typography variant="body1" mt={1} sx={{fontSize: "18px", fontFamily: "Poppins"}}>
                       {travelTrends[currentTrendIndex].title}
                     </Typography>
                   </Box>
@@ -564,7 +560,7 @@ const Analytics = () => {
                         objectFit: "cover",
                       }}
                     />
-                    <Typography variant="body1" mt={2}>
+                    <Typography variant="body1" mt={1} sx={{fontSize: "18px", fontFamily: "Poppins"}}>
                       {popularDestinations[currentDestinationIndex].title}
                     </Typography>
                   </Box>
