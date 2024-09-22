@@ -1,3 +1,5 @@
+
+/* Trends and destinations -- hard coded */
 // import React, { useState, useEffect } from "react";
 // import {
 //   Box,
@@ -213,6 +215,7 @@
 
 // export default Analytics;
 
+/* Saving data to database and loading data from it*/
 // import React, { useState } from "react";
 // import {
 //   Box,
@@ -397,7 +400,445 @@
 
 // export default Analytics;
 
-import React, { useState, useEffect } from "react";
+/* Final , with trends and destinations - Without analytics*/
+
+// import React, { useState, useEffect } from "react";
+// import {
+//   Box,
+//   Drawer,
+//   Typography,
+//   Container,
+//   Paper,
+//   Grid,
+//   CircularProgress,
+//   useTheme,
+//   useMediaQuery,
+// } from "@mui/material";
+// import Sidebar from "./sidebar";
+// import { collection, getDocs } from "firebase/firestore"; // Firebase Firestore imports
+// import { db } from "../../firebase/firebase-config"; // Your Firebase config file
+// import "./dashboard.css";
+
+// const Analytics = () => {
+//   const theme = useTheme();
+//   const isDarkMode = theme.palette.mode === "dark";
+//   const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
+
+//   const [travelTrends, setTravelTrends] = useState([]);
+//   const [popularDestinations, setPopularDestinations] = useState([]);
+//   const [currentTrendIndex, setCurrentTrendIndex] = useState(0);
+//   const [currentDestinationIndex, setCurrentDestinationIndex] = useState(0);
+//   const [loading, setLoading] = useState(true);
+
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       setLoading(true);
+//       try {
+//         // Fetch travel trends 
+//         const travelTrendsSnapshot = await getDocs(collection(db, "travelTrends"));
+//         const travelTrendsList = travelTrendsSnapshot.docs.map(doc => doc.data());
+//         setTravelTrends(travelTrendsList);
+
+//         // Fetch popular destinations 
+//         const popularDestinationsSnapshot = await getDocs(collection(db, "popularDestinations"));
+//         const popularDestinationsList = popularDestinationsSnapshot.docs.map(doc => doc.data());
+//         setPopularDestinations(popularDestinationsList);
+
+//         setLoading(false);
+//       } catch (error) {
+//         console.error("Error fetching data: ", error);
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchData();
+
+//     // Automatic slideshow effect with timers
+//     const trendInterval = setInterval(() => {
+//       setCurrentTrendIndex((prevIndex) => (prevIndex + 1) % travelTrends.length);
+//     }, 3000); // Slide changes every 3 seconds
+
+//     const destinationInterval = setInterval(() => {
+//       setCurrentDestinationIndex((prevIndex) => (prevIndex + 1) % popularDestinations.length);
+//     }, 3000);
+
+//     return () => {
+//       clearInterval(trendInterval);
+//       clearInterval(destinationInterval);
+//     };
+//   }, [travelTrends.length, popularDestinations.length]);
+
+//   if (loading) {
+//     return (
+//       <Box
+//         display="flex"
+//         justifyContent="center"
+//         alignItems="center"
+//         height="100vh"
+//       >
+//         <CircularProgress />
+//       </Box>
+//     );
+//   }
+
+//   return (
+//     <Box display="flex">
+//       <Drawer
+//         variant={isSmUp ? "permanent" : "temporary"}
+//         open={true}
+//         sx={{
+//           "& .MuiDrawer-paper": {
+//             boxSizing: "border-box",
+//             width: 240,
+//           },
+//         }}
+//       >
+//         <Sidebar />
+//       </Drawer>
+//       <Box
+//         flexGrow={1}
+//         p={3}
+//         sx={{ ml: isSmUp ? "240px" : "0", overflowX: "hidden" }}
+//       >
+//         <Container maxWidth="lg">
+//           <h1>Analytics Dashboard</h1>
+//           <h2>Analytics</h2>
+
+//           <Grid container spacing={3}>
+//             {/* Travel Trends Slideshow */}
+//             <Grid item xs={12} md={6}>
+//               <Paper
+//                 elevation={3}
+//                 sx={{ p: 2, bgcolor: isDarkMode ? "#424242" : "#ffffff" }}
+//               >
+//                 <Typography variant="h6" gutterBottom>
+//                   Travel Trends
+//                 </Typography>
+//                 {travelTrends.length > 0 ? (
+//                   <Box
+//                     display="flex"
+//                     flexDirection="column"
+//                     alignItems="center"
+//                     justifyContent="center"
+//                   >
+//                     <img
+//                       src={travelTrends[currentTrendIndex].image}
+//                       alt={travelTrends[currentTrendIndex].title}
+//                       style={{
+//                         width: "100%",
+//                         height: "300px",
+//                         objectFit: "cover",
+//                       }}
+//                     />
+//                     <Typography variant="body1" mt={1} sx={{fontSize: "18px", fontFamily: "Poppins"}}>
+//                       {travelTrends[currentTrendIndex].title}
+//                     </Typography>
+//                   </Box>
+//                 ) : (
+//                   <Typography>No data available</Typography>
+//                 )}
+//               </Paper>
+//             </Grid>
+
+//             {/* Popular Destinations Slideshow */}
+//             <Grid item xs={12} md={6}>
+//               <Paper
+//                 elevation={3}
+//                 sx={{ p: 2, bgcolor: isDarkMode ? "#424242" : "#ffffff" }}
+//               >
+//                 <Typography variant="h6" gutterBottom>
+//                   Popular Destinations
+//                 </Typography>
+//                 {popularDestinations.length > 0 ? (
+//                   <Box
+//                     display="flex"
+//                     flexDirection="column"
+//                     alignItems="center"
+//                     justifyContent="center"
+//                   >
+//                     <img
+//                       src={popularDestinations[currentDestinationIndex].image}
+//                       alt={popularDestinations[currentDestinationIndex].title}
+//                       style={{
+//                         width: "100%",
+//                         height: "300px",
+//                         objectFit: "cover",
+//                       }}
+//                     />
+//                     <Typography variant="body1" mt={1} sx={{fontSize: "18px", fontFamily: "Poppins"}}>
+//                       {popularDestinations[currentDestinationIndex].title}
+//                     </Typography>
+//                   </Box>
+//                 ) : (
+//                   <Typography>No data available</Typography>
+//                 )}
+//               </Paper>
+//             </Grid>
+//           </Grid>
+//         </Container>
+//       </Box>
+//     </Box>
+//   );
+// };
+
+// export default Analytics;
+
+/* Everything - trends, destinations, google analytics */
+// import React, { useState, useEffect, useRef } from "react";
+// import {
+//   Box,
+//   Drawer,
+//   Typography,
+//   Container,
+//   Paper,
+//   Grid,
+//   CircularProgress,
+//   Button,
+//   useTheme,
+//   useMediaQuery,
+// } from "@mui/material";
+// import Sidebar from "./sidebar";
+// import { collection, getDocs } from "firebase/firestore"; // Firebase Firestore imports
+// import { db } from "../../firebase/firebase-config"; // Your Firebase config file
+// import { getAnalytics, logEvent } from "firebase/analytics"; // Firebase Analytics imports
+// import "./dashboard.css";
+
+// const Analytics = () => {
+//   const theme = useTheme();
+//   const isDarkMode = theme.palette.mode === "dark";
+//   const isSmUp = useMediaQuery(theme.breakpoints.up("sm"));
+
+//   const [travelTrends, setTravelTrends] = useState([]);
+//   const [popularDestinations, setPopularDestinations] = useState([]);
+//   const [currentTrendIndex, setCurrentTrendIndex] = useState(0);
+//   const [currentDestinationIndex, setCurrentDestinationIndex] = useState(0);
+//   const [loading, setLoading] = useState(true);
+//   const [timeSpent, setTimeSpent] = useState(0);
+//   const [totalTimeSpent, setTotalTimeSpent] = useState(0);
+//   const startTimeRef = useRef(Date.now());
+
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       setLoading(true);
+//       try {
+//         // Fetch travel trends 
+//         const travelTrendsSnapshot = await getDocs(collection(db, "travelTrends"));
+//         const travelTrendsList = travelTrendsSnapshot.docs.map(doc => doc.data());
+//         setTravelTrends(travelTrendsList);
+
+//         // Fetch popular destinations 
+//         const popularDestinationsSnapshot = await getDocs(collection(db, "popularDestinations"));
+//         const popularDestinationsList = popularDestinationsSnapshot.docs.map(doc => doc.data());
+//         setPopularDestinations(popularDestinationsList);
+
+//         setLoading(false);
+//       } catch (error) {
+//         console.error("Error fetching data: ", error);
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchData();
+
+//     // Automatic slideshow effect with timers
+//     const trendInterval = setInterval(() => {
+//       setCurrentTrendIndex((prevIndex) => (prevIndex + 1) % travelTrends.length);
+//     }, 3000); // Slide changes every 3 seconds
+
+//     const destinationInterval = setInterval(() => {
+//       setCurrentDestinationIndex((prevIndex) => (prevIndex + 1) % popularDestinations.length);
+//     }, 3000);
+
+//     // Track time spent on the page
+//     const analytics = getAnalytics();
+//     logEvent(analytics, 'page_view', { page_title: 'Analytics Dashboard' });
+
+//     return () => {
+//       clearInterval(trendInterval);
+//       clearInterval(destinationInterval);
+//       const endTime = Date.now();
+//       const timeSpentOnPage = (endTime - startTimeRef.current) / 1000; // time in seconds
+//       setTimeSpent(timeSpentOnPage);
+//       logEvent(analytics, 'time_spent', { time_spent: timeSpentOnPage });
+
+//       // Update total time spent on the application
+//       setTotalTimeSpent(prevTime => prevTime + timeSpentOnPage);
+//     };
+//   }, [travelTrends.length, popularDestinations.length]);
+
+//   const updateTimeSpent = () => {
+//     const endTime = Date.now();
+//     const timeSpentOnPage = (endTime - startTimeRef.current) / 1000; // time in seconds
+//     setTimeSpent(prevTime => prevTime + timeSpentOnPage);
+//     const analytics = getAnalytics();
+//     logEvent(analytics, 'time_spent', { time_spent: timeSpentOnPage });
+
+//     // Update total time spent on the application
+//     setTotalTimeSpent(prevTime => prevTime + timeSpentOnPage);
+
+//     // Reset start time
+//     startTimeRef.current = Date.now();
+//   };
+
+//   if (loading) {
+//     return (
+//       <Box
+//         display="flex"
+//         justifyContent="center"
+//         alignItems="center"
+//         height="100vh"
+//       >
+//         <CircularProgress />
+//       </Box>
+//     );
+//   }
+
+//   return (
+//     <Box display="flex">
+//       <Drawer
+//         variant={isSmUp ? "permanent" : "temporary"}
+//         open={true}
+//         sx={{
+//           "& .MuiDrawer-paper": {
+//             boxSizing: "border-box",
+//             width: 240,
+//           },
+//         }}
+//       >
+//         <Sidebar />
+//       </Drawer>
+//       <Box
+//         flexGrow={1}
+//         p={3}
+//         sx={{ ml: isSmUp ? "240px" : "0", overflowX: "hidden" }}
+//       >
+//         <Container maxWidth="lg">
+//           <h1>Analytics Dashboard</h1>
+//           <h2>Analytics</h2>
+
+//           <Grid container spacing={3}>
+//             {/* Travel Trends Slideshow */}
+//             <Grid item xs={12} md={6}>
+//               <Paper
+//                 elevation={3}
+//                 sx={{ p: 2, bgcolor: isDarkMode ? "#424242" : "#ffffff" }}
+//               >
+//                 <Typography variant="h6" gutterBottom>
+//                   Travel Trends
+//                 </Typography>
+//                 {travelTrends.length > 0 ? (
+//                   <Box
+//                     display="flex"
+//                     flexDirection="column"
+//                     alignItems="center"
+//                     justifyContent="center"
+//                   >
+//                     <img
+//                       src={travelTrends[currentTrendIndex].image}
+//                       alt={travelTrends[currentTrendIndex].title}
+//                       style={{
+//                         width: "100%",
+//                         height: "300px",
+//                         objectFit: "cover",
+//                       }}
+//                     />
+//                     <Typography variant="body1" mt={1} sx={{fontSize: "18px", fontFamily: "Poppins"}}>
+//                       {travelTrends[currentTrendIndex].title}
+//                     </Typography>
+//                   </Box>
+//                 ) : (
+//                   <Typography>No data available</Typography>
+//                 )}
+//               </Paper>
+//             </Grid>
+
+//             {/* Popular Destinations Slideshow */}
+//             <Grid item xs={12} md={6}>
+//               <Paper
+//                 elevation={3}
+//                 sx={{ p: 2, bgcolor: isDarkMode ? "#424242" : "#ffffff" }}
+//               >
+//                 <Typography variant="h6" gutterBottom>
+//                   Popular Destinations
+//                 </Typography>
+//                 {popularDestinations.length > 0 ? (
+//                   <Box
+//                     display="flex"
+//                     flexDirection="column"
+//                     alignItems="center"
+//                     justifyContent="center"
+//                   >
+//                     <img
+//                       src={popularDestinations[currentDestinationIndex].image}
+//                       alt={popularDestinations[currentDestinationIndex].title}
+//                       style={{
+//                         width: "100%",
+//                         height: "300px",
+//                         objectFit: "cover",
+//                       }}
+//                     />
+//                     <Typography variant="body1" mt={1} sx={{fontSize: "18px", fontFamily: "Poppins"}}>
+//                       {popularDestinations[currentDestinationIndex].title}
+//                     </Typography>
+//                   </Box>
+//                 ) : (
+//                   <Typography>No data available</Typography>
+//                 )}
+//               </Paper>
+//             </Grid>
+//           </Grid>
+
+//           <h2>User Analytics</h2>
+
+//           <Grid container spacing={3}>
+//             {/* Time Spent on Page */}
+//             <Grid item xs={12} md={6}>
+//               <Paper
+//                 elevation={3}
+//                 sx={{ p: 2, bgcolor: isDarkMode ? "#424242" : "#ffffff" }}
+//               >
+//                 <Typography variant="h6" gutterBottom>
+//                   Time Spent on Page
+//                 </Typography>
+//                 <Typography variant="body1" mt={1} sx={{fontSize: "18px", fontFamily: "Poppins"}}>
+//                   You have spent {timeSpent.toFixed(2)} seconds on this page.
+//                 </Typography>
+//               </Paper>
+//             </Grid>
+
+//             {/* Total Time Spent on Application */}
+//             <Grid item xs={12} md={6}>
+//               <Paper
+//                 elevation={3}
+//                 sx={{ p: 2, bgcolor: isDarkMode ? "#424242" : "#ffffff" }}
+//               >
+//                 <Typography variant="h6" gutterBottom>
+//                   Total Time Spent on Application
+//                 </Typography>
+//                 <Typography variant="body1" mt={1} sx={{fontSize: "18px", fontFamily: "Poppins"}}>
+//                   You have spent {totalTimeSpent.toFixed(2)} seconds on this application.
+//                 </Typography>
+//               </Paper>
+//             </Grid>
+
+//             {/* Update Time Spent Button */}
+//             <Grid item xs={12}>
+//               <Box display="flex" justifyContent="center">
+//                 <Button variant="contained" color="primary" onClick={updateTimeSpent}>
+//                   Update Time Spent
+//                 </Button>
+//               </Box>
+//             </Grid>
+//           </Grid>
+//         </Container>
+//       </Box>
+//     </Box>
+//   );
+// };
+
+// export default Analytics;
+
+import React, { useState, useEffect, useContext, useRef } from "react";
 import {
   Box,
   Drawer,
@@ -406,13 +847,21 @@ import {
   Paper,
   Grid,
   CircularProgress,
+  Button,
   useTheme,
   useMediaQuery,
 } from "@mui/material";
 import Sidebar from "./sidebar";
 import { collection, getDocs } from "firebase/firestore"; // Firebase Firestore imports
 import { db } from "../../firebase/firebase-config"; // Your Firebase config file
+import { getAnalytics, logEvent } from "firebase/analytics"; // Firebase Analytics imports
+import { TimeSpentContext } from "../TimeContext/TimeSpentContext"; // Import the context
 import "./dashboard.css";
+
+import { MdCardTravel } from "react-icons/md";
+import { MdOutlineTravelExplore } from "react-icons/md";
+import { IoIosTimer } from "react-icons/io";
+
 
 const Analytics = () => {
   const theme = useTheme();
@@ -424,6 +873,9 @@ const Analytics = () => {
   const [currentTrendIndex, setCurrentTrendIndex] = useState(0);
   const [currentDestinationIndex, setCurrentDestinationIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [timeSpent, setTimeSpent] = useState(0);
+  const { totalTimeSpent, setTotalTimeSpent } = useContext(TimeSpentContext);
+  const startTimeRef = useRef(Date.now());
 
   useEffect(() => {
     const fetchData = async () => {
@@ -457,11 +909,36 @@ const Analytics = () => {
       setCurrentDestinationIndex((prevIndex) => (prevIndex + 1) % popularDestinations.length);
     }, 3000);
 
+    // Track time spent on the page
+    const analytics = getAnalytics();
+    logEvent(analytics, 'page_view', { page_title: 'Analytics Dashboard' });
+
     return () => {
       clearInterval(trendInterval);
       clearInterval(destinationInterval);
+      const endTime = Date.now();
+      const timeSpentOnPage = (endTime - startTimeRef.current) / 1000; // time in seconds
+      setTimeSpent(timeSpentOnPage);
+      logEvent(analytics, 'time_spent', { time_spent: timeSpentOnPage });
+
+      // Update total time spent on the application
+      setTotalTimeSpent(prevTime => prevTime + timeSpentOnPage);
     };
-  }, [travelTrends.length, popularDestinations.length]);
+  }, [travelTrends.length, popularDestinations.length, setTotalTimeSpent]);
+
+  const updateTimeSpent = () => {
+    const endTime = Date.now();
+    const timeSpentOnPage = (endTime - startTimeRef.current) / 1000; // time in seconds
+    setTimeSpent(prevTime => prevTime + timeSpentOnPage);
+    const analytics = getAnalytics();
+    logEvent(analytics, 'time_spent', { time_spent: timeSpentOnPage });
+
+    // Update total time spent on the application
+    setTotalTimeSpent(prevTime => prevTime + timeSpentOnPage);
+
+    // Reset start time
+    startTimeRef.current = Date.now();
+  };
 
   if (loading) {
     return (
@@ -506,9 +983,15 @@ const Analytics = () => {
                 elevation={3}
                 sx={{ p: 2, bgcolor: isDarkMode ? "#424242" : "#ffffff" }}
               >
-                <Typography variant="h6" gutterBottom>
+                {/*<Typography variant="h6" gutterBottom>
                   Travel Trends
-                </Typography>
+                </Typography> */}
+                <Box display="flex" alignItems="center" mb={1}>
+                    <MdCardTravel style={{ marginRight: "13px", fontSize: 30, color: "#318CE7" }} />
+                    <Typography variant="h6" gutterBottom>
+                        Travel Trends
+                    </Typography>
+                </Box>
                 {travelTrends.length > 0 ? (
                   <Box
                     display="flex"
@@ -536,14 +1019,22 @@ const Analytics = () => {
             </Grid>
 
             {/* Popular Destinations Slideshow */}
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={6} >
               <Paper
                 elevation={3}
                 sx={{ p: 2, bgcolor: isDarkMode ? "#424242" : "#ffffff" }}
               >
-                <Typography variant="h6" gutterBottom>
+                
+                {/*<Typography variant="h6" gutterBottom>
                   Popular Destinations
-                </Typography>
+                </Typography> */}
+
+                <Box display="flex" alignItems="center" mb={1}>
+                    <MdOutlineTravelExplore style={{ marginRight: "13px", fontSize: 30, color: "#318CE7" }} />
+                    <Typography variant="h6" gutterBottom>
+                        Popular Destinations
+                    </Typography>
+                </Box>
                 {popularDestinations.length > 0 ? (
                   <Box
                     display="flex"
@@ -568,6 +1059,61 @@ const Analytics = () => {
                   <Typography>No data available</Typography>
                 )}
               </Paper>
+            </Grid>
+          </Grid>
+        
+          <h2>User Analytics</h2>
+
+          <Grid container spacing={3}>
+            {/* Time Spent on Page */}
+            <Grid item xs={12} md={6}>
+              <Paper
+                elevation={3}
+                sx={{ p: 2, bgcolor: isDarkMode ? "#424242" : "#ffffff" }}
+              >
+                {/* <Typography variant="h6" gutterBottom>
+                  Time Spent on Page
+                </Typography> */}
+                <Box display="flex" alignItems="center" mt={1}>
+                    <IoIosTimer style={{ marginRight: "13px", fontSize: 30, color: "#818589" }} />
+                    <Typography variant="h6" gutterBottom>
+                        Time Spent on Page
+                    </Typography>
+                </Box>
+                <Typography variant="body1" mt={1} sx={{fontSize: "18px", fontFamily: "Poppins"}}>
+                  You have spent {timeSpent.toFixed(2)} seconds on this page.
+                </Typography>
+              </Paper>
+            </Grid>
+
+            {/* Total Time Spent on Application */}
+            <Grid item xs={12} md={6}>
+              <Paper
+                elevation={3}
+                sx={{ p: 2, bgcolor: isDarkMode ? "#424242" : "#ffffff" }}
+              >
+                {/* <Typography variant="h6" gutterBottom>
+                  Total Time Spent on Application
+                </Typography> */}
+                <Box display="flex" alignItems="center" mt={1}>
+                    <IoIosTimer style={{ marginRight: "13px", fontSize: 30, color: "#818589" }} />
+                    <Typography variant="h6" gutterBottom>
+                        Total Time Spent on Application
+                    </Typography>
+                </Box>
+                <Typography variant="body1" mt={1} sx={{fontSize: "18px", fontFamily: "Poppins"}}>
+                  You have spent {totalTimeSpent.toFixed(2)} seconds on this application.
+                </Typography>
+              </Paper>
+            </Grid>
+
+            {/* Update Time Spent Button */}
+            <Grid item xs={12}>
+              <Box display="flex" justifyContent="center">
+                <Button variant="contained" color="primary" onClick={updateTimeSpent}>
+                  Update Time Spent
+                </Button>
+              </Box>
             </Grid>
           </Grid>
         </Container>
