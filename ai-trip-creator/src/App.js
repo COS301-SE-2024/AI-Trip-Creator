@@ -83,6 +83,9 @@ import Accommodations from "./components/dashboard/accommodation";
 import { UserProvider } from "./components/UserContext/UserContext";
 import { ThemeProviderWrapper } from "./components/themeContext/themeContext";
 import Activities from "./components/dashboard/activities";
+import { TimeSpentProvider } from './context/TimeSpentContext';
+import Analytics from './components/dashboard/analytics';
+
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [itinerary, setItinerary] = useState(null);
