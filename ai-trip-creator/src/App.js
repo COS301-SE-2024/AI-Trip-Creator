@@ -77,6 +77,7 @@ import Settings from "./components/dashboard/settings";
 import Flights from "./components/dashboard/flights";
 import Accommodation from "./components/dashboard/accommodation";
 import Help from "./components/dashboard/help";
+import Analytics from "./components/dashboard/analytics";
 import Itinerary from "./components/dashboard/Itinerary";
 import Accommodations from "./components/dashboard/accommodation";
 import { UserProvider } from "./components/UserContext/UserContext";
@@ -121,6 +122,7 @@ const App = () => {
               <Route path="/accommodation" element={<Accommodation />} />
               <Route path="/activities" element={<Activities />} />
               <Route path="/help" element={<Help />} />
+              <Route path="/analytics" element={<Analytics />} />
               <Route
                 path="/Itinerary"
                 element={
