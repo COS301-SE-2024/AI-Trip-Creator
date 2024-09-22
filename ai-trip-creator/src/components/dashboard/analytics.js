@@ -114,10 +114,7 @@ const Analytics = () => {
       >
         <Container maxWidth="lg">
           <h1>Analytics Dashboard</h1>
-          <Typography variant="h5" color="textSecondary" gutterBottom>
-            Analytics
-          </Typography>
-
+          <h2>Analytics</h2>
           <Grid container spacing={3}>
             {/* Travel Trends Slideshow */}
             <Grid item xs={12} md={6}>
@@ -143,7 +140,7 @@ const Analytics = () => {
                       objectFit: "cover",
                     }}
                   />
-                  <Typography variant="body1" mt={2}>
+                  <Typography variant="body1" mt={1} sx={{ fontSize: "18px", fontFamily: "Poppins",}}>
                     {travelTrendsData[currentTrendIndex].title}
                   </Typography>
                 </Box>
@@ -174,7 +171,7 @@ const Analytics = () => {
                       objectFit: "cover",
                     }}
                   />
-                  <Typography variant="body1" mt={2}>
+                  <Typography variant="body1" mt={1} sx={{ fontSize: "18px", fontFamily: "Poppins",}}>
                     {popularDestinationsData[currentDestinationIndex].title}
                   </Typography>
                 </Box>
