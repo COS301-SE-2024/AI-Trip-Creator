@@ -3,6 +3,9 @@ on:
   push:
     branches: [main, develop]
 
+env:
+  CI: false
+  REACT_APP_OPEN_AI_KEY : ${{ secrets.REACT_APP_OPEN_AI_KEY }}
 jobs:
   build:
     name: Build
