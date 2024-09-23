@@ -117,7 +117,7 @@ const Settings = () => {
           <h1  
           style={{
             position: "relative",
-            marginLeft: "-16px",
+            marginLeft: "-115px",
             marginTop: "10px",
             marginBottom: "20px",
             overflowY: "auto",
