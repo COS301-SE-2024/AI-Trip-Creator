@@ -368,7 +368,7 @@ const Flights = () => {
                 <Card
                   className="card-flight"
                   sx={{
-                    backgroundColor: isDarkMode ? "#424242" : "#f5f5f5",
+                    backgroundColor: isDarkMode ? "#424242" : "#ffffff",
                     color: isDarkMode ? "#ffffff" : "#000000",
                     boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
                     borderRadius: "8px",
