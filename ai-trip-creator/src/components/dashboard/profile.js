@@ -26,6 +26,7 @@ import {
   IconButton,
   CardMedia,
 } from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
 import Sidebar from "./sidebar";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import {
@@ -36,6 +37,7 @@ import {
   getDocs,
   query,
   where,
+  deleteDoc,
 } from "firebase/firestore";
 import { db } from "../../firebase/firebase-config";
 import "./dashboard.css";
@@ -67,6 +69,8 @@ const Profile = () => {
   const [profilePicturePreview, setProfilePicturePreview] = useState("");
   const [itineraries, setItineraries] = useState([]);
   const [selectedItinerary, setSelectedItinerary] = useState(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [itineraryToDelete, setItineraryToDelete] = useState(null);
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
@@ -126,9 +130,10 @@ const Profile = () => {
             where("uid", "==", currentUser.uid),
           );
           const itinerariesSnapshot = await getDocs(itinerariesQuery);
-          const itinerariesList = itinerariesSnapshot.docs.map((doc) =>
-            doc.data(),
-          );
+          const itinerariesList = itinerariesSnapshot.docs.map((doc) => ({
+            ...doc.data(),
+            id: doc.id,  // Ensure the ID is captured for deletion
+          }));
           setItineraries(itinerariesList);
         } catch (error) {
           console.error("Error loading user data:", error);
@@ -151,6 +156,27 @@ const Profile = () => {
       setProfilePicture(file);
       setProfilePicturePreview(URL.createObjectURL(file));
     }
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (itineraryToDelete) {
+      try {
+        await deleteDoc(doc(db, "Itinerary", itineraryToDelete.id));
+
+        setItineraries(itineraries.filter(i => i.id !== itineraryToDelete.id));
+
+        console.log("Itinerary deleted successfully");
+      } catch (error) {
+        console.error("Error deleting itinerary:", error);
+      }
+    }
+    setDeleteConfirmOpen(false);
+    setItineraryToDelete(null);
+  };
+
+  const handleDeleteClick = (itinerary) => {
+    setItineraryToDelete(itinerary);
+    setDeleteConfirmOpen(true);
   };
 
   const handlePreferencesChange = (event, newPreferences) => {
@@ -256,6 +282,11 @@ const Profile = () => {
   };
   const handleItineraryClick = (itinerary) => {
     setSelectedItinerary(itinerary);
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirmOpen(false);
+    setItineraryToDelete(null);
   };
 
   const handleCloseDialog = () => {
@@ -561,6 +592,25 @@ const Profile = () => {
                                     Created {itinerary.createdAt}
                                   </Typography>
                                 </Box>
+                                <IconButton
+                                  aria-label="delete"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteClick(itinerary);
+                                  }}
+                                  sx={{
+                                    position: 'absolute',
+                                    top: 5,
+                                    right: 5,
+                                    color: 'white',
+                                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                                    '&:hover': {
+                                      backgroundColor: 'rgba(255, 0, 0, 0.7)',
+                                    },
+                                  }}
+                                >
+                                  <DeleteIcon />
+                                </IconButton>
                               </Card>
                             );
                           })}
@@ -568,6 +618,27 @@ const Profile = () => {
                       ) : (
                         <Typography>No itineraries found.</Typography>
                       )}
+                      <Dialog
+        open={deleteConfirmOpen}
+        onClose={handleDeleteCancel}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Delete Itinerary?"}</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete this itinerary? This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteCancel} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDeleteConfirm} color="primary" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
                       <Dialog
                         open={Boolean(selectedItinerary)}
                         onClose={handleCloseDialog}
