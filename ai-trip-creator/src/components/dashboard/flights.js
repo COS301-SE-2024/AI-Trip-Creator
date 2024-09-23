@@ -492,7 +492,7 @@ const Flights = () => {
       }
       setErrorMessage(""); // Clear any previous errors
 
-      const flightOffers = await getFlightOffers(origin, destination, departureDate, 1, 10);
+      const flightOffers = await getFlightOffers(origin, destination, departureDate, 1, 12);
       if (flightOffers) {
         setFlights(flightOffers);
       } else {
@@ -587,7 +587,7 @@ const Flights = () => {
                 <Card
                   className="card-flight"
                   sx={{
-                    backgroundColor: isDarkMode ? "#424242" : "#f5f5f5",
+                    backgroundColor: isDarkMode ? "#424242" : "#ffffff",
                     color: isDarkMode ? "#ffffff" : "#000000",
                     boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
                     borderRadius: "8px",
@@ -595,15 +595,15 @@ const Flights = () => {
                   }}
                 >
                   <CardContent>
-                    <Typography variant="h6">
+                    <h2>
                       <FaPlaneDeparture style={{ marginRight: "8px", color: isDarkMode ? "#90caf9" : "#1976d2" }} />
                       {firstSegment.departure.iataCode} to {lastSegment.arrival.iataCode}
-                    </Typography>
+                    </h2>
                     <Typography>
                       <FaPlaneArrival style={{ marginRight: "8px", color: isDarkMode ? "#90caf9" : "#1976d2" }} />
                       Departure: {departureTime} | Arrival: {arrivalTime}
                     </Typography>
-                    <Typography>Carrier Code: {carrierCode}</Typography>
+                    {/* <Typography>Carrier Code: {carrierCode}</Typography> */}
                     <Typography>
                       <FaDollarSign style={{ marginRight: "8px", color: isDarkMode ? "#ffd700" : "#ffb300" }} />
                       Total Price: {totalPrice} {flight.price.currency} | {totalPriceInZar} ZAR
