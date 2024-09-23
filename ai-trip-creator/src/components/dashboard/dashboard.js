@@ -5,11 +5,11 @@ import Sidebar from "./sidebar";
 import OpenAI from 'openai';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { OPEN_AI_KEY } from "../../firebase/firebase-config";
+
 
 // Initialize the OpenAI client
 const openai = new OpenAI({
-  apiKey: OPEN_AI_KEY,
+  apiKey: process.env.REACT_APP_OPEN_AI_KEY,
   dangerouslyAllowBrowser: true
 });
 
