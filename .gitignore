@@ -2,8 +2,3 @@ node_modules/
 build/
 .env
 .DS_Store
-
-
-ai-trip-creator/src/serviceAccountKey.json
-ai-trip-creator/src/firebase/firebase-config.js
-ai-trip-creator/serviceAccountKey.json

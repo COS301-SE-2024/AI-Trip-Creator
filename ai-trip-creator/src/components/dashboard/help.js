@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import "./dashboard.css";
 import Sidebar from "./sidebar";
 import ChatbotComponent from "./chatbot/chatbot";
+import "./dashboard.css";
 
 const Help = () => {
   const [isChatbotVisible, setChatbotVisible] = useState(false);
@@ -10,12 +10,54 @@ const Help = () => {
     setChatbotVisible((prev) => !prev);
   };
 
+  // Inline styles for the container
+  const containerStyles = {
+    display: "flex",
+    height: "100vh",
+    overflow: "hidden", // Prevent scrolling
+  };
+
+  // Inline styles for the sidebar
+  const sidebarStyles = {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "250px",
+    height: "100vh",
+
+    zIndex: 1000,
+  };
+
+  // Inline styles for the content
+  const contentStyles = {
+    marginLeft: "250px", // Same as the sidebar width
+    padding: "20px",
+    overflowY: "auto", // Enable scrolling within the content area
+    width: "calc(100% - 250px)", // Adjust width to fill the remaining space
+  };
+
+  // Inline style for the floating button
+  const floatingButtonStyles = {
+    position: "fixed",
+    bottom: "20px",
+    right: "20px",
+    padding: "10px 20px",
+    borderRadius: "50%",
+    backgroundColor: "#376B7E",
+    color: "#fff",
+    border: "none",
+    cursor: "pointer",
+    zIndex: 1001,
+  };
+
   return (
-    <div>
-      <Sidebar />
-      <div className="content">
-        <h1>Help</h1>
-        <div className="help-content">
+    <div style={containerStyles}>
+      <div style={sidebarStyles}>
+        <Sidebar />
+      </div>
+      <div style={contentStyles } >
+        <h1 style={{marginTop: "10px", marginLeft: "16px"}}>Help</h1>
+        <div className="help-content" style={{ marginLeft: "10px"}}>
           <h2>How to Use the AI Trip Creator</h2>
           <p>
             Welcome to the help section. Here you can find answers to common
@@ -52,13 +94,9 @@ const Help = () => {
           </ul>
         </div>
 
-        <div
-          className={`chatbot-container ${isChatbotVisible ? "visible" : ""}`}
-        >
-          {isChatbotVisible && <ChatbotComponent />}
-        </div>
+        <ChatbotComponent isVisible={isChatbotVisible} />
 
-        <button className="floating-button" onClick={toggleChatbotVisibility}>
+        <button style={floatingButtonStyles} onClick={toggleChatbotVisibility}>
           {isChatbotVisible ? "x" : "Chat"}
         </button>
       </div>
