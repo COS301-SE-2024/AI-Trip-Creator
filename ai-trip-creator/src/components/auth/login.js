@@ -69,7 +69,11 @@ const Login = ({ setIsLoggedIn, closeLogin, openSignup }) => {
         fullWidth
         required
       />
-      <Button type="submit" variant="contained" color="primary">
+      <Button 
+      type="submit" 
+      variant="contained" 
+      color="primary"
+      >
         Login
       </Button>
       <Typography variant="body2">
