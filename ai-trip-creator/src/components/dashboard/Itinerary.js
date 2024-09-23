@@ -12,22 +12,10 @@ const Itinerary = () => {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        height: "100vh",
-        overflowX: "hidden",
-      }}
-    >
+    <div className="dashboard">
       <Sidebar />
-      <div
-        style={{
-          flex: 1,
-          padding: "20px",
-          overflowY: "auto",
-          boxSizing: "border-box",
-        }}
-      >
+      <div className="content">
+        <h1>Itinerary</h1>
         {!itinerary ? (
           <ItineraryForm onGenerateItinerary={generateItinerary} />
         ) : (

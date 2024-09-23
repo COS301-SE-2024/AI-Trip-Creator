@@ -224,36 +224,17 @@ button.theme-toggle:hover {
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap");
 
 :root {
-  /* --background-color-light: #ffffff;
-  --text-color-light: #333333;
-  --primary-color-light: #3e78b2a3;
-  --secondary-color-light: #6c757d;
-  --heading1-color-light: #004ba8;*/
-
-  /* --background-color-dark: rgba(0, 0, 0, 0.477); */
- /* --background-color-dark: #0000007a;
-  --text-color-dark: #e0e0e0;
-  --primary-color-dark: #3e78b2a3;
-  --secondary-color-dark: #9aa0a6;
-  --heading1-color-dark: #3a87e5;
-
-  --card-background-light: #b4c5e4;
-  --card-background-dark: #666666; */
-
   --background-color-light: #ffffff;
   --text-color-light: #333333;
   --primary-color-light: #3e78b2a3;
   --secondary-color-light: #6c757d;
   --heading1-color-light: #004ba8;
 
-  /* --background-color-dark: rgba(0, 0, 0, 0.477); */
-  --background-color-dark: rgb(40, 40, 40);;
+  --background-color-dark: rgba(0, 0, 0, 0.477);
   --text-color-dark: #e0e0e0;
   --primary-color-dark: #3e78b2a3;
   --secondary-color-dark: #9aa0a6;
   --heading1-color-dark: #3a87e5;
-  --main-heading-size: 3.5rem; 
-  --main-heading-color: red;
 
   --card-background-light: #b4c5e4;
   --card-background-dark: #666666;
@@ -262,25 +243,23 @@ button.theme-toggle:hover {
   --transition-duration: 0.3s;
   --font-family: "Poppins", sans-serif;
   --font-family-body: "Roboto", sans-serif;
-
   /* --font-family-heading: 'Merriweather', serif; */
 }
 
 [data-theme="light"] {
-  --background-color: var(--background-color-light); 
+  --background-color: var(--background-color-light);
   --text-color: var(--text-color-light);
   --primary-color: var(--primary-color-light);
   --secondary-color: var(--secondary-color-light);
   --card-background: var(--card-background-light);
   --heading1-color: var(--heading1-color-light);
-  
 }
 
 [data-theme="dark"] {
- --background-color: var(--background-color-dark);
+  --background-color: var(--background-color-dark);
   --text-color: var(--text-color-dark);
   --primary-color: var(--primary-color-dark);
- --secondary-color: var(--secondary-color-dark);
+  --secondary-color: var(--secondary-color-dark);
   --card-background: var(--card-background-dark);
   --heading1-color: var(--heading1-color-dark);
 }
@@ -308,8 +287,6 @@ body {
 label {
   color: var(--text-color);
 }
-
-
 
 .button {
   background-color: var(--button-color-primary);
@@ -345,7 +322,7 @@ p {
   color: var(--text-color);
 }
 
-/* h1, */
+h1,
 h2,
 h3,
 h4,
@@ -365,11 +342,11 @@ h6 {
   text-align: center;
 }
 
-/* .splash-container h1 {
+.splash-container h1 {
   font-size: 3.5rem;
   font-weight: 700;
   margin-bottom: 1.5rem;
-} */
+}
 
 .splash-container button {
   background-color: var(--primary-color);
@@ -468,10 +445,10 @@ h6 {
     width var(--transition-duration);
 }
 
-/* .content h1 {
+.content h1 {
   font-size: 2rem;
   margin-bottom: 1.5rem;
-} */
+}
 
 .accommodation-item {
   background-color: #3e78b2a3;
@@ -482,7 +459,7 @@ h6 {
 h1 {
   margin: 0;
   padding-bottom: 15px;
-  font-size: 50px;
+  font-size: 55px;
   color: var(--heading1-color);
 }
 

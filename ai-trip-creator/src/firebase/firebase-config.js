@@ -2,7 +2,6 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 //import { getProfileDB } from "firebase/firestore/collection/Profile"
 import { getFirestore } from "firebase/firestore";
-import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAwuPv1t0KhiADo9MK7SZbWPgfWNcaTAeA",
@@ -15,11 +14,13 @@ const firebaseConfig = {
   measurementId: "G-K1EFHGGM1S",
 };
 
+
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 // const db = getProfileDB(app);
 const firestore = getFirestore(app);
 const db = getFirestore(app);
-const analytics = getAnalytics(app); // Initialize Google Analytics
+export { auth, firestore,db, app};
 
-export { auth, firestore,db, app, analytics};
+

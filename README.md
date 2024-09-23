@@ -2,17 +2,10 @@
 The Rolling Capstones
 
 
-[![Coverage Status](https://coveralls.io/repos/github/COS301-SE-2024/AI-Trip-Creator/badge.svg?branch=main)](https://coveralls.io/github/COS301-SE-2024/AI-Trip-Creator?branch=main)  [![System Status](https://img.shields.io/pingpong/status/sp_0f00d195b8a2427c89a76dac4273cc99)](.pingpong.host/) ![Dependencies](https://img.shields.io/badge/dependencies-Up--to--date-brightgreen) [![GitHub issues](https://img.shields.io/github/issues/COS301-SE-2024/AI-Trip-Creator.svg)](https://github.com/COS301-SE-2024/AI-Trip-Creator/issues)
+[![Coverage Status](https://coveralls.io/repos/github/COS301-SE-2024/AI-Trip-Creator/badge.svg?branch=main)](https://coveralls.io/github/COS301-SE-2024/AI-Trip-Creator?branch=main) ![CI](https://github.com/COS301-SE-2024/AI-Trip-Creator/actions/workflows/ci.yml/badge.svg) [![System Status](https://img.shields.io/pingpong/status/sp_0f00d195b8a2427c89a76dac4273cc99)](.pingpong.host/) ![Dependencies](https://img.shields.io/badge/dependencies-Up--to--date-brightgreen) [![GitHub issues](https://img.shields.io/github/issues/COS301-SE-2024/AI-Trip-Creator.svg)](https://github.com/COS301-SE-2024/AI-Trip-Creator/issues)
 
-# Table of contents
-- Purpose of project
-- Demo links
-- Documentation
-- Team members
-- Repository information
 
-## Purpose of project
-The purpose of this application is to use the power of an AI chatbot and virtual assistant to aid users in planning for trips.
+Our task is to create a Progressive Web Application (PWA) that leverages the power of an AI chatbot and virtual assistant to aid users in planning for trips.
 At a high level, the web application should achieve the following:
 1. Reduce the difficulty of planning trips:
    Reduce the cognitive load that comes with trip planning by presenting the user(s) with curated travel plans that cater to their needs
@@ -23,27 +16,14 @@ At a high level, the web application should achieve the following:
    and ensuring that they do not have to pay more than what is necessary for their trip.
 4. Provide a user-friendly interface
    The interface should be quick to learn and easy to understand providing the user(s) with all the information they need to ease the process of travel planning.
-## Demo links
+
 ### Demo1-video-
-
-## Documentation
-
 ### Demo 1 Documentation: https://docs.google.com/document/d/19L6aMWtfrBhs8b1KxlzUgDt6_VR9y-CtPlmndlVveJM/edit?usp=sharing
 ### Demo 2 Documentation: https://drive.google.com/drive/folders/1FdCSEWLEiCJMx1wZnsEbrxyj8pMCxOQv?usp=drive_link
-### Demo 3 Documentation: https://docs.google.com/document/d/1WftryvZLKDnwDYBZSdE5w6eT0XxTaJnezaBwjwcu9R0/edit?usp=sharing
-
-### Technical Installation https://github.com/COS301-SE-2024/AI-Trip-Creator/blob/Documentation/Technical_installation.pdf
-
-### User manual https://github.com/COS301-SE-2024/AI-Trip-Creator/blob/Documentation/User_manual.pdf
-
-### Coding Standards: https://docs.google.com/document/d/1t-oqqG4aHLipHFRUZ-bhNzYQLz90ghLKzz5P_EyJZ2k/edit?usp=sharing
-
-### Architectural Requirements: https://docs.google.com/document/d/1H7bH4GkZ-gYgsrXFR4yK0Zux2w1p5OAweX4wgQijOp0/edit?usp=sharing
-
 ### Project Board- https://github.com/orgs/COS301-SE-2024/projects/110
-### Deployed application: [ai-trip-creator.web.app/](https://ai-trip-creator.web.app/)
+### https://ai-trip-creator.vercel.app/
     
-## Team Members 
+# Team Members 
 
 | Member         | Contact                                                                                   | Description                                                                                                                                 |
 |----------------|-------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|

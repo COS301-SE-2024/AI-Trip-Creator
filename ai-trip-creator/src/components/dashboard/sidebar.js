@@ -23,9 +23,7 @@ import {
   FaQuestion,
   FaCog,
   FaSignOutAlt,
-  FaRunning,
 } from "react-icons/fa";
-import { MdOutlineAnalytics } from "react-icons/md";
 
 const Sidebar = () => {
   const { toggleTheme } = useTheme();
@@ -120,21 +118,11 @@ const Sidebar = () => {
           {/* Example: Replace with your own icon component */}
           <ListItemText primary="Accommodation" />
         </ListItem>
-        <ListItem button component={Link} to="/activities">
-          <FaRunning style={{ marginRight: "10px" }} />{" "}
-          {/* Example: Replace with your own icon component */}
-          <ListItemText primary="Things to do" />
-        </ListItem>
         <Divider sx={{ my: 2, borderColor: "#34495e" }} />
         <ListItem button component={Link} to="/profile">
           <FaUser style={{ marginRight: "10px" }} />{" "}
           {/* Example: Replace with your own icon component */}
           <ListItemText primary="Profile" />
-        </ListItem>
-        <ListItem button component={Link} to="/analytics">
-          <MdOutlineAnalytics style={{ marginRight: "10px" }} />{" "}
-          {/* Example: Replace with your own icon component */}
-          <ListItemText primary="Analytics" />
         </ListItem>
         <ListItem button component={Link} to="/help">
           <FaQuestion style={{ marginRight: "10px" }} />{" "}

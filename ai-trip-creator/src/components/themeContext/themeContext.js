@@ -64,13 +64,11 @@ export const ThemeProviderWrapper = ({ children }) => {
           mode,
           ...(mode === "dark" && {
             background: {
-              // default: "#121212", // Use a lighter shade of grey for dark mode
-              // paper: "#1d1d1d",
-              default: "#0000007a",
-              paper: "#424242",
+              default: "#121212", // Use a lighter shade of grey for dark mode
+              paper: "#1d1d1d",
             },
             text: {
-              primary: "#0000007a",
+              primary: "#e0e0e0",
             },
           }),
         },

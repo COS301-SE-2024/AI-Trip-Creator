@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "./sidebar";
 import { Card, CardContent, Typography, Box, Grid } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import "./dashboard.css";
 import { FaPlaneDeparture, FaPlaneArrival, FaDollarSign } from "react-icons/fa";
 
 const client_id = "rwfsFIbmTtMXDAAjzXKCBcR6lZZirbin";
