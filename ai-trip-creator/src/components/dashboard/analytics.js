@@ -1062,7 +1062,7 @@ const Analytics = () => {
             </Grid>
           </Grid>
         
-          <h2>User Analytics</h2>
+          <h2>User Activity</h2>
 
           <Grid container spacing={3}>
             {/* Time Spent on Page */}
