@@ -1135,6 +1135,7 @@ const Dashboard = () => {
 
   return (
     <div style={{ display: "flex", height: "100vh", flexDirection: "column" }}>
+      
       <Sidebar
         style={{
           flex: "0 0 250px",
@@ -1143,7 +1144,7 @@ const Dashboard = () => {
           borderRight: "1px solid #ddd",
         }}
       />
-
+      
       <div
         style={{
           marginLeft: "250px",
@@ -1152,6 +1153,7 @@ const Dashboard = () => {
           flexDirection: "column",
         }}
       >
+        <h1 style={{marginLeft: "28px", marginTop: "30px"}}>AI Trip Planning</h1>
         {showCards && (
           <Box
             sx={{
@@ -1160,9 +1162,10 @@ const Dashboard = () => {
               backgroundColor: "#f7f7f7",
             }}
           >
-            <Typography variant="h3" gutterBottom>
+            {/* <Typography variant="h3" gutterBottom>
               AI Trip Planning
-            </Typography>
+            </Typography> */}
+
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
               <Card sx={{ minWidth: 150, backgroundColor: "#e1f5fe" }}>
                 <CardContent sx={{ padding: 1 }}>
