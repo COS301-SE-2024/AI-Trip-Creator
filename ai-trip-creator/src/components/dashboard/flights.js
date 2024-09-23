@@ -492,7 +492,7 @@ const Flights = () => {
       }
       setErrorMessage(""); // Clear any previous errors
 
-      const flightOffers = await getFlightOffers(origin, destination, departureDate, 1, 12);
+      const flightOffers = await getFlightOffers(origin, destination, departureDate, 1, 9);
       if (flightOffers) {
         setFlights(flightOffers);
       } else {
