@@ -775,3 +775,5 @@ const Profile = () => {
 };
 
 export default Profile;
+
+//Initial fix to get profile code to work
