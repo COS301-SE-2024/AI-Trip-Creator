@@ -321,9 +321,9 @@ const Profile = () => {
       >
         <Sidebar />
       </Drawer>
-      <Box p={3} sx={{ ml: isSmUp ? "240px" : "0", overflowX: "hidden" }}>
+      <Box p={3} sx={{ ml: isSmUp ? "380px" : "0", overflowX: "hidden", width: "950px" }}>
         <Box p={3} sx={{ minHeight: "50vh" }}>
-          <h1 style={{ marginTop: "-20px" }}>My Profile</h1>
+        <h1 style={{ marginTop: "-20px", marginLeft: "25px"}}>My Profile</h1>
           {loading ? (
             <Box
               display="flex"
@@ -333,6 +333,7 @@ const Profile = () => {
             >
               <CircularProgress />
             </Box>
+            
           ) : (
             <Card
               sx={{
@@ -623,7 +624,7 @@ const Profile = () => {
         onClose={handleDeleteCancel}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
-      >
+        >
         <DialogTitle id="alert-dialog-title">{"Delete Itinerary?"}</DialogTitle>
         <DialogContent>
           <Typography>
@@ -638,7 +639,7 @@ const Profile = () => {
             Delete
           </Button>
         </DialogActions>
-      </Dialog>
+        </Dialog>
                       <Dialog
                         open={Boolean(selectedItinerary)}
                         onClose={handleCloseDialog}
@@ -682,93 +683,6 @@ const Profile = () => {
             </Card>
           )}
         </Box>
-        <Container maxWidth="lg" sx={{ mt: 5 }}>
-          <h1>Analytic Dashboard</h1>
-          <Typography variant="body1" paragraph>
-            Welcome to your analytics dashboard. Here you can view insights
-            about user activity and trip creation.
-          </Typography>
-          <Typography variant="h5" color="textSecondary" gutterBottom>
-            Analytics
-          </Typography>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
-              <Paper
-                elevation={3}
-                sx={{ p: 2, bgcolor: isDarkMode ? "#424242" : "#ffffff" }}
-              >
-                <Typography variant="h6" gutterBottom>
-                  Travel Trends
-                </Typography>
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  height="150px"
-                >
-                  <CircularProgress />
-                </Box>
-                <Typography
-                  variant="body2"
-                  color="textSecondary"
-                  align="center"
-                >
-                  Loading travel trends data...
-                </Typography>
-              </Paper>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Paper
-                elevation={3}
-                sx={{ p: 2, bgcolor: isDarkMode ? "#424242" : "#ffffff" }}
-              >
-                <Typography variant="h6" gutterBottom>
-                  Popular Destinations
-                </Typography>
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  height="150px"
-                >
-                  <CircularProgress />
-                </Box>
-                <Typography
-                  variant="body2"
-                  color="textSecondary"
-                  align="center"
-                >
-                  Loading popular destinations data...
-                </Typography>
-              </Paper>
-            </Grid>
-            <Grid item xs={12}>
-              <Paper
-                elevation={3}
-                sx={{ p: 2, bgcolor: isDarkMode ? "#424242" : "#ffffff" }}
-              >
-                <Typography variant="h6" gutterBottom>
-                  User Activity
-                </Typography>
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  height="150px"
-                >
-                  <CircularProgress />
-                </Box>
-                <Typography
-                  variant="body2"
-                  color="textSecondary"
-                  align="center"
-                >
-                  Loading user activity data...
-                </Typography>
-              </Paper>
-            </Grid>
-          </Grid>
-        </Container>
       </Box>
     </Box>
   );
