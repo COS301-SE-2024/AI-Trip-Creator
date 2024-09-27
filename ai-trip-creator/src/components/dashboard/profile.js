@@ -307,6 +307,11 @@ const Profile = () => {
     "Nightlife",
   ];
 
+  const cleanItineraryText = (text) => {
+    // Remove markdown symbols like ** and ##
+    return text.replace(/\*\*/g, '').replace(/##/g, '').trim();
+  };
+
   return (
     <Box display="flex">
       <Drawer
@@ -640,33 +645,112 @@ const Profile = () => {
           </Button>
         </DialogActions>
         </Dialog>
-                      <Dialog
-                        open={Boolean(selectedItinerary)}
-                        onClose={handleCloseDialog}
-                        fullWidth
-                      >
-                        <DialogTitle>Itinerary Details</DialogTitle>
-                        <DialogContent>
-                          {selectedItinerary && (
-                            <Box>
-                              <Typography variant="body3">
-                                Trip to {selectedItinerary.destination}
-                                <br />
-                                {`Duration: ${selectedItinerary.duration}`}
-                                <br />
-                                {`Created: ${selectedItinerary.createdAt}`}
-                                <br />
-                                {` ${selectedItinerary.itineraryText}`}
-                              </Typography>
-                            </Box>
-                          )}
-                        </DialogContent>
-                        <DialogActions>
-                          <Button onClick={handleCloseDialog} color="primary">
-                            Close
-                          </Button>
-                        </DialogActions>
-                      </Dialog>
+        <Dialog
+  open={Boolean(selectedItinerary)}
+  onClose={handleCloseDialog}
+  fullWidth
+  maxWidth="md" // Set dialog size
+>
+  <DialogTitle>Itinerary Details</DialogTitle>
+  <DialogContent>
+    {selectedItinerary && (
+      <Box>
+        {/* Destination image at the top with full width */}
+        <CardMedia
+          component="img"
+          height="300"
+          image={selectedItinerary.image}
+          alt={selectedItinerary.destination}
+          onError={(e) => {
+            e.target.src = selectedItinerary.altimage; // Set fallback image
+          }}
+        />
+
+        {/* Itinerary information */}
+        <Typography
+          variant="h4"
+          gutterBottom
+          style={{
+            fontWeight: "bold",
+            marginTop: "20px",
+            color: "#333", // Darker color for the title
+          }}
+        >
+          {selectedItinerary.title}
+        </Typography>
+
+        <Typography
+          variant="body1"
+          gutterBottom
+          style={{
+            color: "#666", // Slightly lighter for subtitle
+            marginBottom: "10px",
+          }}
+        >
+          This itinerary focuses on exploring the historical aspects of {selectedItinerary.destination}.
+        </Typography>
+
+        <Typography
+          variant="body2"
+          color="textSecondary"
+          gutterBottom
+          style={{ fontStyle: "italic" }}
+        >
+          Created on {selectedItinerary.createdAt}
+        </Typography>
+
+        {/* Day-by-day itinerary */}
+        {selectedItinerary.itineraryText && (
+          <Box mt={2}>
+            <Grid container spacing={2}>
+              {selectedItinerary.itineraryText
+                .split(/(?=\*\*Day \d+:)/g) // Split by "Day"
+                .filter((day) => day.trim() !== "") // Filter out empty days
+                .map((dayText, index) => (
+                  <Grid item xs={12} key={index}>
+                    <Card
+                      style={{
+                        borderRadius: "10px",
+                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Soft shadow for card
+                        backgroundColor: "#fafafa", // Light background for readability
+                      }}
+                    >
+                      <CardContent>
+                        <Typography
+                          variant="h6"
+                          style={{
+                            fontWeight: "bold",
+                            marginBottom: "10px",
+                            color: "#333", // Darker color for day title
+                          }}
+                        >
+                          {cleanItineraryText(dayText.split(":", 1)[0])} {/* Display Day title */}
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          style={{
+                            color: "#555", // Slightly lighter for text content
+                            lineHeight: "1.5", // Increased line height for readability
+                          }}
+                        >
+                          {cleanItineraryText(dayText.split(":").slice(1).join(":"))} {/* Display rest of the day info */}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
+            </Grid>
+          </Box>
+        )}
+      </Box>
+    )}
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={handleCloseDialog} color="primary">
+      Close
+    </Button>
+  </DialogActions>
+</Dialog>
                     </Box>
                     <Box mt={3} display="flex" justifyContent="center">
                       <Button

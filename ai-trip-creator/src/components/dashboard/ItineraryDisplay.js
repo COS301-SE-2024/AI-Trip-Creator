@@ -242,15 +242,18 @@ function ItineraryDisplay({ itinerary }) {
   }, [itinerary]);
 
   const getDetails = () => {
-    const details = {
-      "1-3 days": "A short and sweet trip with the highlights of the city.",
-      "4-7 days":
-        "A more immersive experience, allowing for additional activities.",
-      "8-14 days":
-        "A deep dive into the city with plenty of time for relaxation and exploration.",
-      "15+ days":
-        "An extensive journey to fully explore all the attractions and hidden gems.",
-    };
+      const dynamicDuration = itinerary.duration;
+
+    let durationDetails;
+    if (dynamicDuration <= 3) {
+      durationDetails = "A short and sweet trip with the highlights of the city.";
+    } else if (dynamicDuration <= 7) {
+      durationDetails = "A more immersive experience, allowing for additional activities.";
+    } else if (dynamicDuration <= 14) {
+      durationDetails = "A deep dive into the city with plenty of time for relaxation and exploration.";
+    } else {
+    durationDetails = "An extensive journey to fully explore all the attractions and hidden gems.";
+    }
 
     const interestsDetails = {
       Culture: "Museums, historical landmarks, and cultural events.",
@@ -263,10 +266,10 @@ function ItineraryDisplay({ itinerary }) {
     };
 
     return {
-      durationDetails: details[itinerary.duration],
+      durationDetails,
       interestsDetails: itinerary.interests
-        .map((interest) => interestsDetails[interest])
-        .join(", "),
+      .map((interest) => interestsDetails[interest])
+      .join(", "),
     };
   };
 
