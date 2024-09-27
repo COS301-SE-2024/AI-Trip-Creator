@@ -82,8 +82,8 @@ const Accommodation = () => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null); // Track user authentication state
   const [booked, setBooked] = useState({}); // Track booked state for each accommodation
+  const [alert, setAlert] = useState("");
   const location = useLocation();
-
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -99,7 +99,7 @@ const Accommodation = () => {
 
     if (destinationParam) {
       setQuery(destinationParam);
-      handleSearch(destinationParam.toLowerCase().replace(/\s+/g, ""));
+      handleSearch(destinationParam);
     }
   }, [location, user]);
 
@@ -116,13 +116,18 @@ const Accommodation = () => {
       const accommodationsRef = collection(db, "Accommodation");
       const q = firestoreQuery(
         accommodationsRef,
-        where("city", "==", searchQuery),
+        where("city", "==", searchQuery.toLowerCase().replace(/\s+/g, "")),
       );
       const querySnapshot = await getDocs(q);
-
+      const seenNames = new Set();
       const results = [];
+
       querySnapshot.forEach((doc) => {
-        results.push(doc.data());
+        const data = doc.data();
+        if (!seenNames.has(data.name.toLowerCase())) {
+          seenNames.add(data.name.toLowerCase());
+          results.push(data);
+        }
       });
 
       if (results.length > 0) {
@@ -130,9 +135,15 @@ const Accommodation = () => {
         setFilteredResults(results);
         setError("");
       } else {
-        setError(`No accommodations found for "${searchQuery}"`);
+        const closestCity = getClosestCity(searchQuery);
+        setError(
+          `No accommodations found for "${searchQuery}". Did you mean "${closestCity}"?`,
+        );
+
         setSearchResults([]);
         setFilteredResults([]);
+        setAlert(closestCity);
+        //setQuery(closestCity); automatically searches for nearest matching word
       }
     } catch (error) {
       console.error("Error fetching search results from Firestore:", error);
