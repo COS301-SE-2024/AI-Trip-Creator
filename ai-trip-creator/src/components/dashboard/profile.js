@@ -323,7 +323,7 @@ const Profile = () => {
       </Drawer>
       <Box p={3} sx={{ ml: isSmUp ? "380px" : "0", overflowX: "hidden", width: "950px" }}>
         <Box p={3} sx={{ minHeight: "50vh" }}>
-        <h1 style={{ marginTop: "-20px", marginLeft: "25px"}}>My Profile</h1>
+        <h1 style={{ marginTop: "-20px", marginLeft: "-50px"}}>My Profile</h1>
           {loading ? (
             <Box
               display="flex"
