@@ -28,6 +28,13 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+const allowedCities = [
+  "Pretoria",
+  "Johannesburg",
+  "Cape Town",
+  "Durban",
+  "Gqeberha",
+];
 
 const Accommodation = () => {
   const theme = useTheme();
@@ -161,9 +168,7 @@ const Accommodation = () => {
   };
 
   return (
-    <Box sx={{ display: "flex", 
-      
-    }}>
+    <Box sx={{ display: "flex" }}>
       <Sidebar
         sx={{
           width: "250px",
@@ -214,9 +219,9 @@ const Accommodation = () => {
                   </InputAdornment>
                 ),
               }}
-              sx={{ 
-                flexGrow: 1, 
-                minWidth: "200px", 
+              sx={{
+                flexGrow: 1,
+                minWidth: "200px",
                 input: {
                   color: isDarkMode ? "#ffffff" : "#000000",
                 },
@@ -245,20 +250,35 @@ const Accommodation = () => {
               <FormControl fullWidth sx={{ mb: 2 }}>
                 <InputLabel htmlFor="sort-by-select">Sort By</InputLabel>
                 <Select
-                  sx={{color: isDarkMode ? "#ffffff" : "#000000"}}
+                  sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
                   value={sortOption}
                   onChange={handleSortChange}
                   inputProps={{ id: "sort-by-select" }}
                 >
-                  <MenuItem value="priceAsc" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>Price: Low to High</MenuItem>
-                  <MenuItem value="priceDesc" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>Price: High to Low</MenuItem>
-                  <MenuItem value="ratingDesc" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>Rating: High to Low</MenuItem>
+                  <MenuItem
+                    value="priceAsc"
+                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                  >
+                    Price: Low to High
+                  </MenuItem>
+                  <MenuItem
+                    value="priceDesc"
+                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                  >
+                    Price: High to Low
+                  </MenuItem>
+                  <MenuItem
+                    value="ratingDesc"
+                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                  >
+                    Rating: High to Low
+                  </MenuItem>
                 </Select>
               </FormControl>
               <FormControl component="fieldset" sx={{ mb: 2 }}>
                 <Typography>Price Range</Typography>
                 <Slider
-                  sx= {{color: isDarkMode ? "#ffffff" : "#000000"}}
+                  sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
                   value={filters.price}
                   onChange={handleFilterChange}
                   valueLabelDisplay="auto"
@@ -270,23 +290,78 @@ const Accommodation = () => {
               <FormControl fullWidth sx={{ mb: 2 }}>
                 <InputLabel htmlFor="rating-select">Minimum Rating</InputLabel>
                 <Select
-                  sx={{color: isDarkMode ? "#ffffff" : "#000000"}}
+                  sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
                   name="rating"
                   value={filters.rating}
                   onChange={handleFilterChange}
                   inputProps={{ id: "rating-select" }}
                 >
-                  <MenuItem value="" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>Any</MenuItem>
-                  <MenuItem value="1" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>1</MenuItem>
-                  <MenuItem value="2" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>2</MenuItem>
-                  <MenuItem value="3" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>3</MenuItem>
-                  <MenuItem value="4" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>4</MenuItem>
-                  <MenuItem value="5" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>5</MenuItem>
-                  <MenuItem value="6" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>6</MenuItem>
-                  <MenuItem value="7" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>7</MenuItem>
-                  <MenuItem value="8" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>8</MenuItem>
-                  <MenuItem value="9" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>9</MenuItem>
-                  <MenuItem value="10" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>10</MenuItem>
+                  <MenuItem
+                    value=""
+                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                  >
+                    Any
+                  </MenuItem>
+                  <MenuItem
+                    value="1"
+                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                  >
+                    1
+                  </MenuItem>
+                  <MenuItem
+                    value="2"
+                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                  >
+                    2
+                  </MenuItem>
+                  <MenuItem
+                    value="3"
+                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                  >
+                    3
+                  </MenuItem>
+                  <MenuItem
+                    value="4"
+                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                  >
+                    4
+                  </MenuItem>
+                  <MenuItem
+                    value="5"
+                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                  >
+                    5
+                  </MenuItem>
+                  <MenuItem
+                    value="6"
+                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                  >
+                    6
+                  </MenuItem>
+                  <MenuItem
+                    value="7"
+                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                  >
+                    7
+                  </MenuItem>
+                  <MenuItem
+                    value="8"
+                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                  >
+                    8
+                  </MenuItem>
+                  <MenuItem
+                    value="9"
+                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                  >
+                    9
+                  </MenuItem>
+                  <MenuItem
+                    value="10"
+                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                  >
+                    10
+                  </MenuItem>
                 </Select>
               </FormControl>
               <Button
