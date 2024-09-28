@@ -398,6 +398,34 @@ function ItineraryDisplay({ itinerary }) {
     }
   };
 
+  const carouselSettings = {
+  dots: true,  // Show navigation dots
+  infinite: true,  // Infinite scroll
+  speed: 500,  // Transition speed
+  slidesToShow: 3,  // Number of cards to show at once
+  slidesToScroll: 1,  // How many to scroll on click
+  responsive: [  // Make the carousel responsive
+    {
+      breakpoint: 1024,  // Max width for this setting
+      settings: {
+        slidesToShow: 2,
+        slidesToScroll: 1,
+        infinite: true,
+        dots: true
+      }
+    },
+    {
+      breakpoint: 600,
+      settings: {
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        infinite: true,
+        dots: true
+      }
+    }
+  ]
+};
+
   return (
     <Box
       sx={{

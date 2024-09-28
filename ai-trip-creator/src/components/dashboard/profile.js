@@ -25,8 +25,10 @@ import {
   DialogActions,
   IconButton,
   CardMedia,
+  Slider,
 } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
+import Carousel from 'react-material-ui-carousel';
 import Sidebar from "./sidebar";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import {
@@ -309,6 +311,34 @@ const Profile = () => {
     "Nightlife",
   ];
 
+  const carouselSettings = {
+    dots: true,  // Show navigation dots
+    infinite: true,  // Infinite scroll
+    speed: 500,  // Transition speed
+    slidesToShow: 3,  // Number of cards to show at once
+    slidesToScroll: 1,  // How many to scroll on click
+    responsive: [  // Make the carousel responsive
+      {
+        breakpoint: 1024,  // Max width for this setting
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+          infinite: true,
+          dots: true
+        }
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          infinite: true,
+          dots: true
+        }
+      }
+    ]
+  };
+
   return (
     <Box display="flex">
       <Drawer
@@ -542,7 +572,10 @@ const Profile = () => {
                     <Box mt={4}>
                       <Typography variant="h6">My Itineraries</Typography>
                       {itineraries.length > 0 ? (
-                        <Box display="flex" flexWrap="wrap" gap={2}>
+                         <Carousel 
+                         indicators={true}  // Dots to indicate slides
+                         navButtonsAlwaysVisible={true}  // Navigation arrows always visible
+                       >
                           {itineraries.map((itinerary, index) => {
                             // Extract the title (text between "##" and "Day 1")
                             const itineraryTitle = itinerary.itineraryText
@@ -568,7 +601,7 @@ const Profile = () => {
                                 <CardMedia
                                   component="img"
                                   image={itinerary.image}
-                                  alt={itinerary.name}
+                                  alt={itinerary.destination}
                                   onError={(e) => {
                                     e.target.src = itinerary.altimage; // Set fallback image if the primary image fails to load
                                   }}
@@ -590,8 +623,6 @@ const Profile = () => {
                                   }}
                                 >
                                   <Typography variant="body6">
-                                    {itineraryTitle}
-                                    <br />
                                     Created {itinerary.createdAt}
                                   </Typography>
                                 </Box>
@@ -617,7 +648,7 @@ const Profile = () => {
                               </Card>
                             );
                           })}
-                        </Box>
+                          </Carousel>
                       ) : (
                         <Typography>No itineraries found.</Typography>
                       )}
@@ -684,7 +715,7 @@ const Profile = () => {
             marginBottom: "10px",
           }}
         >
-          This itinerary focuses on exploring the historical aspects of {selectedItinerary.destination}.
+
         </Typography>
 
         <Typography
