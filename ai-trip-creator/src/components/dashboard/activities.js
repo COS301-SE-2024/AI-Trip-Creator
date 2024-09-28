@@ -444,24 +444,28 @@ const Activities = () => {
         <Box sx={{ mt: 1 }}>
           <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
             <Button
+              sx={{ textTransform: "none" }}
               variant={showCategory === "all" ? "contained" : "outlined"}
               onClick={() => handleFilterByCategory("all")}
             >
               All
             </Button>
             <Button
+              sx={{ textTransform: "none" }}
               variant={showCategory === "favourites" ? "contained" : "outlined"}
               onClick={() => handleFilterByCategory("favourites")}
             >
               Favourites
             </Button>
             <Button
+              sx={{ textTransform: "none" }}
               variant={showCategory === "Restaurant" ? "contained" : "outlined"}
               onClick={() => handleFilterByCategory("Restaurant")}
             >
               Restaurants
             </Button>
             <Button
+              sx={{ textTransform: "none" }}
               variant={
                 showCategory === "Things_to_do" ? "contained" : "outlined"
               }
