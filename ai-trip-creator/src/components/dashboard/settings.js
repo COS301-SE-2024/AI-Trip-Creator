@@ -7,15 +7,10 @@ import {
   Typography,
   Container,
   Box,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  // useTheme,
 } from "@mui/material";
 import {
   getAuth,
@@ -24,18 +19,17 @@ import {
   EmailAuthProvider,
   deleteUser,
 } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 import "./dashboard.css";
 
 const Settings = () => {
-  // const theme = useTheme();
-  // const isDarkMode = theme.palette.mode === "dark";
   const { toggleTheme } = useTheme();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [language, setLanguage] = useState("en"); // Default language
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [openConfirmDialog, setOpenConfirmDialog] = useState(false); // For delete account confirmation dialog
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const navigate = useNavigate();
 
   const auth = getAuth();
   const user = auth.currentUser;
@@ -63,11 +57,6 @@ const Settings = () => {
     }
   };
 
-  const handleLanguageChange = (event) => {
-    setLanguage(event.target.value);
-    // Implement the logic to change the language in your app
-  };
-
   const handleToggle = () => {
     toggleTheme();
   };
@@ -86,7 +75,7 @@ const Settings = () => {
         await reauthenticateWithCredential(user, credential);
         await deleteUser(user);
         setSuccess("Account deleted successfully.");
-        // Redirect user or handle post-deletion logic here
+        navigate("/"); // Redirect to splash page after deletion
       } catch (error) {
         console.error("Account deletion failed:", error);
         setError(error.message);
@@ -176,32 +165,6 @@ const Settings = () => {
               Toggle Theme
             </Button>
           </Box>
-          {/*
-          <Box
-            mb={4}
-            p={2}
-            border={1}
-            borderColor="grey.300"
-            borderRadius="8px"
-          >
-            <Typography variant="h5" gutterBottom>
-              Language Preferences
-            </Typography>
-            <Typography variant="body1">
-              Select your preferred language.
-            </Typography>
-            <FormControl fullWidth margin="normal">
-              <InputLabel>Language</InputLabel>
-              <Select value={language} onChange={handleLanguageChange}>
-                <MenuItem value="en">English</MenuItem>
-                <MenuItem value="es">Spanish</MenuItem>
-                <MenuItem value="fr">French</MenuItem>
-                <MenuItem value="de">German</MenuItem>
-                <MenuItem value="zh">Chinese</MenuItem>
-                 Add more languages as needed 
-              </Select>
-            </FormControl>
-          </Box>*/}
 
           <Box
             mb={4}
