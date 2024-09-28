@@ -612,17 +612,6 @@ function ItineraryForm({ onGenerateItinerary }) {
     { name: "Gqeberha", image: gqerberhaImg },
   ];
 
-  const durations = ["1-3 days", "4-7 days", "8-14 days", "15+ days"];
-  // const interests = [
-  //   "Culture",
-  //   "Adventure",
-  //   "Relaxation",
-  //   "Nature",
-  //   "Food",
-  //   "Shopping",
-  //   "Nightlife",
-  // ];
-
   const interests = [
     "Outdoor",
     "Indoor",

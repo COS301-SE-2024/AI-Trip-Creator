@@ -147,14 +147,6 @@ function ItineraryDisplay({ itinerary }) {
   const [currentDate, setCurrentDate] = useState("");
   const [randomNum, setRandomNum] = useState("");
 
-  // const destinationImages = {
-  //   durban: durbanImg,
-  //   johannesburg: johannesburgImg,
-  //   capetown: capetownImg,
-  //   pretoria: pretoriaImg,
-  //   gqeberha: gqerberhaImg,
-  // };
-
   // const destinationImage = destinationImages[destinationKey] || fallbackImageUrl;
   const des = itinerary.destination.toLowerCase();
   let destinationImage

@@ -41,6 +41,8 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase/firebase-config";
 import "./dashboard.css";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const Profile = () => {
   const theme = useTheme();
@@ -306,11 +308,6 @@ const Profile = () => {
     "Food",
     "Nightlife",
   ];
-
-  const cleanItineraryText = (text) => {
-    // Remove markdown symbols like ** and ##
-    return text.replace(/\*\*/g, '').replace(/##/g, '').trim();
-  };
 
   return (
     <Box display="flex">
@@ -716,25 +713,17 @@ const Profile = () => {
                       }}
                     >
                       <CardContent>
-                        <Typography
-                          variant="h6"
-                          style={{
-                            fontWeight: "bold",
-                            marginBottom: "10px",
-                            color: "#333", // Darker color for day title
+                        {/* Use ReactMarkdown to render markdown content */}
+                        <ReactMarkdown
+                          children={dayText}
+                          remarkPlugins={[remarkGfm]} // Enable GitHub Flavored Markdown
+                          components={{
+                            h1: ({node, ...props}) => <Typography variant="h6" style={{ fontWeight: "bold", marginBottom: "10px", color: "#333" }} {...props} />,
+                            p: ({node, ...props}) => <Typography variant="body1" style={{ color: "#555", lineHeight: "1.5" }} {...props} />,
+                            ul: ({node, ...props}) => <ul style={{ marginLeft: "20px" }} {...props} />,
+                            li: ({node, ...props}) => <li style={{ color: "#555" }} {...props} />,
                           }}
-                        >
-                          {cleanItineraryText(dayText.split(":", 1)[0])} {/* Display Day title */}
-                        </Typography>
-                        <Typography
-                          variant="body1"
-                          style={{
-                            color: "#555", // Slightly lighter for text content
-                            lineHeight: "1.5", // Increased line height for readability
-                          }}
-                        >
-                          {cleanItineraryText(dayText.split(":").slice(1).join(":"))} {/* Display rest of the day info */}
-                        </Typography>
+                        />
                       </CardContent>
                     </Card>
                   </Grid>
