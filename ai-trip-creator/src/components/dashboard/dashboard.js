@@ -114,7 +114,7 @@ const Dashboard = () => {
                   sx={{
                     width: "40px",
                     height: "40px",
-                    backgroundColor: "#007bff",
+                    backgroundColor: "#376B7E",
                     color: "white",
                     borderRadius: "50%",
                     display: "flex",
@@ -135,13 +135,13 @@ const Dashboard = () => {
                     backgroundColor: "gray",
                     borderRadius: "50%",
                     marginRight: "10px",
-                    backgroundImage: "url('https://via.placeholder.com/150')", // Example image, replace with actual avatar URL
+                    backgroundImage: "url('https://via.placeholder.com/150')",
                     backgroundSize: "cover",
                   }}
                 />
               )}
 
-              {/* Speech Bubble */}
+              {/* Speechubble Styling */}
               <Box
                 sx={{
                   maxWidth: "70%",
@@ -212,12 +212,12 @@ const Dashboard = () => {
           <Button
             onClick={handleSubmit}
             sx={{
-              backgroundColor: "#007bff",
+              backgroundColor: "#5ccc9d",
               color: "white",
               borderRadius: "5px",
               padding: "10px",
               minWidth: "40px",
-              "&:hover": { backgroundColor: "#0056b3" },
+              "&:hover": { backgroundColor: "#5ddd9e" },
             }}
           >
             <FaPaperPlane />
