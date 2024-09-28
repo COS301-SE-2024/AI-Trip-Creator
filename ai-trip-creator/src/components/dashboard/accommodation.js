@@ -18,6 +18,7 @@ import {
   CircularProgress,
   useTheme,
   Autocomplete,
+  Grid,
 } from "@mui/material";
 import {
   FaFilter,
@@ -442,79 +443,96 @@ const Accommodation = () => {
           {loading ? (
             <CircularProgress />
           ) : (
-            filteredResults.map((accommodation, index) => (
-              <Card key={index} sx={{ maxWidth: 345, mb: 1 }}>
-                <CardMedia
-                  component="img"
-                  height="180"
-                  image={accommodation.image}
-                  alt={accommodation.name}
-                />
-                <CardContent>
-                  <Typography gutterBottom variant="h5" component="div">
-                    {accommodation.name}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {accommodation.description}{" "}
-                    <a href="{accomodation.link}">Read more</a>
-                    <br />
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1,
-                        }}
-                      >
+            <Grid container spacing={2} sx={{ mt: 2 }}>
+              {filteredResults.map((accommodation, index) => (
+                <Grid key={index} item xs={12} sm={6} md={4}>
+                  <Card
+                    key={index}
+                    sx={{
+                      maxWidth: 345,
+                      width: "100%",
+                      height: 500,
+                      display: "flex",
+                      flexDirection: "column",
+                      mb: 1,
+                    }}
+                  >
+                    <CardMedia
+                      component="img"
+                      height="180"
+                      image={accommodation.image}
+                      alt={accommodation.name}
+                    />
+                    <CardContent>
+                      <Typography gutterBottom variant="h5" component="div">
+                        {accommodation.name}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {accommodation.description}{" "}
+                        <a href="{accomodation.link}">Read more</a>
+                        <br />
                         <Box
                           sx={{
-                            backgroundColor: "green",
-                            color: "white",
-                            p: 1,
-                            borderRadius: "4px",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
                           }}
                         >
-                          {accommodation.rating}
-                          <br />
-                        </Box>
-                        {getReviewComment(accommodation.rating)} Rating
-                      </Box>
-                      <Box
-                        sx={{
-                          textAlign: "right",
-                          flexGrow: 1,
-                        }}
-                      >
-                        from {"  "} R{accommodation.price}
-                        /night
-                        <Box
-                          sx={{ display: "flex", justifyContent: "flex-end" }}
-                        >
-                          <IconButton
-                            onClick={() => handleBookNowClick(index)}
+                          <Box
                             sx={{
-                              color: booked[index] ? "red" : "grey",
-                              backgroundColor: "transparent",
-                              "&:hover": {
-                                backgroundColor: "transparent",
-                              },
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1,
                             }}
                           >
-                            {booked[index] ? <FaHeart /> : <FaRegHeart />}
-                          </IconButton>
+                            <Box
+                              sx={{
+                                backgroundColor: "green",
+                                color: "white",
+                                p: 1,
+                                borderRadius: "4px",
+                              }}
+                            >
+                              {accommodation.rating}
+                              <br />
+                            </Box>
+                            {getReviewComment(accommodation.rating)} Rating
+                          </Box>
+                          <Box
+                            sx={{
+                              textAlign: "right",
+                              flexGrow: 1,
+                            }}
+                          >
+                            from {"  "} R{accommodation.price}
+                            /night
+                            <Box
+                              sx={{
+                                display: "flex",
+                                justifyContent: "flex-end",
+                              }}
+                            >
+                              <IconButton
+                                onClick={() => handleBookNowClick(index)}
+                                sx={{
+                                  color: booked[index] ? "red" : "grey",
+                                  backgroundColor: "transparent",
+                                  "&:hover": {
+                                    backgroundColor: "transparent",
+                                  },
+                                }}
+                              >
+                                {booked[index] ? <FaHeart /> : <FaRegHeart />}
+                              </IconButton>
+                            </Box>
+                          </Box>
                         </Box>
-                      </Box>
-                    </Box>
-                  </Typography>
-                </CardContent>
-              </Card>
-            ))
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
           )}
           {error && (
             <Typography variant="body1" color="error">
