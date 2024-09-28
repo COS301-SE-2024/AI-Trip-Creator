@@ -22,7 +22,7 @@ const Login = ({ setIsLoggedIn, closeLogin, openSignup }) => {
   const [error, setError] = useState("");
   const [resetError, setResetError] = useState("");
   const [resetSuccess, setResetSuccess] = useState("");
-  const [loading, setLoading] = useState(false); // Loading state for login
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -141,9 +141,7 @@ const Login = ({ setIsLoggedIn, closeLogin, openSignup }) => {
         >
           Signup
         </Link>
-      </Typography>
-
-      <Typography variant="body2" sx={{ textAlign: "center" }}>
+        <br />
         Forgot your password?{" "}
         <Link component="button" variant="body2" onClick={handlePasswordReset}>
           Reset Password
