@@ -11,6 +11,8 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import {
   getAuth,
@@ -29,6 +31,7 @@ const Settings = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false); // Snackbar state
   const navigate = useNavigate();
 
   const auth = getAuth();
@@ -75,7 +78,12 @@ const Settings = () => {
         await reauthenticateWithCredential(user, credential);
         await deleteUser(user);
         setSuccess("Account deleted successfully.");
-        navigate("/"); // Redirect to splash page after deletion
+        setOpenSnackbar(true); // Show snackbar
+
+        // Wait 5 seconds before redirecting
+        setTimeout(() => {
+          navigate("/"); // Redirect to splash page after deletion
+        }, 5000);
       } catch (error) {
         console.error("Account deletion failed:", error);
         setError(error.message);
@@ -234,6 +242,17 @@ const Settings = () => {
               </Button>
             </DialogActions>
           </Dialog>
+
+          {/* Snackbar for success message */}
+          <Snackbar
+            open={openSnackbar}
+            autoHideDuration={3000}
+            onClose={() => setOpenSnackbar(false)}
+          >
+            <Alert onClose={() => setOpenSnackbar(false)} severity="success">
+              Account deleted successfully. Redirecting...
+            </Alert>
+          </Snackbar>
         </Container>
       </div>
     </Box>
