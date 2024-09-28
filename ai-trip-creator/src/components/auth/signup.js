@@ -1,6 +1,10 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Button, Input, Link } from "@nextui-org/react";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+  sendEmailVerification,
+} from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, firestore } from "../../firebase/firebase-config";
 import { useNavigate } from "react-router-dom";
@@ -18,28 +22,40 @@ const Signup = ({ closeSignup, openLogin }) => {
   const handleSignup = async (e) => {
     e.preventDefault();
     setError("");
+
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    if (!password.match(passwordRegex)) {
+      setError(
+        "Password must be at least 8 characters long and contain at least one number.",
+      );
+      return;
+    }
+
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email.trim(),
+        password,
+      );
       const user = userCredential.user;
 
-      console.log("User created:", user);
-
       await updateProfile(user, { displayName: name });
-      console.log("Profile updated");
 
       await setDoc(doc(firestore, "users", user.uid), {
         uid: user.uid,
-        name: name,
-        birthday: birthday,
-        email: email,
+        name: name.trim(),
+        birthday: birthday.trim(),
+        email: email.trim(),
       });
-      console.log("Document written");
+
+      await sendEmailVerification(auth.currentUser);
 
       setShowSuccess(true);
-      navigate("/dashboard");
     } catch (error) {
       console.error("Signup failed:", error);
-      setError(error.message);
+      if (error.message === "Firebase: Error (auth/email-already-in-use).")
+        setError("Signup failed: Email already in use");
+      else setError("Signup failed: " + error.message);
     }
   };
 
@@ -56,7 +72,6 @@ const Signup = ({ closeSignup, openLogin }) => {
             padding: "0.5rem",
           }}
         >
-          {error && <p style={{ color: "red" }}>{error}</p>}
           <div style={{ marginBottom: "0.25rem", width: "100%" }}>
             <label style={{ marginBottom: "0.25rem", display: "block" }}>
               Fullname
@@ -89,6 +104,7 @@ const Signup = ({ closeSignup, openLogin }) => {
               required
             />
           </div>
+
           <div style={{ marginBottom: "0.25rem", width: "100%" }}>
             <label style={{ marginBottom: "0.25rem", display: "block" }}>
               Email
@@ -122,7 +138,7 @@ const Signup = ({ closeSignup, openLogin }) => {
               required
             />
           </div>
-
+          {error && <p style={{ color: "red" }}>{error}</p>}
           <Button
             type="submit"
             style={{
