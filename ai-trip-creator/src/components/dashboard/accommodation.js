@@ -519,19 +519,20 @@ const Accommodation = () => {
             onClick={handleToggleLikedFilter}
             variant="contained"
             sx={{
-              backgroundColor: "grey",
-              color: "white",
+              backgroundColor: "lightgrey",
+              color: "black",
               "&:hover": { backgroundColor: "grey" },
+              textTransform: "none",
             }}
           >
-            {showOnlyLiked ? "Show All" : "Show Liked"}
+            {showOnlyLiked ? "Show All" : "Show Favourites"}
           </Button>
           {loading ? (
             <CircularProgress />
           ) : (
             <Grid container spacing={2} sx={{ mt: 2 }}>
               {filteredResults.map((accommodation, index) => (
-                <Grid key={index} item xs={12} sm={6} md={4}>
+                <Grid key={index} item xs={12} sm={10} md={4}>
                   <Card
                     key={index}
                     sx={{
