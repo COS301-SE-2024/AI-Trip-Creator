@@ -34,6 +34,9 @@ import {
   query as firestoreQuery,
   where,
   getDocs,
+  doc,
+  setDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 const allowedCities = [
@@ -127,37 +130,59 @@ const Accommodation = () => {
         where("city", "==", searchQuery.toLowerCase().replace(/\s+/g, "")),
       );
       const querySnapshot = await getDocs(q);
-      const seenNames = new Set();
       const results = [];
-
       querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        if (!seenNames.has(data.name.toLowerCase())) {
-          seenNames.add(data.name.toLowerCase());
-          results.push(data);
-        }
+        results.push(doc.data());
       });
 
       if (results.length > 0) {
         setSearchResults(results);
         setFilteredResults(results);
         setError("");
+        // After fetching search results, fetch user's liked accommodations
+        fetchLikedAccommodations(results);
       } else {
-        const closestCity = getClosestCity(searchQuery);
-        setError(
-          `No accommodations found for "${searchQuery}". Did you mean "${closestCity}"?`,
-        );
-
+        setError(`No accommodations found for "${searchQuery}".`);
         setSearchResults([]);
         setFilteredResults([]);
-        setAlert(closestCity);
-        //setQuery(closestCity); automatically searches for nearest matching word
       }
     } catch (error) {
       console.error("Error fetching search results from Firestore:", error);
       setError("Failed to fetch accommodation data. Please try again.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchLikedAccommodations = async (results) => {
+    try {
+      const db = getFirestore();
+      const likedAccommodationsRef = collection(db, "LikedAccommodations");
+      const likedQuery = firestoreQuery(
+        likedAccommodationsRef,
+        where("uid", "==", user.uid),
+      );
+      const likedSnapshot = await getDocs(likedQuery);
+
+      const likedAccommodations = new Set();
+      likedSnapshot.forEach((doc) => {
+        const data = doc.data();
+        likedAccommodations.add(data.accommodationName.toLowerCase());
+      });
+
+      const updatedBooked = {};
+      results.forEach((accommodation, index) => {
+        updatedBooked[index] = likedAccommodations.has(
+          accommodation.name.toLowerCase(),
+        );
+      });
+
+      setBooked(updatedBooked); // Update the booked state to reflect liked accommodations
+    } catch (error) {
+      console.error(
+        "Error fetching liked accommodations from Firestore:",
+        error,
+      );
     }
   };
 
@@ -203,11 +228,48 @@ const Accommodation = () => {
     setFilteredResults(applyFiltersAndSorting());
   };
 
-  const handleBookNowClick = (index) => {
+  const handleBookNowClick = async (index, accommodation) => {
+    if (!user) {
+      setError("You must be logged in to like an accommodation.");
+      return;
+    }
+
+    const liked = !booked[index];
     setBooked((prevBooked) => ({
       ...prevBooked,
-      [index]: !prevBooked[index],
+      [index]: liked,
     }));
+
+    try {
+      const db = getFirestore();
+      const userUid = user.uid; // Get the authenticated user's UID
+
+      const likedAccommodationRef = doc(
+        collection(db, "LikedAccommodations"),
+        `${userUid}_${accommodation.name}`,
+      );
+
+      if (liked) {
+        // Save the accommodation to Firestore when liked
+        await setDoc(likedAccommodationRef, {
+          uid: userUid,
+          accommodationName: accommodation.name,
+          city: accommodation.city,
+          price: accommodation.price,
+          rating: accommodation.rating,
+          description: accommodation.description,
+          image: accommodation.image,
+        });
+        console.log("Accommodation liked and saved to Firestore");
+      } else {
+        // Delete the accommodation from Firestore when unliked
+        await deleteDoc(likedAccommodationRef);
+        console.log("Accommodation unliked and deleted from Firestore");
+      }
+    } catch (error) {
+      console.error("Error updating liked accommodation in Firestore:", error);
+      setError("Failed to update liked accommodation. Please try again.");
+    }
   };
 
   const getReviewComment = (rating) => {
@@ -451,7 +513,8 @@ const Accommodation = () => {
                     sx={{
                       maxWidth: 345,
                       width: "100%",
-                      height: 500,
+                      maxheight: 480,
+                      height: "100%",
                       display: "flex",
                       flexDirection: "column",
                       mb: 1,
@@ -513,7 +576,9 @@ const Accommodation = () => {
                               }}
                             >
                               <IconButton
-                                onClick={() => handleBookNowClick(index)}
+                                onClick={() =>
+                                  handleBookNowClick(index, accommodation)
+                                }
                                 sx={{
                                   color: booked[index] ? "red" : "grey",
                                   backgroundColor: "transparent",
