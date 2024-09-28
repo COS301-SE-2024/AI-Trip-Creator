@@ -1,12 +1,20 @@
 import React, { useState } from "react";
-import { Button, TextField, Link, Box, Typography } from "@mui/material";
+import {
+  Button,
+  TextField,
+  Link,
+  Box,
+  Typography,
+  Alert,
+  CircularProgress,
+} from "@mui/material";
 import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../firebase/firebase-config";
-import "./auth.css";
+import "./auth.css"; // Assuming there's custom CSS for additional styling
 
 const Login = ({ setIsLoggedIn, closeLogin, openSignup }) => {
   const [email, setEmail] = useState("");
@@ -14,14 +22,17 @@ const Login = ({ setIsLoggedIn, closeLogin, openSignup }) => {
   const [error, setError] = useState("");
   const [resetError, setResetError] = useState("");
   const [resetSuccess, setResetSuccess] = useState("");
+  const [loading, setLoading] = useState(false); // Loading state for login
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     if (!email || !password) {
-      setError("Both fields are required");
+      setError("Both fields are required.");
+      setLoading(false);
       return;
     }
 
@@ -35,15 +46,22 @@ const Login = ({ setIsLoggedIn, closeLogin, openSignup }) => {
 
       if (!user.emailVerified) {
         setError("Please verify your email before logging in.");
+        setLoading(false);
         return;
       }
 
       setIsLoggedIn(true);
       navigate("/dashboard");
     } catch (error) {
-      console.error("Login failed:", error);
-      setError("Login failed: Please check your credentials.");
-      // You might also want to throttle after a few failed attempts
+      const errorMessage =
+        error.code === "auth/wrong-password"
+          ? "Incorrect password. Please try again."
+          : error.code === "auth/user-not-found"
+          ? "No account found with this email."
+          : "Login failed. Please check your credentials.";
+
+      setError(errorMessage);
+      setLoading(false);
     }
   };
 
@@ -60,8 +78,7 @@ const Login = ({ setIsLoggedIn, closeLogin, openSignup }) => {
       await sendPasswordResetEmail(auth, email.trim());
       setResetSuccess("Password reset email sent!");
     } catch (error) {
-      console.error("Password reset failed:", error);
-      setResetError("Password reset failed: Invalid Email");
+      setResetError("Password reset failed: Invalid email.");
     }
   };
 
@@ -69,9 +86,18 @@ const Login = ({ setIsLoggedIn, closeLogin, openSignup }) => {
     <Box
       component="form"
       onSubmit={handleLogin}
-      sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 2,
+        maxWidth: 400,
+        margin: "0 auto",
+      }}
     >
-      {error && <Typography color="error">{error}</Typography>}
+      {error && <Alert severity="error">{error}</Alert>}
+      {resetError && <Alert severity="error">{resetError}</Alert>}
+      {resetSuccess && <Alert severity="success">{resetSuccess}</Alert>}
+
       <TextField
         label="Email"
         type="email"
@@ -90,10 +116,20 @@ const Login = ({ setIsLoggedIn, closeLogin, openSignup }) => {
         required
         autoComplete="current-password"
       />
-      <Button type="submit" variant="contained" color="primary">
-        Login
-      </Button>
-      <Typography variant="body2">
+
+      <Box sx={{ position: "relative" }}>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          disabled={loading} // Disable button when loading
+        >
+          {loading ? <CircularProgress size={24} /> : "Login"}
+        </Button>
+      </Box>
+
+      <Typography variant="body2" sx={{ textAlign: "center" }}>
         Don't have an account?{" "}
         <Link
           component="button"
@@ -106,14 +142,13 @@ const Login = ({ setIsLoggedIn, closeLogin, openSignup }) => {
           Signup
         </Link>
       </Typography>
-      <Typography variant="body2">
+
+      <Typography variant="body2" sx={{ textAlign: "center" }}>
         Forgot your password?{" "}
         <Link component="button" variant="body2" onClick={handlePasswordReset}>
           Reset Password
         </Link>
       </Typography>
-      {resetError && <Typography color="error">{resetError}</Typography>}
-      {resetSuccess && <Typography color="success">{resetSuccess}</Typography>}
     </Box>
   );
 };
