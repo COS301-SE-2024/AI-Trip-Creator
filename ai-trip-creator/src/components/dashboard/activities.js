@@ -96,7 +96,7 @@ const Activities = () => {
   const [booked, setBooked] = useState({}); // Track booked state for each activity
   const [alert, setAlert] = useState("");
   const [showOnlyLiked, setShowOnlyLiked] = useState(false); // Filter toggle
-
+  const [showCategory, setShowCategory] = useState("all");
   const location = useLocation();
   useEffect(() => {
     const auth = getAuth();
@@ -283,6 +283,20 @@ const Activities = () => {
       setFilteredResults(searchResults);
     }
   };
+  const handleFilterByCategory = (category) => {
+    setShowCategory(category);
+    if (category === "all") {
+      setFilteredResults(searchResults);
+    } else if (category === "favourites") {
+      const likedResults = searchResults.filter((_, index) => booked[index]);
+      setFilteredResults(likedResults);
+    } else {
+      const filteredByCategory = searchResults.filter(
+        (activity) => activity.category === category,
+      );
+      setFilteredResults(filteredByCategory);
+    }
+  };
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -375,7 +389,6 @@ const Activities = () => {
                 borderRadius: "4px",
                 p: 2,
                 mt: 2,
-                // backgroundColor: "#fff",
                 backgroundColor: isDarkMode ? "#424242" : "#ffffff",
               }}
             >
@@ -401,6 +414,7 @@ const Activities = () => {
                   </MenuItem>
                 </Select>
               </FormControl>
+
               <FormControl component="fieldset" sx={{ mb: 2 }}>
                 <Typography>Price Range</Typography>
                 <Slider
@@ -413,8 +427,8 @@ const Activities = () => {
                   step={100}
                 />
               </FormControl>
-              <FormControl>
-                {" "}
+
+              <Box sx={{}}>
                 <Button
                   variant="contained"
                   color="primary"
@@ -422,24 +436,40 @@ const Activities = () => {
                 >
                   Apply Filters
                 </Button>
-              </FormControl>
+              </Box>
             </Box>
           )}
         </Box>
 
         <Box sx={{ mt: 1 }}>
-          <Button
-            onClick={handleToggleLikedFilter}
-            variant="contained"
-            sx={{
-              backgroundColor: "lightgrey",
-              color: "black",
-              "&:hover": { backgroundColor: "grey" },
-              textTransform: "none",
-            }}
-          >
-            {showOnlyLiked ? "Show All" : "Show Favourites"}
-          </Button>
+          <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
+            <Button
+              variant={showCategory === "all" ? "contained" : "outlined"}
+              onClick={() => handleFilterByCategory("all")}
+            >
+              All
+            </Button>
+            <Button
+              variant={showCategory === "favourites" ? "contained" : "outlined"}
+              onClick={() => handleFilterByCategory("favourites")}
+            >
+              Favourites
+            </Button>
+            <Button
+              variant={showCategory === "Restaurant" ? "contained" : "outlined"}
+              onClick={() => handleFilterByCategory("Restaurant")}
+            >
+              Restaurants
+            </Button>
+            <Button
+              variant={
+                showCategory === "Things_to_do" ? "contained" : "outlined"
+              }
+              onClick={() => handleFilterByCategory("Things_to_do")}
+            >
+              Things to Do
+            </Button>
+          </Box>
           {loading ? (
             <CircularProgress />
           ) : (
