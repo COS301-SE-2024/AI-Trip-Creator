@@ -132,17 +132,23 @@ const Accommodation = () => {
         where("city", "==", searchQuery.toLowerCase().replace(/\s+/g, "")),
       );
       const querySnapshot = await getDocs(q);
-      const results = [];
+      let results = [];
       querySnapshot.forEach((doc) => {
         results.push(doc.data());
       });
 
-      if (results.length > 0) {
-        setSearchResults(results);
-        setFilteredResults(results);
+      // Filter out duplicates based on unique property (e.g., name or id)
+      const uniqueResults = results.filter(
+        (accommodation, index, self) =>
+          index === self.findIndex((a) => a.name === accommodation.name),
+      );
+
+      if (uniqueResults.length > 0) {
+        setSearchResults(uniqueResults);
+        setFilteredResults(uniqueResults);
         setError("");
-        // After fetching search results, fetch user's liked accommodations
-        fetchLikedAccommodations(results);
+        // Fetch user's liked accommodations after filtering duplicates
+        fetchLikedAccommodations(uniqueResults);
       } else {
         setError(`No accommodations found for "${searchQuery}".`);
         setSearchResults([]);
