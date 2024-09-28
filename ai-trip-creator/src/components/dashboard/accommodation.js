@@ -95,7 +95,7 @@ const Accommodation = () => {
   const [booked, setBooked] = useState({}); // Track booked state for each accommodation
   const [alert, setAlert] = useState("");
   const [showOnlyLiked, setShowOnlyLiked] = useState(false); // Filter toggle
-
+  const [showCategory, setShowCategory] = useState("all");
   const location = useLocation();
   useEffect(() => {
     const auth = getAuth();
@@ -287,6 +287,16 @@ const Accommodation = () => {
       setFilteredResults(likedResults); // Show only liked accommodations
     } else {
       setFilteredResults(searchResults); // Show all accommodations
+    }
+  };
+
+  const handleFilterByCategory = (category) => {
+    setShowCategory(category);
+    if (category === "all") {
+      setFilteredResults(searchResults);
+    } else if (category === "favourites") {
+      const likedResults = searchResults.filter((_, index) => booked[index]);
+      setFilteredResults(likedResults);
     }
   };
 
@@ -515,18 +525,22 @@ const Accommodation = () => {
         </Box>
 
         <Box sx={{ mt: 1 }}>
-          <Button
-            onClick={handleToggleLikedFilter}
-            variant="contained"
-            sx={{
-              backgroundColor: "lightgrey",
-              color: "black",
-              "&:hover": { backgroundColor: "grey" },
-              textTransform: "none",
-            }}
-          >
-            {showOnlyLiked ? "Show All" : "Show Favourites"}
-          </Button>
+          <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
+            <Button
+              sx={{ textTransform: "none" }}
+              variant={showCategory === "all" ? "contained" : "outlined"}
+              onClick={() => handleFilterByCategory("all")}
+            >
+              All
+            </Button>
+            <Button
+              sx={{ textTransform: "none" }}
+              variant={showCategory === "favourites" ? "contained" : "outlined"}
+              onClick={() => handleFilterByCategory("favourites")}
+            >
+              Favourites
+            </Button>
+          </Box>
           {loading ? (
             <CircularProgress />
           ) : (
