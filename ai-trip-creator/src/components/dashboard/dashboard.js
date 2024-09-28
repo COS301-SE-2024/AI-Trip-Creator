@@ -108,6 +108,40 @@ const Dashboard = () => {
                 margin: "10px 0",
               }}
             >
+              {/* Avatar Circle */}
+              {response.type === "bot" ? (
+                <Box
+                  sx={{
+                    width: "40px",
+                    height: "40px",
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    borderRadius: "50%",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginRight: "10px",
+                    fontWeight: "bold",
+                    fontSize: "18px",
+                  }}
+                >
+                  B
+                </Box>
+              ) : (
+                <Box
+                  sx={{
+                    width: "40px",
+                    height: "40px",
+                    backgroundColor: "gray",
+                    borderRadius: "50%",
+                    marginRight: "10px",
+                    backgroundImage: "url('https://via.placeholder.com/150')", // Example image, replace with actual avatar URL
+                    backgroundSize: "cover",
+                  }}
+                />
+              )}
+
+              {/* Speech Bubble */}
               <Box
                 sx={{
                   maxWidth: "70%",
