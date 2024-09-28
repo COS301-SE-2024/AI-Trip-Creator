@@ -18,7 +18,13 @@ import {
   CircularProgress,
   useTheme,
 } from "@mui/material";
-import { FaFilter, FaSearch, FaStar, FaHeart } from "react-icons/fa";
+import {
+  FaFilter,
+  FaSearch,
+  FaStar,
+  FaHeart,
+  FaRegHeart,
+} from "react-icons/fa";
 import Sidebar from "./sidebar";
 import {
   getFirestore,
@@ -424,7 +430,7 @@ const Accommodation = () => {
               <Card key={index} sx={{ maxWidth: 345, mb: 1 }}>
                 <CardMedia
                   component="img"
-                  height="140"
+                  height="180"
                   image={accommodation.image}
                   alt={accommodation.name}
                 />
@@ -433,68 +439,63 @@ const Accommodation = () => {
                     {accommodation.name}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {accommodation.description} <a href="#">See more</a>
-                  </Typography>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      mt: 2,
-                    }}
-                  >
+                    {accommodation.description}{" "}
+                    <a href="{accomodation.link}">Read more</a>
+                    <br />
                     <Box
                       sx={{
                         display: "flex",
+                        justifyContent: "space-between",
                         alignItems: "center",
-                        gap: 1,
                       }}
                     >
                       <Box
                         sx={{
-                          backgroundColor: "green",
-                          color: "white",
-                          p: 1,
-                          borderRadius: "4px",
-                        }}
-                      >
-                        {accommodation.rating}
-                      </Box>
-
-                      <Typography variant="body1" color="text.primary">
-                        {getReviewComment(accommodation.rating)} Rating
-                      </Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        textAlign: "right",
-                        flexGrow: 1,
-                      }}
-                    >
-                      <Typography
-                        variant="body1"
-                        color="text.primary"
-                        sx={{ fontWeight: "bold" }}
-                      >
-                        R{accommodation.price}
-                        /night
-                      </Typography>
-                      <Button
-                        variant="contained"
-                        sx={{
-                          mt: "2px",
-                          backgroundColor: booked[index] ? "green" : "black",
-                          color: "white",
                           display: "flex",
                           alignItems: "center",
                           gap: 1,
                         }}
-                        onClick={() => handleBookNowClick(index)}
                       >
-                        {booked[index] ? "Saved for later" : "Save for later"}
-                      </Button>
+                        <Box
+                          sx={{
+                            backgroundColor: "green",
+                            color: "white",
+                            p: 1,
+                            borderRadius: "4px",
+                          }}
+                        >
+                          {accommodation.rating}
+                          <br />
+                        </Box>
+                        {getReviewComment(accommodation.rating)} Rating
+                      </Box>
+                      <Box
+                        sx={{
+                          textAlign: "right",
+                          flexGrow: 1,
+                        }}
+                      >
+                        from {"  "} R{accommodation.price}
+                        /night
+                        <Box
+                          sx={{ display: "flex", justifyContent: "flex-end" }}
+                        >
+                          <IconButton
+                            onClick={() => handleBookNowClick(index)}
+                            sx={{
+                              color: booked[index] ? "red" : "grey",
+                              backgroundColor: "transparent",
+                              "&:hover": {
+                                backgroundColor: "transparent",
+                              },
+                            }}
+                          >
+                            {booked[index] ? <FaHeart /> : <FaRegHeart />}
+                          </IconButton>
+                        </Box>
+                      </Box>
                     </Box>
-                  </Box>
+                  </Typography>
                 </CardContent>
               </Card>
             ))
