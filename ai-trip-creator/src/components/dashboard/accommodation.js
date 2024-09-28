@@ -17,6 +17,7 @@ import {
   CardContent,
   CircularProgress,
   useTheme,
+  Autocomplete,
 } from "@mui/material";
 import {
   FaFilter,
@@ -245,34 +246,49 @@ const Accommodation = () => {
             gap: 2,
           }}
         >
-          <Box display="flex" flexDirection="column" gap={2}>
-            <TextField
-              fullWidth
-              label="Search accommodations"
-              variant="outlined"
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+            }}
+          >
+            <Autocomplete
+              freeSolo
+              options={allowedCities}
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyPress={(e) => {
-                if (e.key === "Enter") {
-                  handleSearch();
-                }
+              onChange={(event, newValue) => {
+                setQuery(newValue || "");
+                handleSearch(newValue || "");
               }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => handleSearch(query)}>
-                      <FaSearch />
-                    </IconButton>
-                  </InputAdornment>
-                ),
+              onInputChange={(event, newInputValue) => {
+                setQuery(newInputValue);
               }}
-              sx={{
-                flexGrow: 1,
-                minWidth: "200px",
-                input: {
-                  color: isDarkMode ? "#ffffff" : "#000000",
-                },
-              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  fullWidth
+                  label="Search accommodations"
+                  variant="outlined"
+                  InputProps={{
+                    ...params.InputProps,
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={() => handleSearch(query)}>
+                          <FaSearch />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    flexGrow: 1,
+                    minWidth: "200px",
+                    input: {
+                      color: isDarkMode ? "#ffffff" : "#000000",
+                    },
+                  }}
+                />
+              )}
             />
             <Button
               variant="outlined"
