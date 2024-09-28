@@ -94,6 +94,8 @@ const Accommodation = () => {
   const [user, setUser] = useState(null); // Track user authentication state
   const [booked, setBooked] = useState({}); // Track booked state for each accommodation
   const [alert, setAlert] = useState("");
+  const [showOnlyLiked, setShowOnlyLiked] = useState(false); // Filter toggle
+
   const location = useLocation();
   useEffect(() => {
     const auth = getAuth();
@@ -278,6 +280,16 @@ const Accommodation = () => {
     return "Poor";
   };
 
+  const handleToggleLikedFilter = () => {
+    setShowOnlyLiked(!showOnlyLiked);
+    if (!showOnlyLiked) {
+      const likedResults = searchResults.filter((_, index) => booked[index]);
+      setFilteredResults(likedResults); // Show only liked accommodations
+    } else {
+      setFilteredResults(searchResults); // Show all accommodations
+    }
+  };
+
   return (
     <Box sx={{ display: "flex" }}>
       <Sidebar
@@ -413,6 +425,7 @@ const Accommodation = () => {
                   step={100}
                 />
               </FormControl>
+
               <FormControl fullWidth sx={{ mb: 2 }}>
                 <InputLabel htmlFor="rating-select">Minimum Rating</InputLabel>
                 <Select
@@ -502,6 +515,17 @@ const Accommodation = () => {
         </Box>
 
         <Box sx={{ mt: 1 }}>
+          <Button
+            onClick={handleToggleLikedFilter}
+            variant="contained"
+            sx={{
+              backgroundColor: "grey",
+              color: "white",
+              "&:hover": { backgroundColor: "grey" },
+            }}
+          >
+            {showOnlyLiked ? "Show All" : "Show Liked"}
+          </Button>
           {loading ? (
             <CircularProgress />
           ) : (
@@ -515,8 +539,6 @@ const Accommodation = () => {
                       width: "100%",
                       maxheight: 480,
                       height: "100%",
-                      display: "flex",
-                      flexDirection: "column",
                       mb: 1,
                     }}
                   >
