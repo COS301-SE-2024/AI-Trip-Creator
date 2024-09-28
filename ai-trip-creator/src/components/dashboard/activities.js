@@ -406,12 +406,6 @@ const Activities = () => {
                   >
                     Price: High to Low
                   </MenuItem>
-                  <MenuItem
-                    value="ratingDesc"
-                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-                  >
-                    Rating: High to Low
-                  </MenuItem>
                 </Select>
               </FormControl>
               <FormControl component="fieldset" sx={{ mb: 2 }}>
@@ -426,91 +420,16 @@ const Activities = () => {
                   step={100}
                 />
               </FormControl>
-
-              <FormControl fullWidth sx={{ mb: 2 }}>
-                <InputLabel htmlFor="rating-select">Minimum Rating</InputLabel>
-                <Select
-                  sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-                  name="rating"
-                  value={filters.rating}
-                  onChange={handleFilterChange}
-                  inputProps={{ id: "rating-select" }}
+              <FormControl>
+                {" "}
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleFilterApply}
                 >
-                  <MenuItem
-                    value=""
-                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-                  >
-                    Any
-                  </MenuItem>
-                  <MenuItem
-                    value="1"
-                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-                  >
-                    1
-                  </MenuItem>
-                  <MenuItem
-                    value="2"
-                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-                  >
-                    2
-                  </MenuItem>
-                  <MenuItem
-                    value="3"
-                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-                  >
-                    3
-                  </MenuItem>
-                  <MenuItem
-                    value="4"
-                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-                  >
-                    4
-                  </MenuItem>
-                  <MenuItem
-                    value="5"
-                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-                  >
-                    5
-                  </MenuItem>
-                  <MenuItem
-                    value="6"
-                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-                  >
-                    6
-                  </MenuItem>
-                  <MenuItem
-                    value="7"
-                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-                  >
-                    7
-                  </MenuItem>
-                  <MenuItem
-                    value="8"
-                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-                  >
-                    8
-                  </MenuItem>
-                  <MenuItem
-                    value="9"
-                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-                  >
-                    9
-                  </MenuItem>
-                  <MenuItem
-                    value="10"
-                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-                  >
-                    10
-                  </MenuItem>
-                </Select>
+                  Apply Filters
+                </Button>
               </FormControl>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleFilterApply}
-              >
-                Apply Filters
-              </Button>
             </Box>
           )}
         </Box>
@@ -550,10 +469,13 @@ const Activities = () => {
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
                         {accommodation.category} - {accommodation.sub_category}{" "}
+                        <br />
                         <FaMapMarkedAlt /> {accommodation.address}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {accommodation.description} <br />
+                        <br />
+                        <br />
+                        {accommodation.description}
+                        <br />
+                        <br />
                         <Box
                           sx={{
                             display: "flex",
