@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Button, Input, Link } from "@nextui-org/react";
+import {
+  Button,
+  TextField,
+  Typography,
+  Link,
+  Box,
+  InputLabel,
+} from "@mui/material";
 import {
   createUserWithEmailAndPassword,
   updateProfile,
@@ -8,7 +15,6 @@ import {
 import { doc, setDoc } from "firebase/firestore";
 import { auth, firestore } from "../../firebase/firebase-config";
 import { useNavigate } from "react-router-dom";
-import "./auth.css";
 
 const Signup = ({ closeSignup, openLogin }) => {
   const [email, setEmail] = useState("");
@@ -60,120 +66,116 @@ const Signup = ({ closeSignup, openLogin }) => {
   };
 
   return (
-    <>
+    <Box
+      component="form"
+      onSubmit={handleSignup}
+      sx={{
+        maxWidth: "400px",
+        margin: "auto",
+        display: "flex",
+        flexDirection: "column",
+        gap: 2,
+        padding: "1rem",
+      }}
+    >
       {!showSuccess ? (
-        <form
-          onSubmit={handleSignup}
-          style={{
-            maxWidth: "20rem",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-            padding: "0.5rem",
-          }}
-        >
-          <div style={{ marginBottom: "0.25rem", width: "100%" }}>
-            <label style={{ marginBottom: "0.25rem", display: "block" }}>
-              Fullname
-            </label>
-            <Input
-              style={{ width: "100%" }}
-              fullWidth
-              clearable
-              bordered
-              labelPlaceholder="Name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </div>
+        <>
+          <InputLabel htmlFor="name">Name </InputLabel>
+          <TextField
+            fullWidth
+            id="name"
+            label="Name"
+            variant="outlined"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
 
-          <div style={{ marginBottom: "0.25rem", width: "100%" }}>
-            <label style={{ marginBottom: "0.25rem", display: "block" }}>
-              Birthday
-            </label>
-            <Input
-              style={{ height: "32px", width: "100%" }}
-              fullWidth
-              bordered
-              labelPlaceholder="Birthday"
-              type="date"
-              value={birthday}
-              onChange={(e) => setBirthday(e.target.value)}
-              required
-            />
-          </div>
+          <InputLabel htmlFor="birthday">Birthday</InputLabel>
+          <TextField
+            fullWidth
+            id="birthday"
+            type="date"
+            variant="outlined"
+            value={birthday}
+            onChange={(e) => setBirthday(e.target.value)}
+            required
+            InputLabelProps={{ shrink: true }}
+          />
 
-          <div style={{ marginBottom: "0.25rem", width: "100%" }}>
-            <label style={{ marginBottom: "0.25rem", display: "block" }}>
-              Email
-            </label>
-            <Input
-              style={{ width: "100%" }}
-              fullWidth
-              clearable
-              bordered
-              labelPlaceholder="Email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
+          <InputLabel htmlFor="email">Email</InputLabel>
+          <TextField
+            fullWidth
+            id="email"
+            type="email"
+            label="Email"
+            variant="outlined"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
 
-          <div style={{ marginBottom: "0.25rem", width: "100%" }}>
-            <label style={{ marginBottom: "0.25rem", display: "block" }}>
-              Password
-            </label>
-            <Input
-              style={{ width: "100%" }}
-              fullWidth
-              clearable
-              bordered
-              labelPlaceholder="Password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          {error && <p style={{ color: "red" }}>{error}</p>}
+          <InputLabel htmlFor="password">Password</InputLabel>
+          <TextField
+            fullWidth
+            id="password"
+            type="password"
+            label="Password"
+            variant="outlined"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+
           <Button
             type="submit"
-            style={{
-              alignSelf: "center",
-              marginTop: "0.5rem",
-              width: "100%",
-              borderRadius: "20px",
-              padding: "8px",
-            }}
+            variant="contained"
+            color="primary"
+            sx={{ marginTop: "1rem", borderRadius: "20px", padding: "10px" }}
           >
             Signup
           </Button>
+          {error && (
+            <Typography color="error" variant="body2">
+              {error}
+            </Typography>
+          )}
 
-          <p>
+          <Typography
+            variant="body2"
+            textAlign="center"
+            sx={{ marginTop: "1rem" }}
+          >
             Already have an account?{" "}
             <Link
-              onPress={() => {
+              component="button"
+              variant="body2"
+              onClick={() => {
                 closeSignup();
                 openLogin();
               }}
-              style={{ color: "#0000EE" }}
             >
               Login
             </Link>
-          </p>
-        </form>
+          </Typography>
+        </>
       ) : (
-        <div>
-          <p>
-            Signup successful! A verification link has been sent to your email.
-          </p>
-          <Button onPress={() => setShowSuccess(false)}>Okay</Button>
-        </div>
+        <Box textAlign="center">
+          <Typography variant="h6">Signup successful!</Typography>
+          <Typography variant="body2">
+            A verification link has been sent to your email.
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setShowSuccess(false)}
+            sx={{ marginTop: "1rem" }}
+          >
+            Okay
+          </Button>
+        </Box>
       )}
-    </>
+    </Box>
   );
 };
 
