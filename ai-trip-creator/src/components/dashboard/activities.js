@@ -93,7 +93,7 @@ const Activities = () => {
   const [sortOption, setSortOption] = useState("");
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null); // Track user authentication state
-  const [booked, setBooked] = useState({}); // Track booked state for each accommodation
+  const [booked, setBooked] = useState({}); // Track booked state for each activity
   const [alert, setAlert] = useState("");
   const [showOnlyLiked, setShowOnlyLiked] = useState(false); // Filter toggle
 
@@ -147,7 +147,6 @@ const Activities = () => {
         setSearchResults(results);
         setFilteredResults(results);
         setError("");
-        // After fetching search results, fetch user's liked accommodations
         fetchLikedActivities(results);
       } else {
         setError(`No activities found for "${searchQuery}".`);
@@ -175,22 +174,17 @@ const Activities = () => {
       const likedActivities = new Set();
       likedSnapshot.forEach((doc) => {
         const data = doc.data();
-        likedActivities.add(data.accommodationName.toLowerCase());
+        likedActivities.add(data.activityName.toLowerCase());
       });
 
       const updatedBooked = {};
-      results.forEach((accommodation, index) => {
-        updatedBooked[index] = likedActivities.has(
-          accommodation.name.toLowerCase(),
-        );
+      results.forEach((activity, index) => {
+        updatedBooked[index] = likedActivities.has(activity.name.toLowerCase());
       });
 
-      setBooked(updatedBooked); // Update the booked state to reflect liked accommodations
+      setBooked(updatedBooked);
     } catch (error) {
-      console.error(
-        "Error fetching liked accommodations from Firestore:",
-        error,
-      );
+      console.error("Error fetching liked activities from Firestore:", error);
     }
   };
 
@@ -236,9 +230,9 @@ const Activities = () => {
     setFilteredResults(applyFiltersAndSorting());
   };
 
-  const handleBookNowClick = async (index, accommodation) => {
+  const handleBookNowClick = async (index, activity) => {
     if (!user) {
-      setError("You must be logged in to like an accommodation.");
+      setError("You must be logged in to like an activity.");
       return;
     }
 
@@ -252,32 +246,31 @@ const Activities = () => {
       const db = getFirestore();
       const userUid = user.uid; // Get the authenticated user's UID
 
-      const likedAccommodationRef = doc(
-        collection(db, "LikedActivitiess"),
-        `${userUid}_${accommodation.name}`,
+      const likedActivitiesRef = doc(
+        collection(db, "LikedActivities"),
+        `${userUid}_${activity.name}`,
       );
 
       if (liked) {
-        // Save the accommodation to Firestore when liked
-        await setDoc(likedAccommodationRef, {
+        // Save the activity to Firestore when liked
+        await setDoc(likedActivitiesRef, {
           uid: userUid,
-          accommodationName: accommodation.name,
-          city: accommodation.city,
-          price: accommodation.price,
-          rating: accommodation.category,
-          rating: accommodation.sub_category,
-          description: accommodation.description,
-          address: accommodation.address,
+          activityName: activity.name,
+          city: activity.city,
+          price: activity.price,
+          rating: activity.category,
+          rating: activity.sub_category,
+          description: activity.description,
+          address: activity.address,
         });
         console.log("Activities liked and saved to Firestore");
       } else {
-        // Delete the accommodation from Firestore when unliked
-        await deleteDoc(likedAccommodationRef);
+        await deleteDoc(likedActivitiesRef);
         console.log("Activities unliked and deleted from Firestore");
       }
     } catch (error) {
-      console.error("Error updating liked accommodation in Firestore:", error);
-      setError("Failed to update liked accommodation. Please try again.");
+      console.error("Error updating liked activity in Firestore:", error);
+      setError("Failed to update liked activity. Please try again.");
     }
   };
 
@@ -285,9 +278,9 @@ const Activities = () => {
     setShowOnlyLiked(!showOnlyLiked);
     if (!showOnlyLiked) {
       const likedResults = searchResults.filter((_, index) => booked[index]);
-      setFilteredResults(likedResults); // Show only liked accommodations
+      setFilteredResults(likedResults);
     } else {
-      setFilteredResults(searchResults); // Show all accommodations
+      setFilteredResults(searchResults);
     }
   };
 
@@ -344,7 +337,7 @@ const Activities = () => {
                 <TextField
                   {...params}
                   fullWidth
-                  label="Search accommodations"
+                  label="Search activities"
                   variant="outlined"
                   InputProps={{
                     ...params.InputProps,
@@ -451,7 +444,7 @@ const Activities = () => {
             <CircularProgress />
           ) : (
             <Grid container spacing={2} sx={{ mt: 2 }}>
-              {filteredResults.map((accommodation, index) => (
+              {filteredResults.map((activity, index) => (
                 <Grid key={index} item xs={12} sm={10} md={4}>
                   <Card
                     key={index}
@@ -465,15 +458,14 @@ const Activities = () => {
                   >
                     <CardContent>
                       <Typography gutterBottom variant="h5" component="div">
-                        {accommodation.name}
+                        {activity.name}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        {accommodation.category} - {accommodation.sub_category}{" "}
+                        {activity.category} - {activity.sub_category} <br />
+                        <FaMapMarkedAlt /> {activity.address}
                         <br />
-                        <FaMapMarkedAlt /> {accommodation.address}
                         <br />
-                        <br />
-                        {accommodation.description}
+                        {activity.description}
                         <br />
                         <br />
                         <Box
@@ -489,7 +481,7 @@ const Activities = () => {
                               flexGrow: 1,
                             }}
                           >
-                            from {"  "} R{accommodation.price}
+                            from {"  "} R{activity.price}
                             /person
                             <Box
                               sx={{
@@ -499,7 +491,7 @@ const Activities = () => {
                             >
                               <IconButton
                                 onClick={() =>
-                                  handleBookNowClick(index, accommodation)
+                                  handleBookNowClick(index, activity)
                                 }
                                 sx={{
                                   color: booked[index] ? "red" : "grey",
