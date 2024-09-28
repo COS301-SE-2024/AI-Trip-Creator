@@ -95,7 +95,7 @@ const Settings = () => {
   };
 
   return (
-    <Box sx={{ display: "flex", height: "100vh"}}>
+    <Box sx={{ display: "flex", height: "100vh" }}>
       <Sidebar
         style={{
           position: "fixed",
@@ -114,15 +114,7 @@ const Settings = () => {
         }}
       >
         <Container>
-          <h1  
-          style={{
-            position: "relative",
-            marginLeft: "-115px",
-            marginTop: "10px",
-            marginBottom: "20px",
-            overflowY: "auto",
-            width: "100%",
-        }}>Settings</h1>
+          <h1 style={{}}>Settings</h1>
 
           <Box
             mb={4}
@@ -131,8 +123,8 @@ const Settings = () => {
             borderColor="grey.300"
             borderRadius="8px"
           >
-            <h2 style={{marginTop: "7px"}}>Account Settings</h2>
-            <Typography variant="body1" sx={{mt: "-8px", mb: "8px"}}>
+            <h2 style={{ marginTop: "7px" }}>Account Settings</h2>
+            <Typography variant="body1" sx={{ mt: "-8px", mb: "8px" }}>
               Update your account details and preferences below.
             </Typography>
             <form onSubmit={handlePasswordChange}>
@@ -170,7 +162,7 @@ const Settings = () => {
             borderColor="grey.300"
             borderRadius="8px"
           >
-            <h2 style={{marginTop: "7px"}}>Theme Preferences</h2>
+            <h2 style={{ marginTop: "7px" }}>Theme Preferences</h2>
             <Typography variant="body1">
               Press the 'Toggle Theme' button to switch between light mode/dark
               mode.
@@ -179,7 +171,7 @@ const Settings = () => {
               variant="contained"
               color="primary"
               onClick={toggleTheme}
-              sx={{ margin: "20px 0"}}
+              sx={{ margin: "20px 0" }}
             >
               Toggle Theme
             </Button>
@@ -218,7 +210,7 @@ const Settings = () => {
             borderColor="grey.300"
             borderRadius="8px"
           >
-            <h2 style={{marginTop: "7px"}}>App Version</h2>
+            <h2 style={{ marginTop: "7px" }}>App Version</h2>
             <Typography variant="body1">
               You are currently using version 1.0.0 of the AI Trip Creator app.
             </Typography>
@@ -231,7 +223,7 @@ const Settings = () => {
             borderColor="grey.300"
             borderRadius="8px"
           >
-            <h2 style={{marginTop: "7px"}}>Account Deletion</h2>
+            <h2 style={{ marginTop: "7px" }}>Account Deletion</h2>
             <Typography variant="body1">
               Once deleted, your account and all associated data will be
               permanently removed. Please proceed with caution.
