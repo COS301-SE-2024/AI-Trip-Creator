@@ -299,7 +299,7 @@ const Activities = () => {
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex", overflow: "hidden" }}>
       <Sidebar
         sx={{
           width: "250px",
