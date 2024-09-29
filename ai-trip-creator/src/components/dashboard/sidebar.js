@@ -99,10 +99,14 @@ const Sidebar = () => {
           backgroundColor: "#004BA8",
           color: "#FFFFFF",
           elevation: 16, // Nav drawer elevation
+          height: "100vh", // Full height of the viewport
+          overflow: "hidden", // Prevent scrolling
         },
       }}
     >
-      <List>
+      <List sx={{ overflow: "hidden" }}>
+        {" "}
+        {/* Disable scroll inside the List */}
         <ListItem
           button
           component={Link}
@@ -110,6 +114,9 @@ const Sidebar = () => {
           sx={{
             backgroundColor: isActive("/dashboard") ? "#ffffff33" : "inherit",
             color: isActive("/dashboard") ? "#ffffff" : "inherit",
+            borderRadius: "50px",
+            margin: "2px 10px",
+            width: "200px",
           }}
         >
           <FaHome style={{ marginRight: "10px" }} />
@@ -122,6 +129,9 @@ const Sidebar = () => {
           sx={{
             backgroundColor: isActive("/Itinerary") ? "#ffffff33" : "inherit",
             color: isActive("/Itinerary") ? "#ffffff" : "inherit",
+            borderRadius: "50px",
+            margin: "2px 10px",
+            width: "200px",
           }}
         >
           <FaListAlt style={{ marginRight: "10px" }} />
@@ -134,6 +144,9 @@ const Sidebar = () => {
           sx={{
             backgroundColor: isActive("/flights") ? "#ffffff33" : "inherit",
             color: isActive("/flights") ? "#ffffff" : "inherit",
+            borderRadius: "50px",
+            margin: "2px 10px",
+            width: "200px",
           }}
         >
           <FaPlane style={{ marginRight: "10px" }} />
@@ -148,6 +161,9 @@ const Sidebar = () => {
               ? "#ffffff33"
               : "inherit",
             color: isActive("/accommodation") ? "#ffffff" : "inherit",
+            borderRadius: "50px",
+            margin: "2px 10px",
+            width: "200px",
           }}
         >
           <FaBed style={{ marginRight: "10px" }} />
@@ -160,6 +176,9 @@ const Sidebar = () => {
           sx={{
             backgroundColor: isActive("/activities") ? "#ffffff33" : "inherit",
             color: isActive("/activities") ? "#ffffff" : "inherit",
+            borderRadius: "50px",
+            margin: "2px 10px",
+            width: "200px",
           }}
         >
           <FaRunning style={{ marginRight: "10px" }} />
@@ -173,6 +192,9 @@ const Sidebar = () => {
           sx={{
             backgroundColor: isActive("/profile") ? "#ffffff33" : "inherit",
             color: isActive("/profile") ? "#ffffff" : "inherit",
+            borderRadius: "50px",
+            margin: "2px 10px",
+            width: "200px",
           }}
         >
           <FaUser style={{ marginRight: "10px" }} />
@@ -185,6 +207,9 @@ const Sidebar = () => {
           sx={{
             backgroundColor: isActive("/analytics") ? "#ffffff33" : "inherit",
             color: isActive("/analytics") ? "#ffffff" : "inherit",
+            borderRadius: "50px",
+            margin: "2px 10px",
+            width: "200px",
           }}
         >
           <MdOutlineAnalytics style={{ marginRight: "10px" }} />
@@ -197,6 +222,9 @@ const Sidebar = () => {
           sx={{
             backgroundColor: isActive("/help") ? "#ffffff33" : "inherit",
             color: isActive("/help") ? "#ffffff" : "inherit",
+            borderRadius: "50px",
+            margin: "2px 10px",
+            width: "200px",
           }}
         >
           <FaQuestion style={{ marginRight: "10px" }} />
@@ -209,6 +237,9 @@ const Sidebar = () => {
           sx={{
             backgroundColor: isActive("/settings") ? "#ffffff33" : "inherit",
             color: isActive("/settings") ? "#ffffff" : "inherit",
+            borderRadius: "50px",
+            margin: "2px 10px",
+            width: "200px",
           }}
         >
           <FaCog style={{ marginRight: "10px" }} />
@@ -221,6 +252,9 @@ const Sidebar = () => {
           sx={{
             backgroundColor: isActive("/") ? "#ffffff33" : "inherit",
             color: isActive("/") ? "#ffffff" : "inherit",
+            borderRadius: "50px",
+            margin: "2px 10px",
+            width: "200px",
           }}
         >
           <FaSignOutAlt style={{ marginRight: "10px" }} />
