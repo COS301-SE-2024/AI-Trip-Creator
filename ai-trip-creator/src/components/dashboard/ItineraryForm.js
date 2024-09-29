@@ -33,6 +33,7 @@ import {
   Slider,
   Rating,
 } from "@mui/material";
+import Sidebar from "./sidebar";
 import { DatePicker } from "@mui/lab";
 import johannesburgImg from "./images/johannesburg.jpg";
 import pretoriaImg from "./images/pretoria.jpg";
@@ -634,6 +635,13 @@ function ItineraryForm({ onGenerateItinerary }) {
   
   
   return (
+    <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column">
+      <Sidebar/>
+      {/* Main Heading Outside the Form */}
+      <h1 style={{marginLeft: "-900px", marginTop: "10px"}}>Itinerary</h1>
+      <h2 style={{ size: "45px", textAlign: "center" }}>
+        Create Your Itinerary
+      </h2>
     <Box
       component="form"
       onSubmit={handleSubmit}
@@ -649,6 +657,7 @@ function ItineraryForm({ onGenerateItinerary }) {
         backgroundColor: isDarkMode ? "#424242" : "#ffffff",
       }}
     >
+
       {/* <Typography variant="h4" gutterBottom align="center" 
       sx ={{
         fontFamily: "Poppins",
@@ -656,10 +665,7 @@ function ItineraryForm({ onGenerateItinerary }) {
       }}>
         Create Your Itinerary
       </Typography> */}
-      <h1>Itinerary</h1>
-      <h2 style={{ size: "45px", textAlign: "center" }}>
-        Create Your Itinerary
-      </h2>
+      
 
       <Grid container spacing={4} justifyContent="center">
         <Grid item xs={12} sm={6}>
@@ -924,6 +930,7 @@ function ItineraryForm({ onGenerateItinerary }) {
           </Button>
         </Grid>
       </Grid>
+    </Box>
     </Box>
   );
 }
