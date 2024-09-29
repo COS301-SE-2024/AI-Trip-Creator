@@ -33,6 +33,7 @@ import {
   Slider,
   Rating,
 } from "@mui/material";
+import Sidebar from "./sidebar";
 import { DatePicker } from "@mui/lab";
 import johannesburgImg from "./images/johannesburg.jpg";
 import pretoriaImg from "./images/pretoria.jpg";
@@ -277,6 +278,8 @@ function ItineraryForm({ onGenerateItinerary }) {
   //   groupSize: 1,
   //   itineraryText: '',
   // });
+
+  
 
   const [responseText, setResponseText] = useState("");
   async function run() {
@@ -559,13 +562,45 @@ function ItineraryForm({ onGenerateItinerary }) {
     });
   };
 
+  const calculateTripDuration = (departure, returnDate) => {
+    const departureDateObj = new Date(departure);
+    const returnDateObj = new Date(returnDate);
+
+    if (isNaN(departureDateObj.getTime()) || isNaN(returnDateObj.getTime())) {
+      console.error('Invalid departure or return date');
+      return 0;  // Return 0 if dates are invalid
+    }
+  
+    // Check if departure is before return
+    if (departureDateObj > returnDateObj) {
+      console.error('Departure date must be earlier than return date');
+      return 0;
+    }
+  
+    // Calculate the time difference in milliseconds
+    const timeDifference = returnDateObj - departureDateObj;
+  
+    // Convert the time difference to days
+    const durationInDays = Math.round(timeDifference / (1000 * 60 * 60 * 24)) - 1;
+  
+    return durationInDays;
+  };
+
+  const[departureDate, setDepartureDate] = useState("");
+  const[returnDate, setReturnDate] = useState("");
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const tripDuration = calculateTripDuration(departureDate, returnDate);
     //const { currentLocation, destination, duration, interests, travelDate, budget, priority, groupSize } = preferences;
     await run();
     // console.log("Response submit : ", exportVariable);
     onGenerateItinerary({
       ...preferences,
+      departureDate,
+      returnDate,
+      duration: tripDuration, 
       itineraryText: exportVariable, // Pass the generated AI text
     });
   };
@@ -577,17 +612,6 @@ function ItineraryForm({ onGenerateItinerary }) {
     { name: "Durban", image: durbanImg },
     { name: "Gqeberha", image: gqerberhaImg },
   ];
-
-  const durations = ["1-3 days", "4-7 days", "8-14 days", "15+ days"];
-  // const interests = [
-  //   "Culture",
-  //   "Adventure",
-  //   "Relaxation",
-  //   "Nature",
-  //   "Food",
-  //   "Shopping",
-  //   "Nightlife",
-  // ];
 
   const interests = [
     "Outdoor",
@@ -608,8 +632,16 @@ function ItineraryForm({ onGenerateItinerary }) {
 
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark";
-
+  
+  
   return (
+    <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column">
+      <Sidebar/>
+      {/* Main Heading Outside the Form */}
+      <h1 style={{marginLeft: "-900px", marginTop: "10px"}}>Itinerary</h1>
+      <h2 style={{ size: "45px", textAlign: "center" }}>
+        Create Your Itinerary
+      </h2>
     <Box
       component="form"
       onSubmit={handleSubmit}
@@ -625,6 +657,7 @@ function ItineraryForm({ onGenerateItinerary }) {
         backgroundColor: isDarkMode ? "#424242" : "#ffffff",
       }}
     >
+
       {/* <Typography variant="h4" gutterBottom align="center" 
       sx ={{
         fontFamily: "Poppins",
@@ -632,10 +665,7 @@ function ItineraryForm({ onGenerateItinerary }) {
       }}>
         Create Your Itinerary
       </Typography> */}
-      <h1>Itinerary</h1>
-      <h2 style={{ size: "45px", textAlign: "center" }}>
-        Create Your Itinerary
-      </h2>
+      
 
       <Grid container spacing={4} justifyContent="center">
         <Grid item xs={12} sm={6}>
@@ -705,34 +735,29 @@ function ItineraryForm({ onGenerateItinerary }) {
         </Grid>
 
         <Grid item xs={12} sm={6}>
-          <FormControl required fullWidth>
-            <InputLabel id="duration-label">Duration</InputLabel>
-            <Select
-              sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-              labelId="duration-label"
-              name="duration"
-              value={preferences.duration}
-              onChange={handleChange}
-              label="Duration"
-            >
-              <MenuItem
-                sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-                value=""
-                disabled
-              >
-                Select a duration
-              </MenuItem>
-              {durations.map((duration) => (
-                <MenuItem
-                  sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-                  key={duration}
-                  value={duration}
-                >
-                  {duration}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+        <TextField
+    label="Departure Date"
+    type="date"
+    value={departureDate}
+    onChange={(e) => setDepartureDate(e.target.value)}
+    fullWidth
+    InputLabelProps={{
+      shrink: true,
+    }}
+  />
+</Grid>
+
+<Grid item xs={12} sm={6}>
+  <TextField
+    label="Return Date"
+    type="date"
+    value={returnDate}
+      onChange={(e) => setReturnDate(e.target.value)}
+      fullWidth
+      InputLabelProps={{
+        shrink: true,
+        }}
+        />
         </Grid>
 
         <Grid item xs={12} sm={6}>
@@ -905,6 +930,7 @@ function ItineraryForm({ onGenerateItinerary }) {
           </Button>
         </Grid>
       </Grid>
+    </Box>
     </Box>
   );
 }
