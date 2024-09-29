@@ -323,7 +323,7 @@ const Profile = () => {
       </Drawer>
       <Box p={3} sx={{ ml: isSmUp ? "380px" : "0", overflowX: "hidden", width: "950px" }}>
         <Box p={3} sx={{ minHeight: "50vh" }}>
-        <h1 style={{ marginTop: "-20px", marginLeft: "-50px"}}>My Profile</h1>
+          <h1 style={{ marginTop: "-20px", marginLeft: "-50px" }}>My Profile</h1>
           {loading ? (
             <Box
               display="flex"
@@ -333,7 +333,7 @@ const Profile = () => {
             >
               <CircularProgress />
             </Box>
-            
+
           ) : (
             <Card
               sx={{
@@ -540,7 +540,10 @@ const Profile = () => {
                     <Box mt={4}>
                       <Typography variant="h6">My Itineraries</Typography>
                       {itineraries.length > 0 ? (
-                        <Box display="flex" flexWrap="wrap" gap={2}>
+                         <Carousel 
+                         indicators={true}  // Dots to indicate slides
+                         navButtonsAlwaysVisible={true}  // Navigation arrows always visible
+                       >
                           {itineraries.map((itinerary, index) => {
                             // Extract the title (text between "##" and "Day 1")
                             const itineraryTitle = itinerary.itineraryText
@@ -615,7 +618,7 @@ const Profile = () => {
                               </Card>
                             );
                           })}
-                        </Box>
+                          </Carousel>
                       ) : (
                         <Typography>No itineraries found.</Typography>
                       )}
@@ -640,33 +643,104 @@ const Profile = () => {
           </Button>
         </DialogActions>
         </Dialog>
-                      <Dialog
-                        open={Boolean(selectedItinerary)}
-                        onClose={handleCloseDialog}
-                        fullWidth
-                      >
-                        <DialogTitle>Itinerary Details</DialogTitle>
-                        <DialogContent>
-                          {selectedItinerary && (
-                            <Box>
-                              <Typography variant="body3">
-                                Trip to {selectedItinerary.destination}
-                                <br />
-                                {`Duration: ${selectedItinerary.duration}`}
-                                <br />
-                                {`Created: ${selectedItinerary.createdAt}`}
-                                <br />
-                                {` ${selectedItinerary.itineraryText}`}
-                              </Typography>
-                            </Box>
-                          )}
-                        </DialogContent>
-                        <DialogActions>
-                          <Button onClick={handleCloseDialog} color="primary">
-                            Close
-                          </Button>
-                        </DialogActions>
-                      </Dialog>
+        <Dialog
+  open={Boolean(selectedItinerary)}
+  onClose={handleCloseDialog}
+  fullWidth
+  maxWidth="md" // Set dialog size
+>
+  <DialogTitle>Itinerary Details</DialogTitle>
+  <DialogContent>
+    {selectedItinerary && (
+      <Box>
+        {/* Destination image at the top with full width */}
+        <CardMedia
+          component="img"
+          height="300"
+          image={selectedItinerary.image}
+          alt={selectedItinerary.destination}
+          onError={(e) => {
+            e.target.src = selectedItinerary.altimage; // Set fallback image
+          }}
+        />
+
+        {/* Itinerary information */}
+        <Typography
+          variant="h4"
+          gutterBottom
+          style={{
+            fontWeight: "bold",
+            marginTop: "20px",
+            color: "#333", // Darker color for the title
+          }}
+        >
+          {selectedItinerary.title}
+        </Typography>
+
+        <Typography
+          variant="body1"
+          gutterBottom
+          style={{
+            color: "#666", // Slightly lighter for subtitle
+            marginBottom: "10px",
+          }}
+        >
+
+        </Typography>
+
+        <Typography
+          variant="body2"
+          color="textSecondary"
+          gutterBottom
+          style={{ fontStyle: "italic" }}
+        >
+          Created on {selectedItinerary.createdAt}
+        </Typography>
+
+        {/* Day-by-day itinerary */}
+        {selectedItinerary.itineraryText && (
+          <Box mt={2}>
+            <Grid container spacing={2}>
+              {selectedItinerary.itineraryText
+                .split(/(?=\*\*Day \d+:)/g) // Split by "Day"
+                .filter((day) => day.trim() !== "") // Filter out empty days
+                .map((dayText, index) => (
+                  <Grid item xs={12} key={index}>
+                    <Card
+                      style={{
+                        borderRadius: "10px",
+                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Soft shadow for card
+                        backgroundColor: "#fafafa", // Light background for readability
+                      }}
+                    >
+                      <CardContent>
+                        {/* Use ReactMarkdown to render markdown content */}
+                        <ReactMarkdown
+                          children={dayText}
+                          remarkPlugins={[remarkGfm]} // Enable GitHub Flavored Markdown
+                          components={{
+                            h1: ({node, ...props}) => <Typography variant="h6" style={{ fontWeight: "bold", marginBottom: "10px", color: "#333" }} {...props} />,
+                            p: ({node, ...props}) => <Typography variant="body1" style={{ color: "#555", lineHeight: "1.5" }} {...props} />,
+                            ul: ({node, ...props}) => <ul style={{ marginLeft: "20px" }} {...props} />,
+                            li: ({node, ...props}) => <li style={{ color: "#555" }} {...props} />,
+                          }}
+                        />
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
+            </Grid>
+          </Box>
+        )}
+      </Box>
+    )}
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={handleCloseDialog} color="primary">
+      Close
+    </Button>
+  </DialogActions>
+</Dialog>
                     </Box>
                     <Box mt={3} display="flex" justifyContent="center">
                       <Button
