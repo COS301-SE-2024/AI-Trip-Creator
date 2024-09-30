@@ -40,8 +40,8 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-
-
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import CategoryIcon from '@mui/icons-material/Category'; 
 import johannesburgImg from "./destinations/johannesburg.jpeg";
 import pretoriaImg from "./destinations/Pretoria.jpeg";
 import capetownImg from "./destinations/capetown.jpeg";
@@ -807,8 +807,8 @@ const settingsActs = {
             {limitedActivities.map((activity, index) => (
               <Box key={index} p={2}>
                 <Card sx={{
-                  width: '400px', // Fixed width
-                  height: '600px', // Fixed height
+                  width: '430px', // Fixed width
+                  height: '580px', // Fixed height
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
@@ -829,10 +829,14 @@ const settingsActs = {
                       {activity.name}
                     </Typography>
                     <Typography variant="body2" color="textSecondary" gutterBottom>
-                      Category: {activity.category} / {activity.sub_category}
+                    <CategoryIcon fontSize="small" sx={{ marginRight: 1 }} />
+                    {activity.category} / {activity.sub_category}
+                      {/* Category: {activity.category} / {activity.sub_category} */}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      Address: {activity.address}
+                      {/* Address: {activity.address} */}
+                      <LocationOnIcon fontSize="small" sx={{ marginRight: 1 }} />
+                  {activity.address}
                     </Typography>
                     <Typography variant="body1" paragraph>
                       {activity.description}
