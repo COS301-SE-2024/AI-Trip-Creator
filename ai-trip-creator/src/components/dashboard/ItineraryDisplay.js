@@ -808,7 +808,7 @@ const settingsActs = {
               <Box key={index} p={2}>
                 <Card sx={{
                   width: '400px', // Fixed width
-                  height: '400px', // Fixed height
+                  height: '600px', // Fixed height
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
