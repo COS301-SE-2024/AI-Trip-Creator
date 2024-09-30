@@ -121,7 +121,7 @@ const Dashboard = () => {
           itineraryText: itineraryText, // Store the cleaned itinerary
           duration: dayCount, // Store the duration (based on "Day" occurrences)
           destination: foundLocation, // Store the location (found in the text)
-          createdAt: new Date(), // Timestamp of creation
+          createdAt: new Date().toISOString().split("T")[0], // Timestamp of creation
           flights: [],
           accomodations: [],
           altimage:
