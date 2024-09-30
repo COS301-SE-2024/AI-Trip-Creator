@@ -4,7 +4,7 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAwuPv1t0KhiADo9MK7SZbWPgfWNcaTAeA",
+   apiKey: process.env.REACT_APP_FIREBASE_APIKEY,
   authDomain: "ai-trip-creator.firebaseapp.com",
   databaseURL: "https://ai-trip-creator-default-rtdb.firebaseio.com",
   projectId: "ai-trip-creator",
