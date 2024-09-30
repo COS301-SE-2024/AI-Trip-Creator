@@ -631,24 +631,95 @@ const Profile = () => {
                         {user.email}
                       </Typography>
                     </Box>
-                    <Box mt={-3} mb={5}>
-                      <h3>Budget Level</h3>
-                      <p>{budgetLevel}</p>
+
+                    <Box
+                      mb={5}
+                      p={2}
+                      border={1}
+                      borderColor="grey.300"
+                      borderRadius="8px"
+                    >
+                      <h2>Budget Level</h2>
+                      <Box
+                        sx={{
+                          backgroundColor: isDarkMode ? "#444444" : "#e0e0e0",
+                          borderRadius: "20px",
+                          height: "45px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          maxWidth: "200px",
+                          textAlign: "center",
+                          margin: "0 auto",
+                        }}
+                      >
+                        <p style={{ margin: 0 }}>
+                          <p>{budgetLevel}</p>
+                        </p>
+                      </Box>
                     </Box>
-                    <Box mt={-3} mb={5}>
-                      <h3>Accommodation Rating</h3>
-                      <p>{accommodationRating}-Star</p>
+                    <Box
+                      mb={5}
+                      p={2}
+                      border={1}
+                      borderColor="grey.300"
+                      borderRadius="8px"
+                    >
+                      <h2>Accommodation Rating</h2>
+                      <Box
+                        sx={{
+                          backgroundColor: isDarkMode ? "#444444" : "#e0e0e0",
+                          borderRadius: "20px",
+                          height: "45px",
+                          display: "flex", // Use flexbox for centering
+                          alignItems: "center", // Center vertically
+                          justifyContent: "center", // Center horizontally
+                          maxWidth: "200px",
+                          textAlign: "center",
+                          margin: "0 auto", // Center the bubble in the box
+                        }}
+                      >
+                        <p style={{ margin: 0 }}>{accommodationRating}-Star</p>
+                      </Box>
                     </Box>
-                    <Box mt={-3} mb={5}>
-                      <h3>Activities</h3>
+
+                    <Box
+                      mb={5}
+                      p={2}
+                      border={1}
+                      borderColor="grey.300"
+                      borderRadius="8px"
+                    >
+                      <h2>Activities</h2>
                       <List sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}>
                         {selectedActivities.map((activity) => (
-                          <ListItem key={activity}>{activity}</ListItem>
+                          <ListItem
+                            key={activity}
+                            sx={{
+                              backgroundColor: isDarkMode
+                                ? "#444444"
+                                : "#e0e0e0",
+                              borderRadius: "20px",
+                              padding: "10px 15px",
+                              margin: "10px",
+                              display: "inline-block",
+                              maxWidth: "200px",
+                              textAlign: "center",
+                            }}
+                          >
+                            {activity}
+                          </ListItem>
                         ))}
                       </List>
                     </Box>
-                    <Box mt={4}>
-                      <h3>My Itineraries</h3>
+                    <Box
+                      mb={5}
+                      p={2}
+                      border={1}
+                      borderColor="grey.300"
+                      borderRadius="8px"
+                    >
+                      <h2>My Itineraries</h2>
                       {itineraries.length > 0 ? (
                         <Slider {...sliderSettings}>
                           {itineraries.map((itinerary, index) => (
