@@ -569,51 +569,63 @@ const Profile = () => {
                       </List>
                     </Box>
                     <Box mt={4}>
-                      <Typography variant="h6">My Itineraries</Typography>
+                      <h3>My Itineraries</h3>
                       {itineraries.length > 0 ? (
                         <Carousel
                           {...carouselSettings}
-                          style={{ height: "100px" }}
+                          style={{ height: "200px" }}
                         >
                           {" "}
                           {/* Set height for the carousel */}
                           {itineraries.map((itinerary, index) => (
                             <Card
                               key={index}
-                              onClick={() => handleItineraryClick(itinerary)}
                               sx={{
-                                cursor: "pointer",
-                                mb: 2,
                                 height: "180px",
                                 width: "180px",
-                                position: "relative",
+                                position: "relative", // Set the position to relative for child absolute positioning
                               }}
                             >
                               <CardMedia
+                                onClick={() => handleItineraryClick(itinerary)}
                                 component="img"
-                                image={itinerary.image || "/placeholder.jpg"}
+                                image={itinerary.image || "/placeholder.jpg"} // Fallback image
                                 alt={itinerary.destination}
                                 height="100px"
                                 sx={{
-                                  objectFit: "cover",
+                                  cursor: "pointer",
                                 }}
                               />
-                              <IconButton
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDeleteClick(itinerary);
-                                }}
-                                sx={{
-                                  position: "absolute",
-                                  top: "60px",
-                                  left: "80px",
-                                  color: "white",
-                                }}
-                              >
-                                <DeleteIcon />
-                              </IconButton>
+
                               <CardContent>
-                                <Typography variant="body2">
+                                <IconButton
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteClick(itinerary);
+                                  }}
+                                  sx={{
+                                    cursor: "pointer",
+                                    position: "absolute",
+                                    top: "8px",
+                                    right: "8px",
+                                    backgroundColor: "rgba(128, 128, 128, 0.7)",
+                                    color: "red",
+                                    borderRadius: "50%",
+                                    padding: "5px",
+                                    zIndex: 100,
+                                    "&:hover": {
+                                      backgroundColor: "rgba(128, 128, 128, 1)",
+                                    },
+                                  }}
+                                >
+                                  <DeleteIcon />
+                                </IconButton>
+                                <Typography
+                                  onClick={() =>
+                                    handleItineraryClick(itinerary)
+                                  }
+                                  variant="body2"
+                                >
                                   Created: {itinerary.createdAt}
                                 </Typography>
                               </CardContent>
