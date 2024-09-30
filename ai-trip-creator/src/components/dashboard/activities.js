@@ -17,13 +17,16 @@ import {
   CardContent,
   CircularProgress,
   useTheme,
+  Autocomplete,
+  Grid,
 } from "@mui/material";
 import {
   FaFilter,
   FaSearch,
   FaStar,
-  FaMapMarkedAlt,
   FaHeart,
+  FaRegHeart,
+  FaMapMarkedAlt,
 } from "react-icons/fa";
 import Sidebar from "./sidebar";
 import {
@@ -32,9 +35,48 @@ import {
   query as firestoreQuery,
   where,
   getDocs,
+  doc,
+  setDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import "./dashboard.css";
+const allowedCities = [
+  "Pretoria",
+  "Johannesburg",
+  "Cape Town",
+  "Durban",
+  "Gqeberha",
+];
+
+const getClosestCity = (input) => {
+  return allowedCities.reduce(
+    (closest, city) => {
+      const distance = getLevenshteinDistance(
+        input.toLowerCase(),
+        city.toLowerCase(),
+      );
+      return distance < closest.distance ? { city, distance } : closest;
+    },
+    { city: "", distance: Infinity },
+  ).city;
+};
+
+const getLevenshteinDistance = (a, b) => {
+  const matrix = Array.from({ length: b.length + 1 }, (_, i) => [i]).concat(
+    Array.from({ length: a.length + 1 }, () => []),
+  );
+  for (let i = 1; i <= a.length; i++) matrix[0][i] = i;
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      matrix[i][j] = Math.min(
+        matrix[i - 1][j] + 1,
+        matrix[i][j - 1] + 1,
+        matrix[i - 1][j - 1] + (b[i - 1] === a[j - 1] ? 0 : 1),
+      );
+    }
+  }
+  return matrix[b.length][a.length];
+};
 
 const Activities = () => {
   const theme = useTheme();
@@ -46,22 +88,23 @@ const Activities = () => {
   const [filters, setFilters] = useState({
     price: [0, 5000],
     rating: "",
-    category: "",
   });
   const [filterVisible, setFilterVisible] = useState(false);
   const [sortOption, setSortOption] = useState("");
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(null);
-  const [booked, setBooked] = useState({});
+  const [user, setUser] = useState(null); // Track user authentication state
+  const [booked, setBooked] = useState({}); // Track booked state for each activity
+  const [alert, setAlert] = useState("");
+  const [showOnlyLiked, setShowOnlyLiked] = useState(false); // Filter toggle
+  const [showCategory, setShowCategory] = useState("all");
   const location = useLocation();
-
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+      setUser(user); // Set user state on auth state change
     });
 
-    return () => unsubscribe();
+    return () => unsubscribe(); // Clean up subscription on unmount
   }, []);
 
   useEffect(() => {
@@ -73,7 +116,9 @@ const Activities = () => {
       handleSearch(destinationParam.toLowerCase().replace(/\s+/g, ""));
     }
   }, [location, user]);
-
+  const capitalizeFirstLetterOfEachWord = (str) => {
+    return str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+  };
   const handleSearch = async (searchQuery = query) => {
     setLoading(true);
     try {
@@ -85,9 +130,14 @@ const Activities = () => {
 
       const db = getFirestore();
       const activitiesRef = collection(db, "Activities");
-      const q = firestoreQuery(activitiesRef, where("city", "==", searchQuery));
+      const formattedQuery = capitalizeFirstLetterOfEachWord(
+        searchQuery.replace(/\s+/g, ""),
+      );
+      const q = firestoreQuery(
+        activitiesRef,
+        where("city", "==", formattedQuery),
+      );
       const querySnapshot = await getDocs(q);
-
       const results = [];
       querySnapshot.forEach((doc) => {
         results.push(doc.data());
@@ -97,8 +147,9 @@ const Activities = () => {
         setSearchResults(results);
         setFilteredResults(results);
         setError("");
+        fetchLikedActivities(results);
       } else {
-        setError(`No activities found for "${searchQuery}"`);
+        setError(`No activities found for "${searchQuery}".`);
         setSearchResults([]);
         setFilteredResults([]);
       }
@@ -107,6 +158,33 @@ const Activities = () => {
       setError("Failed to fetch activities data. Please try again.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchLikedActivities = async (results) => {
+    try {
+      const db = getFirestore();
+      const likedActivitiesRef = collection(db, "LikedActivities");
+      const likedQuery = firestoreQuery(
+        likedActivitiesRef,
+        where("uid", "==", user.uid),
+      );
+      const likedSnapshot = await getDocs(likedQuery);
+
+      const likedActivities = new Set();
+      likedSnapshot.forEach((doc) => {
+        const data = doc.data();
+        likedActivities.add(data.activityName.toLowerCase());
+      });
+
+      const updatedBooked = {};
+      results.forEach((activity, index) => {
+        updatedBooked[index] = likedActivities.has(activity.name.toLowerCase());
+      });
+
+      setBooked(updatedBooked);
+    } catch (error) {
+      console.error("Error fetching liked activities from Firestore:", error);
     }
   };
 
@@ -133,10 +211,7 @@ const Activities = () => {
       const meetsRating = filters.rating
         ? result.rating >= Number(filters.rating)
         : true;
-      const meetsCategory = filters.category
-        ? result.category === filters.category
-        : true;
-      return meetsPrice && meetsRating && meetsCategory;
+      return meetsPrice && meetsRating;
     });
 
     // apply sorting
@@ -155,23 +230,76 @@ const Activities = () => {
     setFilteredResults(applyFiltersAndSorting());
   };
 
-  const handleBookNowClick = (index) => {
+  const handleBookNowClick = async (index, activity) => {
+    if (!user) {
+      setError("You must be logged in to like an activity.");
+      return;
+    }
+
+    const liked = !booked[index];
     setBooked((prevBooked) => ({
       ...prevBooked,
-      [index]: !prevBooked[index],
+      [index]: liked,
     }));
+
+    try {
+      const db = getFirestore();
+      const userUid = user.uid; // Get the authenticated user's UID
+
+      const likedActivitiesRef = doc(
+        collection(db, "LikedActivities"),
+        `${userUid}_${activity.name}`,
+      );
+
+      if (liked) {
+        // Save the activity to Firestore when liked
+        await setDoc(likedActivitiesRef, {
+          uid: userUid,
+          activityName: activity.name,
+          city: activity.city,
+          price: activity.price,
+          rating: activity.category,
+          rating: activity.sub_category,
+          description: activity.description,
+          address: activity.address,
+        });
+        console.log("Activities liked and saved to Firestore");
+      } else {
+        await deleteDoc(likedActivitiesRef);
+        console.log("Activities unliked and deleted from Firestore");
+      }
+    } catch (error) {
+      console.error("Error updating liked activity in Firestore:", error);
+      setError("Failed to update liked activity. Please try again.");
+    }
   };
 
-  const getReviewComment = (rating) => {
-    if (rating >= 8) return "Good";
-    if (rating >= 6) return "Average";
-    return "Poor";
+  const handleToggleLikedFilter = () => {
+    setShowOnlyLiked(!showOnlyLiked);
+    if (!showOnlyLiked) {
+      const likedResults = searchResults.filter((_, index) => booked[index]);
+      setFilteredResults(likedResults);
+    } else {
+      setFilteredResults(searchResults);
+    }
+  };
+  const handleFilterByCategory = (category) => {
+    setShowCategory(category);
+    if (category === "all") {
+      setFilteredResults(searchResults);
+    } else if (category === "favourites") {
+      const likedResults = searchResults.filter((_, index) => booked[index]);
+      setFilteredResults(likedResults);
+    } else {
+      const filteredByCategory = searchResults.filter(
+        (activity) => activity.category === category,
+      );
+      setFilteredResults(filteredByCategory);
+    }
   };
 
   return (
-    <Box sx={{ display: "flex",
-     
-    }}>
+    <Box sx={{ display: "flex", overflow: "hidden" }}>
       <Sidebar
         sx={{
           width: "250px",
@@ -201,34 +329,49 @@ const Activities = () => {
             gap: 2,
           }}
         >
-          <Box display="flex" flexDirection="column" gap={2}>
-            <TextField
-              fullWidth
-              label="Search activities"
-              variant="outlined"
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+            }}
+          >
+            <Autocomplete
+              freeSolo
+              options={allowedCities}
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyPress={(e) => {
-                if (e.key === "Enter") {
-                  handleSearch();
-                }
+              onChange={(event, newValue) => {
+                setQuery(newValue || "");
+                handleSearch(newValue || "");
               }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => handleSearch(query)}>
-                      <FaSearch />
-                    </IconButton>
-                  </InputAdornment>
-                ),
+              onInputChange={(event, newInputValue) => {
+                setQuery(newInputValue);
               }}
-              sx={{ 
-                flexGrow: 1, 
-                minWidth: "200px", 
-                input: {
-                  color: isDarkMode ? "#ffffff" : "#000000",
-                },
-              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  fullWidth
+                  label="Search activities"
+                  variant="outlined"
+                  InputProps={{
+                    ...params.InputProps,
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={() => handleSearch(query)}>
+                          <FaSearch />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    flexGrow: 1,
+                    minWidth: "200px",
+                    input: {
+                      color: isDarkMode ? "#ffffff" : "#000000",
+                    },
+                  }}
+                />
+              )}
             />
             <Button
               variant="outlined"
@@ -246,26 +389,36 @@ const Activities = () => {
                 borderRadius: "4px",
                 p: 2,
                 mt: 2,
-                // backgroundColor: "#fff",
                 backgroundColor: isDarkMode ? "#424242" : "#ffffff",
               }}
             >
               <FormControl fullWidth sx={{ mb: 2 }}>
                 <InputLabel htmlFor="sort-by-select">Sort By</InputLabel>
                 <Select
-                  sx= {{color: isDarkMode ? "#ffffff" : "#000000"}}
+                  sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
                   value={sortOption}
                   onChange={handleSortChange}
                   inputProps={{ id: "sort-by-select" }}
                 >
-                  <MenuItem value="priceAsc" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>Price: Low to High</MenuItem>
-                  <MenuItem value="priceDesc" sx={{color: isDarkMode ? "#ffffff" : "#000000"}}>Price: High to Low</MenuItem>
+                  <MenuItem
+                    value="priceAsc"
+                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                  >
+                    Price: Low to High
+                  </MenuItem>
+                  <MenuItem
+                    value="priceDesc"
+                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                  >
+                    Price: High to Low
+                  </MenuItem>
                 </Select>
               </FormControl>
+
               <FormControl component="fieldset" sx={{ mb: 2 }}>
                 <Typography>Price Range</Typography>
                 <Slider
-                  sx= {{color: isDarkMode ? "#ffffff" : "#000000"}}
+                  sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
                   value={filters.price}
                   onChange={handleFilterChange}
                   valueLabelDisplay="auto"
@@ -274,80 +427,125 @@ const Activities = () => {
                   step={100}
                 />
               </FormControl>
-              <FormControl fullWidth sx={{ mb: 2 }}>
-                <InputLabel htmlFor="category-select">Category</InputLabel>
-                <Select
-                sx= {{color: isDarkMode ? "#ffffff" : "#000000"}}
-                  name="category"
-                  value={filters.category}
-                  onChange={handleFilterChange}
-                  inputProps={{ id: "category-select" }}
+
+              <Box sx={{}}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleFilterApply}
                 >
-                  <MenuItem value="" sx= {{color: isDarkMode ? "#ffffff" : "#000000"}}>Any</MenuItem>
-                  <MenuItem value="Restaurant" sx= {{color: isDarkMode ? "#ffffff" : "#000000"}}>Restaurant</MenuItem>
-                  <MenuItem value="Things to Do" sx= {{color: isDarkMode ? "#ffffff" : "#000000"}}>Things to Do</MenuItem>
-                </Select>
-              </FormControl>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleFilterApply}
-              >
-                Apply Filters
-              </Button>
+                  Apply Filters
+                </Button>
+              </Box>
             </Box>
           )}
         </Box>
 
         <Box sx={{ mt: 1 }}>
+          <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
+            <Button
+              sx={{ textTransform: "none" }}
+              variant={showCategory === "all" ? "contained" : "outlined"}
+              onClick={() => handleFilterByCategory("all")}
+            >
+              All
+            </Button>
+            <Button
+              sx={{ textTransform: "none" }}
+              variant={showCategory === "favourites" ? "contained" : "outlined"}
+              onClick={() => handleFilterByCategory("favourites")}
+            >
+              Favourites
+            </Button>
+            <Button
+              sx={{ textTransform: "none" }}
+              variant={showCategory === "Restaurant" ? "contained" : "outlined"}
+              onClick={() => handleFilterByCategory("Restaurant")}
+            >
+              Restaurants
+            </Button>
+            <Button
+              sx={{ textTransform: "none" }}
+              variant={
+                showCategory === "Things_to_do" ? "contained" : "outlined"
+              }
+              onClick={() => handleFilterByCategory("Things_to_do")}
+            >
+              Things to Do
+            </Button>
+          </Box>
           {loading ? (
             <CircularProgress />
           ) : (
-            filteredResults.map((activity, index) => (
-              <Card key={index} sx={{ maxWidth: 345, mb: 1}}>
-                <CardContent>
-                  <Typography gutterBottom variant="h5" component="div">
-                    {activity.name}
-                  </Typography> 
-                  <Typography variant="body2" color="text.secondary">
-                    {activity.category} - {activity.sub_category}{" "}
-                    <FaMapMarkedAlt /> {activity.address}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {activity.description}
-                  </Typography>
-
-                  <Box
+            <Grid container spacing={2} sx={{ mt: 2 }}>
+              {filteredResults.map((activity, index) => (
+                <Grid key={index} item xs={12} sm={10} md={4}>
+                  <Card
+                    key={index}
                     sx={{
-                      textAlign: "left",
-                      flexGrow: 1,
+                      maxWidth: 345,
+                      width: "100%",
+                      maxheight: 480,
+                      height: "100%",
+                      mb: 1,
                     }}
                   >
-                    <Typography
-                      variant="body1"
-                      color="text.primary"
-                      sx={{ fontWeight: "bold" }}
-                    >
-                      R{activity.price} /person
-                    </Typography>
-                    <Button
-                      variant="contained"
-                      sx={{
-                        mt: "2px",
-                        backgroundColor: booked[index] ? "green" : "black",
-                        color: "white",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
-                      }}
-                      onClick={() => handleBookNowClick(index)}
-                    >
-                      {booked[index] ? "Saved for later" : "Save for later"}
-                    </Button>
-                  </Box>
-                </CardContent>
-              </Card>
-            ))
+                    <CardContent>
+                      <Typography gutterBottom variant="h5" component="div">
+                        {activity.name}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {activity.category} - {activity.sub_category} <br />
+                        <FaMapMarkedAlt /> {activity.address}
+                        <br />
+                        <br />
+                        {activity.description}
+                        <br />
+                        <br />
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              textAlign: "right",
+                              flexGrow: 1,
+                            }}
+                          >
+                            from {"  "} R{activity.price}
+                            /person
+                            <Box
+                              sx={{
+                                display: "flex",
+                                justifyContent: "flex-end",
+                              }}
+                            >
+                              <IconButton
+                                onClick={() =>
+                                  handleBookNowClick(index, activity)
+                                }
+                                sx={{
+                                  color: booked[index] ? "red" : "grey",
+                                  backgroundColor: "transparent",
+                                  "&:hover": {
+                                    backgroundColor: "transparent",
+                                  },
+                                }}
+                              >
+                                {booked[index] ? <FaHeart /> : <FaRegHeart />}
+                              </IconButton>
+                            </Box>
+                          </Box>
+                        </Box>
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
           )}
           {error && (
             <Typography variant="body1" color="error">

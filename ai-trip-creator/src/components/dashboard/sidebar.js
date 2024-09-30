@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 import {
   Drawer,
@@ -25,10 +25,12 @@ import {
   FaSignOutAlt,
   FaRunning,
 } from "react-icons/fa";
+import { MdOutlineAnalytics } from "react-icons/md";
 
 const Sidebar = () => {
   const { toggleTheme } = useTheme();
   const user = useUser();
+  const location = useLocation(); // Hook to get the current location
 
   const [isChecked, setIsChecked] = useState(false);
 
@@ -85,6 +87,8 @@ const Sidebar = () => {
     toggleTheme();
   };
 
+  const isActive = (path) => location.pathname === path; // Check if the current path matches the link
+
   return (
     <Drawer
       variant="permanent"
@@ -95,54 +99,165 @@ const Sidebar = () => {
           backgroundColor: "#004BA8",
           color: "#FFFFFF",
           elevation: 16, // Nav drawer elevation
+          height: "100vh", // Full height of the viewport
+          overflow: "hidden", // Prevent scrolling
         },
       }}
     >
-      <List>
-        <ListItem button component={Link} to="/dashboard">
-          <FaHome style={{ marginRight: "10px" }} />{" "}
-          {/* Example: Replace with your own icon component */}
+      <List sx={{ overflow: "hidden" }}>
+        {" "}
+        {/* Disable scroll inside the List */}
+        <ListItem
+          button
+          component={Link}
+          to="/dashboard"
+          sx={{
+            backgroundColor: isActive("/dashboard") ? "#ffffff33" : "inherit",
+            color: isActive("/dashboard") ? "#ffffff" : "inherit",
+            borderRadius: "50px",
+            margin: "2px 10px",
+            width: "200px",
+          }}
+        >
+          <FaHome style={{ marginRight: "10px" }} />
           <ListItemText primary="Home" />
         </ListItem>
-        <ListItem button component={Link} to="/Itinerary">
-          <FaListAlt style={{ marginRight: "10px" }} />{" "}
-          {/* Example: Replace with your own icon component */}
+        <ListItem
+          button
+          component={Link}
+          to="/Itinerary"
+          sx={{
+            backgroundColor: isActive("/Itinerary") ? "#ffffff33" : "inherit",
+            color: isActive("/Itinerary") ? "#ffffff" : "inherit",
+            borderRadius: "50px",
+            margin: "2px 10px",
+            width: "200px",
+          }}
+        >
+          <FaListAlt style={{ marginRight: "10px" }} />
           <ListItemText primary="Itinerary" />
         </ListItem>
-        <ListItem button component={Link} to="/flights">
-          <FaPlane style={{ marginRight: "10px" }} />{" "}
-          {/* Example: Replace with your own icon component */}
+        <ListItem
+          button
+          component={Link}
+          to="/flights"
+          sx={{
+            backgroundColor: isActive("/flights") ? "#ffffff33" : "inherit",
+            color: isActive("/flights") ? "#ffffff" : "inherit",
+            borderRadius: "50px",
+            margin: "2px 10px",
+            width: "200px",
+          }}
+        >
+          <FaPlane style={{ marginRight: "10px" }} />
           <ListItemText primary="Flights" />
         </ListItem>
-        <ListItem button component={Link} to="/accommodation">
-          <FaBed style={{ marginRight: "10px" }} />{" "}
-          {/* Example: Replace with your own icon component */}
+        <ListItem
+          button
+          component={Link}
+          to="/accommodation"
+          sx={{
+            backgroundColor: isActive("/accommodation")
+              ? "#ffffff33"
+              : "inherit",
+            color: isActive("/accommodation") ? "#ffffff" : "inherit",
+            borderRadius: "50px",
+            margin: "2px 10px",
+            width: "200px",
+          }}
+        >
+          <FaBed style={{ marginRight: "10px" }} />
           <ListItemText primary="Accommodation" />
         </ListItem>
-        <ListItem button component={Link} to="/activities">
-          <FaRunning style={{ marginRight: "10px" }} />{" "}
-          {/* Example: Replace with your own icon component */}
+        <ListItem
+          button
+          component={Link}
+          to="/activities"
+          sx={{
+            backgroundColor: isActive("/activities") ? "#ffffff33" : "inherit",
+            color: isActive("/activities") ? "#ffffff" : "inherit",
+            borderRadius: "50px",
+            margin: "2px 10px",
+            width: "200px",
+          }}
+        >
+          <FaRunning style={{ marginRight: "10px" }} />
           <ListItemText primary="Things to do" />
         </ListItem>
         <Divider sx={{ my: 2, borderColor: "#34495e" }} />
-        <ListItem button component={Link} to="/profile">
-          <FaUser style={{ marginRight: "10px" }} />{" "}
-          {/* Example: Replace with your own icon component */}
+        <ListItem
+          button
+          component={Link}
+          to="/profile"
+          sx={{
+            backgroundColor: isActive("/profile") ? "#ffffff33" : "inherit",
+            color: isActive("/profile") ? "#ffffff" : "inherit",
+            borderRadius: "50px",
+            margin: "2px 10px",
+            width: "200px",
+          }}
+        >
+          <FaUser style={{ marginRight: "10px" }} />
           <ListItemText primary="Profile" />
         </ListItem>
-        <ListItem button component={Link} to="/help">
-          <FaQuestion style={{ marginRight: "10px" }} />{" "}
-          {/* Example: Replace with your own icon component */}
+        <ListItem
+          button
+          component={Link}
+          to="/analytics"
+          sx={{
+            backgroundColor: isActive("/analytics") ? "#ffffff33" : "inherit",
+            color: isActive("/analytics") ? "#ffffff" : "inherit",
+            borderRadius: "50px",
+            margin: "2px 10px",
+            width: "200px",
+          }}
+        >
+          <MdOutlineAnalytics style={{ marginRight: "10px" }} />
+          <ListItemText primary="Analytics" />
+        </ListItem>
+        <ListItem
+          button
+          component={Link}
+          to="/help"
+          sx={{
+            backgroundColor: isActive("/help") ? "#ffffff33" : "inherit",
+            color: isActive("/help") ? "#ffffff" : "inherit",
+            borderRadius: "50px",
+            margin: "2px 10px",
+            width: "200px",
+          }}
+        >
+          <FaQuestion style={{ marginRight: "10px" }} />
           <ListItemText primary="Help" />
         </ListItem>
-        <ListItem button component={Link} to="/settings">
-          <FaCog style={{ marginRight: "10px" }} />{" "}
-          {/* Example: Replace with your own icon component */}
+        <ListItem
+          button
+          component={Link}
+          to="/settings"
+          sx={{
+            backgroundColor: isActive("/settings") ? "#ffffff33" : "inherit",
+            color: isActive("/settings") ? "#ffffff" : "inherit",
+            borderRadius: "50px",
+            margin: "2px 10px",
+            width: "200px",
+          }}
+        >
+          <FaCog style={{ marginRight: "10px" }} />
           <ListItemText primary="Settings" />
         </ListItem>
-        <ListItem button component={Link} to="/">
-          <FaSignOutAlt style={{ marginRight: "10px" }} />{" "}
-          {/* Example: Replace with your own icon component */}
+        <ListItem
+          button
+          component={Link}
+          to="/"
+          sx={{
+            backgroundColor: isActive("/") ? "#ffffff33" : "inherit",
+            color: isActive("/") ? "#ffffff" : "inherit",
+            borderRadius: "50px",
+            margin: "2px 10px",
+            width: "200px",
+          }}
+        >
+          <FaSignOutAlt style={{ marginRight: "10px" }} />
           <ListItemText primary="Logout" />
         </ListItem>
       </List>

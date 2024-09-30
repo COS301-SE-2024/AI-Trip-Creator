@@ -56,7 +56,7 @@ const Help = () => {
         <Sidebar />
       </div>
       <div style={contentStyles } >
-        <h1 style={{marginTop: "10px", marginLeft: "10px"}}>Help</h1>
+        <h1 style={{marginTop: "10px", marginLeft: "16px"}}>Help</h1>
         <div className="help-content" style={{ marginLeft: "10px"}}>
           <h2>How to Use the AI Trip Creator</h2>
           <p>
