@@ -425,7 +425,7 @@ function ItineraryForm({ onGenerateItinerary }) {
       },
     ];
 
-
+//Fetch activities to feed to AI based on destination/city
     const FilteredActivities = async (activitiesArray) => {
       try {
         const activitiesCollection = collection(db, "Activities");
