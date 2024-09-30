@@ -5,7 +5,7 @@ import { getFirestore } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAwuPv1t0KhiADo9MK7SZbWPgfWNcaTAeA",
+  apiKey: process.env.REACT_APP_FIREBASE_APIKEY,
   authDomain: "ai-trip-creator.firebaseapp.com",
   databaseURL: "https://ai-trip-creator-default-rtdb.firebaseio.com",
   projectId: "ai-trip-creator",
@@ -22,4 +22,4 @@ const firestore = getFirestore(app);
 const db = getFirestore(app);
 const analytics = getAnalytics(app); // Initialize Google Analytics
 
-export { auth, firestore,db, app, analytics};
+export { auth, firestore, db, app, analytics };
