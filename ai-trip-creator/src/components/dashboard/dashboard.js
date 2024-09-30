@@ -10,10 +10,12 @@ import { collection, addDoc } from "firebase/firestore";
 
 
 
+
+
 // Initialize the OpenAI client
 const openai = new OpenAI({
   apiKey: process.env.REACT_APP_OPEN_AI_KEY,
-  dangerouslyAllowBrowser: true
+  dangerouslyAllowBrowser: true,
 });
 
 
@@ -47,13 +49,15 @@ const Dashboard = () => {
   };
 
 
-
 const handleSubmit = async () => {
   if (userInput.trim() === "") return;
 
   // Add user's input to the responses state
   const newMessage = { type: "user", text: userInput };
   setResponses([...responses, newMessage]);
+
+    
+
 
   try {
     // Get the current user from Firebase Auth
@@ -64,6 +68,9 @@ const handleSubmit = async () => {
     if (!currentUser) {
       console.error("No authenticated user.");
       return;
+
+      
+
     }
 
     const userId = currentUser.uid; // Get the user's UID
@@ -144,7 +151,6 @@ const handleSubmit = async () => {
 
   return (
     <div style={{ display: "flex", height: "100vh", flexDirection: "column" }}>
-      
       <Sidebar
         style={{
           flex: "0 0 250px",
@@ -153,7 +159,7 @@ const handleSubmit = async () => {
           borderRight: "1px solid #ddd",
         }}
       />
-      
+
       <div
         style={{
           marginLeft: "250px",
@@ -162,68 +168,95 @@ const handleSubmit = async () => {
           flexDirection: "column",
         }}
       >
-        <h1 style={{marginLeft: "28px", marginTop: "30px"}}>AI Trip Planning</h1>
-        {showCards && (
-          <Box
-            sx={{
-              padding: 2,
-              borderBottom: "1px solid #ddd",
-              backgroundColor: "#f7f7f7",
-            }}
-          >
-            {/* <Typography variant="h3" gutterBottom>
-              AI Trip Planning
-            </Typography> */}
-
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-              <Card sx={{ minWidth: 150, backgroundColor: "#e1f5fe" }}>
-                <CardContent sx={{ padding: 1 }}>
-                  <Typography variant="body2" sx={{ margin: 0 }}>
-                    Chat with the AI to plan your trip.
-                  </Typography>
-                  <Typography variant="body2" sx={{ margin: 0 }}>
-                    Example Input: "What are some activities to do in Cape Town?"
-                  </Typography>
-                </CardContent>
-              </Card>
-              <Card sx={{ minWidth: 150, backgroundColor: "#fff3e0" }}>
-                <CardContent sx={{ padding: 2 }}>
-                  <Typography variant="body2" sx={{ margin: 0 }}>
-                    Ask any questions related to your trip.
-                  </Typography>
-                  <Typography variant="body2" sx={{ margin: 0 }}>
-                    Example Input: "Find me a hotel in Durban."
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Box>
-          </Box>
-        )}
+        <h1 style={{ marginLeft: "28px", marginTop: "30px" }}>
+          AI Trip Planning
+        </h1>
 
         <Box sx={{ flex: 1, overflowY: "auto", padding: 2 }}>
           {responses.map((response, index) => (
             <Box
               key={index}
               sx={{
-                textAlign: response.type === "user" ? "right" : "left",
-                backgroundColor:
-                  response.type === "user" ? "#e0f7fa" : "#f1f8e9",
-                margin: 1,
-                padding: 1,
-                borderRadius: 1,
-                maxWidth: "70%",
-                display: "inline-block",
-                wordWrap: "break-word",
-                alignSelf: response.type === "user" ? "flex-end" : "flex-start",
+                display: "flex",
+                justifyContent:
+                  response.type === "user" ? "flex-end" : "flex-start",
+                margin: "10px 0",
               }}
             >
-              {response.type === "user" ? (
-                response.text
+              {/* Avatar Circle */}
+              {response.type === "bot" ? (
+                <Box
+                  sx={{
+                    width: "40px",
+                    height: "40px",
+                    backgroundColor: "#376B7E",
+                    color: "white",
+                    borderRadius: "50%",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginRight: "10px",
+                    fontWeight: "bold",
+                    fontSize: "18px",
+                  }}
+                >
+                  B
+                </Box>
               ) : (
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                  {response.text}
-                </ReactMarkdown>
+                <Box
+                  sx={{
+                    width: "40px",
+                    height: "40px",
+                    backgroundColor: "gray",
+                    borderRadius: "50%",
+                    marginRight: "10px",
+                    backgroundImage: "url('https://via.placeholder.com/150')",
+                    backgroundSize: "cover",
+                  }}
+                />
               )}
+
+              {/* Speechubble Styling */}
+              <Box
+                sx={{
+                  maxWidth: "70%",
+                  padding: "10px",
+                  borderRadius: "20px",
+                  position: "relative",
+                  backgroundColor:
+                    response.type === "user" ? "#DCF8C6" : "#E0E0E0",
+                  color: response.type === "user" ? "#000" : "#000",
+                  wordWrap: "break-word",
+                  boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.1)",
+                  "&::before": {
+                    content: "''",
+                    position: "absolute",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    width: "0",
+                    height: "0",
+                    borderStyle: "solid",
+                    borderWidth:
+                      response.type === "user"
+                        ? "10px 0 10px 15px"
+                        : "10px 15px 10px 0",
+                    borderColor:
+                      response.type === "user"
+                        ? "transparent transparent transparent #DCF8C6"
+                        : "transparent #E0E0E0 transparent transparent",
+                    left: response.type === "user" ? "100%" : "auto",
+                    right: response.type !== "user" ? "100%" : "auto",
+                  },
+                }}
+              >
+                {response.type === "user" ? (
+                  response.text
+                ) : (
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {response.text}
+                  </ReactMarkdown>
+                )}
+              </Box>
             </Box>
           ))}
         </Box>
@@ -254,12 +287,12 @@ const handleSubmit = async () => {
           <Button
             onClick={handleSubmit}
             sx={{
-              backgroundColor: "#007bff",
+              backgroundColor: "#5ccc9d",
               color: "white",
               borderRadius: "5px",
               padding: "10px",
               minWidth: "40px",
-              "&:hover": { backgroundColor: "#0056b3" },
+              "&:hover": { backgroundColor: "#5ddd9e" },
             }}
           >
             <FaPaperPlane />
@@ -271,4 +304,3 @@ const handleSubmit = async () => {
 };
 
 export default Dashboard;
-
