@@ -721,7 +721,7 @@ const settingsActs = {
 
       <br />
       <Card>
-      <h2>Activities in {destination}</h2>
+      <h2 style={{marginLeft:"10px"}}>Activities in {destination}</h2>
 
 {limitedActivities.length > 0 ? (
   <Slider {...settingsActs}>
