@@ -113,6 +113,8 @@ const fetchFilteredActivities = async (activitiesArray) => {
       activities.push({ id: doc.id, ...doc.data() });
     });
 
+
+    console.log("Activities:" + activities.join(", "));
     return activities;
   } catch (error) {
     console.error("Error getting documents", error);
@@ -423,6 +425,8 @@ function ItineraryForm({ onGenerateItinerary }) {
       },
     ];
 
+
+
     const currentLocation = preferences.currentLocation;
     const destination = preferences.destination;
     const travelerCategory = preferences.travelerCategory;
@@ -431,6 +435,32 @@ function ItineraryForm({ onGenerateItinerary }) {
     const interests = preferences.interests;
     const groupSize = preferences.groupSize;
     const priority = preferences.priority;
+
+    //Fetch activities to feed to AI based on destination/city
+    const FilteredActivities = async (activitiesArray) => {
+      try {
+        const activitiesCollection = collection(db, "Activities");
+        const q = query(
+          activitiesCollection,
+          where("city", "==", destination),
+          //where("sub_category", "in", activitiesArray),
+        );
+    
+        const querySnapshot = await getDocs(q);
+    
+        let activities = [];
+        querySnapshot.forEach((doc) => {
+          activities.push({ id: doc.id, ...doc.data() });
+        });
+    
+    
+        console.log("Activities:" + activities.join(", "));
+        return activities;
+      } catch (error) {
+        console.error("Error getting documents", error);
+      }
+    };
+    
 
     // const prompt = "Generate an itinerary for my holiday with the the following data. The Holiday is 2 days long and i would like to eat twice a day. You will"
     //                 + " make sure the category is restaurant when choosing a place to eat. i am limit to 2-3 activities a day. Ake sure to include price and descripton at each activity.";
@@ -448,6 +478,8 @@ function ItineraryForm({ onGenerateItinerary }) {
       groupSize +
       ". The interests are as follows " +
       interests +
+      ". Plan when the following activities for the trip can be done across the days: " +
+      FilteredActivities +
       ". And the priority of the trip is " +
       priority +
       ". ";
@@ -607,7 +639,7 @@ function ItineraryForm({ onGenerateItinerary }) {
 
   const locations = [
     { name: "Johannesburg", image: johannesburgImg },
-    { name: "CapeTown", image: capetownImg },
+    { name: "Cape Town", image: capetownImg },
     { name: "Pretoria", image: pretoriaImg },
     { name: "Durban", image: durbanImg },
     { name: "Gqeberha", image: gqerberhaImg },
