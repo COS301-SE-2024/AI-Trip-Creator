@@ -738,6 +738,9 @@ function ItineraryDisplay({ itinerary }) {
                   {/* <CardMedia
             component="img"
             height="200"
+            sx={{
+                height: '200px', // Fixed height for image
+                objectFit: 'cover',}}
             image={activity.image || "fallback_image_url_here"} // Default image in case none is provided
             alt={activity.name}
           /> */}
