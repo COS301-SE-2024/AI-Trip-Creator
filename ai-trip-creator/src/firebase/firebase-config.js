@@ -5,7 +5,7 @@ import { getFirestore } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_GOOGLE_KEY,
+  apiKey: process.env.REACT_APP_FIREBASE_APIKEY,
   authDomain: "ai-trip-creator.firebaseapp.com",
   databaseURL: "https://ai-trip-creator-default-rtdb.firebaseio.com",
   projectId: "ai-trip-creator",
