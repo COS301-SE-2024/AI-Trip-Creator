@@ -25,10 +25,10 @@ import {
   DialogActions,
   IconButton,
   CardMedia,
-  Slider,
 } from "@mui/material";
-import DeleteIcon from '@mui/icons-material/Delete';
-import Carousel from 'react-material-ui-carousel';
+import Slider from "react-slick";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Carousel from "react-material-ui-carousel";
 import Sidebar from "./sidebar";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import {
@@ -45,6 +45,33 @@ import { db } from "../../firebase/firebase-config";
 import "./dashboard.css";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+const SlickArrowLeft = ({ currentSlide, slideCount, ...props }) => (
+  <button
+    {...props}
+    style={{
+      ...props.style,
+      display: "block",
+      background: "black",
+      color: "white",
+      borderRadius: "50%",
+      zIndex: 2,
+    }}
+  />
+);
+
+const SlickArrowRight = ({ currentSlide, slideCount, ...props }) => (
+  <button
+    {...props}
+    style={{
+      ...props.style,
+      display: "block",
+      background: "black",
+      color: "white",
+      borderRadius: "50%",
+      zIndex: 2,
+    }}
+  />
+);
 
 const Profile = () => {
   const theme = useTheme();
@@ -136,7 +163,7 @@ const Profile = () => {
           const itinerariesSnapshot = await getDocs(itinerariesQuery);
           const itinerariesList = itinerariesSnapshot.docs.map((doc) => ({
             ...doc.data(),
-            id: doc.id,  // Ensure the ID is captured for deletion
+            id: doc.id, // Ensure the ID is captured for deletion
           }));
           setItineraries(itinerariesList);
         } catch (error) {
@@ -167,7 +194,9 @@ const Profile = () => {
       try {
         await deleteDoc(doc(db, "Itinerary", itineraryToDelete.id));
 
-        setItineraries(itineraries.filter(i => i.id !== itineraryToDelete.id));
+        setItineraries(
+          itineraries.filter((i) => i.id !== itineraryToDelete.id),
+        );
 
         console.log("Itinerary deleted successfully");
       } catch (error) {
@@ -310,22 +339,40 @@ const Profile = () => {
     "Food",
     "Nightlife",
   ];
+  // Carousel settings
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    responsive: [
+      {
+        breakpoint: 960,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  };
 
   const carouselSettings = {
-    dots: true,  // Show navigation dots
-    infinite: true,  // Infinite scroll
-    speed: 500,  // Transition speed
-    slidesToShow: 3,  // Number of cards to show at once
-    slidesToScroll: 1,  // How many to scroll on click
-    responsive: [  // Make the carousel responsive
+    dots: true, // Show navigation dots
+    infinite: true, // Infinite scroll
+    speed: 500, // Transition speed
+    slidesToShow: 3, // Number of cards to show at once
+    slidesToScroll: 1, // How many to scroll on click
+    responsive: [
+      // Make the carousel responsive
       {
-        breakpoint: 1024,  // Max width for this setting
+        breakpoint: 1024, // Max width for this setting
         settings: {
           slidesToShow: 2,
           slidesToScroll: 1,
           infinite: true,
-          dots: true
-        }
+          dots: true,
+        },
       },
       {
         breakpoint: 600,
@@ -333,461 +380,463 @@ const Profile = () => {
           slidesToShow: 1,
           slidesToScroll: 1,
           infinite: true,
-          dots: true
-        }
-      }
-    ]
+          dots: true,
+        },
+      },
+    ],
+  };
+
+  const sliderSettings = {
+    dots: true,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 4, // Number of cards to show at once on large screens
+    slidesToScroll: 1,
+    nextArrow: <SlickArrowRight />,
+    prevArrow: <SlickArrowLeft />,
+    responsive: [
+      {
+        breakpoint: 1024, // Medium screens (tablets, etc.)
+        settings: {
+          slidesToShow: 3,
+        },
+      },
+      {
+        breakpoint: 600, // Small screens (mobile)
+        settings: {
+          slidesToShow: 2,
+        },
+      },
+      {
+        breakpoint: 480, // Extra small screens
+        settings: {
+          slidesToShow: 1,
+        },
+      },
+    ],
   };
 
   return (
     <Box display="flex">
-      <Drawer
-        variant={isSmUp ? "permanent" : "temporary"}
-        open={true}
-        sx={{
-          "& .MuiDrawer-paper": {
-            boxSizing: "border-box",
-            width: 240,
-          },
+      <Sidebar
+        style={{
+          position: "fixed",
+          width: "250px",
+          height: "100%",
+          top: 0,
+          left: 0,
+        }}
+      />
+      <div
+        style={{
+          marginLeft: "250px",
+          padding: "20px",
+          overflowY: "auto",
+          width: "100%",
         }}
       >
-        <Sidebar />
-      </Drawer>
-      <Box p={3} sx={{ ml: isSmUp ? "380px" : "0", overflowX: "hidden", width: "950px" }}>
-        <Box p={3} sx={{ minHeight: "50vh" }}>
-          <h1 style={{ marginTop: "-20px", marginLeft: "-50px" }}>My Profile</h1>
-          {loading ? (
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              height="50vh"
-            >
-              <CircularProgress />
-            </Box>
+        <Container>
+          <h1 style={{}}>Profile</h1>
+          <Box
+            p={3}
+            sx={{
+              overflowX: "hidden",
+              width: "950px",
+            }}
+          >
+            <Box p={3} sx={{ minHeight: "50vh" }}>
+              {loading ? (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  height="50vh"
+                >
+                  <CircularProgress />
+                </Box>
+              ) : (
+                <Card
+                  sx={{
+                    backgroundColor: isDarkMode ? "#424242" : "#ffffff",
 
-          ) : (
-            <Card
-              sx={{
-                backgroundColor: isDarkMode ? "#424242" : "#ffffff",
-
-                boxShadow: isDarkMode
-                  ? "0px 4px 20px rgba(0, 0, 0, 0.5)"
-                  : "0px 4px 20px rgba(0, 0, 0, 0.1)",
-                padding: "19px",
-              }}
-            >
-              <CardContent>
-                {editing ? (
-                  <>
-                    <Box
-                      display="flex"
-                      flexDirection="column"
-                      alignItems="center"
-                    >
-                      <Avatar
-                        alt={user.name}
-                        src={profilePicturePreview}
-                        sx={{ width: 120, height: 120, mb: 2 }}
-                      />
-                      <Button
-                        variant="contained"
-                        component="label"
-                        sx={{
-                          mb: 2,
-                          backgroundColor: "#800080",
-                          color: "#FFFFFF",
-                          "&:hover": {
-                            backgroundColor: "#6A19B5",
-                            color: "#fff",
-                          },
-                        }}
-                      >
-                        Upload New Picture
-                        <input
-                          type="file"
-                          hidden
-                          onChange={handleProfilePictureChange}
-                        />
-                      </Button>
-                    </Box>
-                    <TextField
-                      sx={{
-                        input: {
-                          color: isDarkMode ? "#ffffff" : "#000000",
-                        },
-                      }}
-                      label="Name"
-                      name="name"
-                      value={user.name}
-                      onChange={handleInputChange}
-                      fullWidth
-                      margin="normal"
-                    />
-                    <TextField
-                      label="Email"
-                      name="email"
-                      value={user.email}
-                      fullWidth
-                      margin="normal"
-                      disabled
-                    />
-                    <FormControl component="fieldset" fullWidth margin="normal">
-                      <h3>Budget Level</h3>
-                      <ToggleButtonGroup
-                        value={budgetLevel}
-                        exclusive
-                        onChange={handleBudgetChange}
-                        fullWidth
-                        sx={{
-                          "& .MuiToggleButton-root": {
-                            "&.Mui-selected": {
-                              backgroundColor: "#1976d2",
-                              color: "#fff",
+                    boxShadow: isDarkMode
+                      ? "0px 4px 20px rgba(0, 0, 0, 0.5)"
+                      : "0px 4px 20px rgba(0, 0, 0, 0.1)",
+                    padding: "19px",
+                  }}
+                >
+                  <CardContent>
+                    {editing ? (
+                      <>
+                        <Box
+                          display="flex"
+                          flexDirection="column"
+                          alignItems="center"
+                        >
+                          <Avatar
+                            alt={user.name}
+                            src={profilePicturePreview}
+                            sx={{ width: 120, height: 120, mb: 2 }}
+                          />
+                          <Button
+                            variant="contained"
+                            component="label"
+                            sx={{
+                              mb: 2,
+                              backgroundColor: "#800080",
+                              color: "#FFFFFF",
+                              "&:hover": {
+                                backgroundColor: "#6A19B5",
+                                color: "#fff",
+                              },
+                            }}
+                          >
+                            Upload New Picture
+                            <input
+                              type="file"
+                              hidden
+                              onChange={handleProfilePictureChange}
+                            />
+                          </Button>
+                        </Box>
+                        <TextField
+                          sx={{
+                            input: {
+                              color: isDarkMode ? "#ffffff" : "#000000",
                             },
-                          },
-                        }}
-                      >
-                        <ToggleButton value="Cheap">Cheap</ToggleButton>
-                        <ToggleButton value="Affordable">
-                          Affordable
-                        </ToggleButton>
-                        <ToggleButton value="Luxury">Luxury</ToggleButton>
-                      </ToggleButtonGroup>
-                    </FormControl>
-                    <FormControl component="fieldset" fullWidth margin="normal">
-                      <h3>Accommodation Rating</h3>
-                      <ToggleButtonGroup
-                        value={accommodationRating}
-                        exclusive
-                        onChange={handleRatingChange}
-                        fullWidth
-                        sx={{
-                          "& .MuiToggleButton-root": {
-                            "&.Mui-selected": {
-                              backgroundColor: "#1976d2",
-                              color: "#fff",
-                            },
-                          },
-                        }}
-                      >
-                        <ToggleButton value="1">1-Star</ToggleButton>
-                        <ToggleButton value="2">2-Star</ToggleButton>
-                        <ToggleButton value="3">3-Star</ToggleButton>
-                        <ToggleButton value="4">4-Star</ToggleButton>
-                        <ToggleButton value="5">5-Star</ToggleButton>
-                      </ToggleButtonGroup>
-                    </FormControl>
-                    <FormControl component="fieldset" fullWidth margin="normal">
-                      <h3>Activities</h3>
-                      <ToggleButtonGroup
-                        value={selectedActivities}
-                        onChange={handleActivitiesChange}
-                        fullWidth
-                        multiple
-                        sx={{
-                          display: "flex",
-                          flexWrap: "wrap",
-                          "& .MuiToggleButton-root": {
-                            width: "223px",
-                            padding: "10px 15px",
-                            margin: "8px",
-                            "&.Mui-selected": {
-                              backgroundColor: "#1976d2",
-                              color: "#fff",
-                            },
-                          },
-                        }}
-                      >
-                        {activitiesOptions.map((option) => (
-                          <ToggleButton key={option} value={option}>
-                            {option}
-                          </ToggleButton>
-                        ))}
-                      </ToggleButtonGroup>
-                    </FormControl>
-                    <Box mt={3} display="flex" justifyContent="center">
-                      <Button
-                        variant="contained"
-                        onClick={handleSave}
-                        sx={{
-                          mx: 1,
-                          color: "#FFFFFF",
-                          backgroundColor: "#800080",
-                          "&:hover": {
-                            backgroundColor: "#6A19B5",
-                            color: "#fff",
-                          },
-                        }}
-                      >
-                        Save
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        onClick={handleCancel}
-                        sx={{ mx: 1 }}
-                      >
-                        Cancel
-                      </Button>
-                    </Box>
-                  </>
-                ) : (
-                  <>
-                    <Box
-                      display="flex"
-                      flexDirection="column"
-                      alignItems="center"
-                    >
-                      <Avatar
-                        alt={user.name}
-                        src={profilePicturePreview}
-                        sx={{ width: 150, height: 150, mb: 1 }}
-                      />
-                      <h2 gutterBottom>{user.name}</h2>
-                      <Typography
-                        variant="body1"
-                        color="textSecondary"
-                        sx={{ mt: -4 }}
-                        gutterBottom
-                      >
-                        {user.email}
-                      </Typography>
-                    </Box>
-                    <Box mt={-3} mb={5}>
-                      <h3>Budget Level</h3>
-                      <p>{budgetLevel}</p>
-                    </Box>
-                    <Box mt={-3} mb={5}>
-                      <h3>Accommodation Rating</h3>
-                      <p>{accommodationRating}-Star</p>
-                    </Box>
-                    <Box mt={-3} mb={5}>
-                      <h3>Activities</h3>
-                      <List sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}>
-                        {selectedActivities.map((activity) => (
-                          <ListItem key={activity}>{activity}</ListItem>
-                        ))}
-                      </List>
-                    </Box>
-                    <Box mt={4}>
-                      <Typography variant="h6">My Itineraries</Typography>
-                      {itineraries.length > 0 ? (
-                         <Carousel 
-                         indicators={true}  // Dots to indicate slides
-                         navButtonsAlwaysVisible={true}  // Navigation arrows always visible
-                       >
-                          {itineraries.map((itinerary, index) => {
-                            // Extract the title (text between "##" and "Day 1")
-                            const itineraryTitle = itinerary.itineraryText
-                              .split("**Day 1")[0] // Get the part before "Day 1"
-                              .replace("##", "") // Remove "##"
-                              .trim(); // Remove any extra spaces
-
-                            return (
-                              <Card
-                                key={index}
-                                sx={{
-                                  width: 200, // Adjust card width as needed
-                                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  alignItems: "center",
-                                  padding: 2,
-                                  cursor: "pointer",
-                                  position: "relative",
-                                }}
-                                onClick={() => handleItineraryClick(itinerary)}
-                              >
-                                <CardMedia
-                                  component="img"
-                                  image={itinerary.image}
-                                  alt={itinerary.destination}
-                                  onError={(e) => {
-                                    e.target.src = itinerary.altimage; // Set fallback image if the primary image fails to load
-                                  }}
-                                  style={{ width: "100%", height: "200px" }}
-                                />
-                                <Box
-                                  sx={{
-                                    position: "absolute",
-                                    bottom: 0, // Position text at the bottom of the image
-                                    backgroundColor: "rgba(0, 0, 0, 0.5)", // Optional dark overlay for contrast
-
-                                    left: 0,
-                                    width: "100%",
-                                    color: "white",
-                                    padding: 2,
-                                    "& *": {
-                                      color: "white !important", // Ensure all nested elements have white text
-                                    },
-                                  }}
-                                >
-                                  <Typography variant="body6">
-                                    Created {itinerary.createdAt}
-                                  </Typography>
-                                </Box>
-                                <IconButton
-                                  aria-label="delete"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDeleteClick(itinerary);
-                                  }}
-                                  sx={{
-                                    position: 'absolute',
-                                    top: 5,
-                                    right: 5,
-                                    color: 'white',
-                                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                                    '&:hover': {
-                                      backgroundColor: 'rgba(255, 0, 0, 0.7)',
-                                    },
-                                  }}
-                                >
-                                  <DeleteIcon />
-                                </IconButton>
-                              </Card>
-                            );
-                          })}
-                          </Carousel>
-                      ) : (
-                        <Typography>No itineraries found.</Typography>
-                      )}
-                      <Dialog
-        open={deleteConfirmOpen}
-        onClose={handleDeleteCancel}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        >
-        <DialogTitle id="alert-dialog-title">{"Delete Itinerary?"}</DialogTitle>
-        <DialogContent>
-          <Typography>
-            Are you sure you want to delete this itinerary? This action cannot be undone.
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDeleteCancel} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleDeleteConfirm} color="primary" autoFocus>
-            Delete
-          </Button>
-        </DialogActions>
-        </Dialog>
-        <Dialog
-  open={Boolean(selectedItinerary)}
-  onClose={handleCloseDialog}
-  fullWidth
-  maxWidth="md" // Set dialog size
->
-  <DialogTitle>Itinerary Details</DialogTitle>
-  <DialogContent>
-    {selectedItinerary && (
-      <Box>
-        {/* Destination image at the top with full width */}
-        <CardMedia
-          component="img"
-          height="300"
-          image={selectedItinerary.image}
-          alt={selectedItinerary.destination}
-          onError={(e) => {
-            e.target.src = selectedItinerary.altimage; // Set fallback image
-          }}
-        />
-
-        {/* Itinerary information */}
-        <Typography
-          variant="h4"
-          gutterBottom
-          style={{
-            fontWeight: "bold",
-            marginTop: "20px",
-            color: "#333", // Darker color for the title
-          }}
-        >
-          {selectedItinerary.title}
-        </Typography>
-
-        <Typography
-          variant="body1"
-          gutterBottom
-          style={{
-            color: "#666", // Slightly lighter for subtitle
-            marginBottom: "10px",
-          }}
-        >
-
-        </Typography>
-
-        <Typography
-          variant="body2"
-          color="textSecondary"
-          gutterBottom
-          style={{ fontStyle: "italic" }}
-        >
-          Created on {selectedItinerary.createdAt}
-        </Typography>
-
-        {/* Day-by-day itinerary */}
-        {selectedItinerary.itineraryText && (
-          <Box mt={2}>
-            <Grid container spacing={2}>
-              {selectedItinerary.itineraryText
-                .split(/(?=\*\*Day \d+:)/g) // Split by "Day"
-                .filter((day) => day.trim() !== "") // Filter out empty days
-                .map((dayText, index) => (
-                  <Grid item xs={12} key={index}>
-                    <Card
-                      style={{
-                        borderRadius: "10px",
-                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Soft shadow for card
-                        backgroundColor: "#fafafa", // Light background for readability
-                      }}
-                    >
-                      <CardContent>
-                        {/* Use ReactMarkdown to render markdown content */}
-                        <ReactMarkdown
-                          children={dayText}
-                          remarkPlugins={[remarkGfm]} // Enable GitHub Flavored Markdown
-                          components={{
-                            h1: ({node, ...props}) => <Typography variant="h6" style={{ fontWeight: "bold", marginBottom: "10px", color: "#333" }} {...props} />,
-                            p: ({node, ...props}) => <Typography variant="body1" style={{ color: "#555", lineHeight: "1.5" }} {...props} />,
-                            ul: ({node, ...props}) => <ul style={{ marginLeft: "20px" }} {...props} />,
-                            li: ({node, ...props}) => <li style={{ color: "#555" }} {...props} />,
                           }}
+                          label="Name"
+                          name="name"
+                          value={user.name}
+                          onChange={handleInputChange}
+                          fullWidth
+                          margin="normal"
                         />
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
-            </Grid>
+                        <TextField
+                          label="Email"
+                          name="email"
+                          value={user.email}
+                          fullWidth
+                          margin="normal"
+                          disabled
+                        />
+                        <FormControl
+                          component="fieldset"
+                          fullWidth
+                          margin="normal"
+                        >
+                          <h3>Budget Level</h3>
+                          <ToggleButtonGroup
+                            value={budgetLevel}
+                            exclusive
+                            onChange={handleBudgetChange}
+                            fullWidth
+                            sx={{
+                              "& .MuiToggleButton-root": {
+                                "&.Mui-selected": {
+                                  backgroundColor: "#1976d2",
+                                  color: "#fff",
+                                },
+                              },
+                            }}
+                          >
+                            <ToggleButton value="Cheap">Cheap</ToggleButton>
+                            <ToggleButton value="Affordable">
+                              Affordable
+                            </ToggleButton>
+                            <ToggleButton value="Luxury">Luxury</ToggleButton>
+                          </ToggleButtonGroup>
+                        </FormControl>
+                        <FormControl
+                          component="fieldset"
+                          fullWidth
+                          margin="normal"
+                        >
+                          <h3>Accommodation Rating</h3>
+                          <ToggleButtonGroup
+                            value={accommodationRating}
+                            exclusive
+                            onChange={handleRatingChange}
+                            fullWidth
+                            sx={{
+                              "& .MuiToggleButton-root": {
+                                "&.Mui-selected": {
+                                  backgroundColor: "#1976d2",
+                                  color: "#fff",
+                                },
+                              },
+                            }}
+                          >
+                            <ToggleButton value="1">1-Star</ToggleButton>
+                            <ToggleButton value="2">2-Star</ToggleButton>
+                            <ToggleButton value="3">3-Star</ToggleButton>
+                            <ToggleButton value="4">4-Star</ToggleButton>
+                            <ToggleButton value="5">5-Star</ToggleButton>
+                          </ToggleButtonGroup>
+                        </FormControl>
+                        <FormControl
+                          component="fieldset"
+                          fullWidth
+                          margin="normal"
+                        >
+                          <h3>Activities</h3>
+                          <ToggleButtonGroup
+                            value={selectedActivities}
+                            onChange={handleActivitiesChange}
+                            fullWidth
+                            multiple
+                            sx={{
+                              display: "flex",
+                              flexWrap: "wrap",
+                              "& .MuiToggleButton-root": {
+                                width: "223px",
+                                padding: "10px 15px",
+                                margin: "8px",
+                                "&.Mui-selected": {
+                                  backgroundColor: "#1976d2",
+                                  color: "#fff",
+                                },
+                              },
+                            }}
+                          >
+                            {activitiesOptions.map((option) => (
+                              <ToggleButton key={option} value={option}>
+                                {option}
+                              </ToggleButton>
+                            ))}
+                          </ToggleButtonGroup>
+                        </FormControl>
+                        <Box mt={3} display="flex" justifyContent="center">
+                          <Button
+                            variant="contained"
+                            onClick={handleSave}
+                            sx={{
+                              mx: 1,
+                              color: "#FFFFFF",
+                              backgroundColor: "#800080",
+                              "&:hover": {
+                                backgroundColor: "#6A19B5",
+                                color: "#fff",
+                              },
+                            }}
+                          >
+                            Save
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            onClick={handleCancel}
+                            sx={{ mx: 1 }}
+                          >
+                            Cancel
+                          </Button>
+                        </Box>
+                      </>
+                    ) : (
+                      <>
+                        <Box
+                          display="flex"
+                          flexDirection="column"
+                          alignItems="center"
+                        >
+                          <Avatar
+                            alt={user.name}
+                            src={profilePicturePreview}
+                            sx={{ width: 150, height: 150, mb: 1 }}
+                          />
+                          <h2 gutterBottom>{user.name}</h2>
+                          <Typography
+                            variant="body1"
+                            color="textSecondary"
+                            sx={{ mt: -4 }}
+                            gutterBottom
+                          >
+                            {user.email}
+                          </Typography>
+                        </Box>
+
+                        <Box
+                          mb={5}
+                          p={2}
+                          border={1}
+                          borderColor="grey.300"
+                          borderRadius="8px"
+                        >
+                          <h2>Budget Level</h2>
+                          <Box
+                            sx={{
+                              backgroundColor: isDarkMode
+                                ? "#444444"
+                                : "#e0e0e0",
+                              borderRadius: "20px",
+                              height: "45px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              maxWidth: "200px",
+                              textAlign: "center",
+                              margin: "0 auto",
+                            }}
+                          >
+                            <p style={{ margin: 0 }}>
+                              <p>{budgetLevel}</p>
+                            </p>
+                          </Box>
+                        </Box>
+                        <Box
+                          mb={5}
+                          p={2}
+                          border={1}
+                          borderColor="grey.300"
+                          borderRadius="8px"
+                        >
+                          <h2>Accommodation Rating</h2>
+                          <Box
+                            sx={{
+                              backgroundColor: isDarkMode
+                                ? "#444444"
+                                : "#e0e0e0",
+                              borderRadius: "20px",
+                              height: "45px",
+                              display: "flex", // Use flexbox for centering
+                              alignItems: "center", // Center vertically
+                              justifyContent: "center", // Center horizontally
+                              maxWidth: "200px",
+                              textAlign: "center",
+                              margin: "0 auto", // Center the bubble in the box
+                            }}
+                          >
+                            <p style={{ margin: 0 }}>
+                              {accommodationRating}-Star
+                            </p>
+                          </Box>
+                        </Box>
+
+                        <Box
+                          mb={5}
+                          p={2}
+                          border={1}
+                          borderColor="grey.300"
+                          borderRadius="8px"
+                        >
+                          <h2>Activities</h2>
+                          <List
+                            sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                          >
+                            {selectedActivities.map((activity) => (
+                              <ListItem
+                                key={activity}
+                                sx={{
+                                  backgroundColor: isDarkMode
+                                    ? "#444444"
+                                    : "#e0e0e0",
+                                  borderRadius: "20px",
+                                  padding: "10px 15px",
+                                  margin: "10px",
+                                  display: "inline-block",
+                                  maxWidth: "200px",
+                                  textAlign: "center",
+                                }}
+                              >
+                                {activity}
+                              </ListItem>
+                            ))}
+                          </List>
+                        </Box>
+                        <Box
+                          mb={5}
+                          p={2}
+                          border={1}
+                          borderColor="grey.300"
+                          borderRadius="8px"
+                        >
+                          <h2>My Itineraries</h2>
+                          {itineraries.length > 0 ? (
+                            <Slider {...sliderSettings}>
+                              {itineraries.map((itinerary, index) => (
+                                <Box key={index} px={2}>
+                                  <Card
+                                    key={index}
+                                    sx={{
+                                      height: "180px",
+                                      width: "180px",
+                                      position: "relative",
+                                      margin: "0 10px", // Add margin between the cards
+                                    }}
+                                  >
+                                    <CardMedia
+                                      onClick={() =>
+                                        handleItineraryClick(itinerary)
+                                      }
+                                      component="img"
+                                      image={
+                                        itinerary.image || "/placeholder.jpg"
+                                      }
+                                      alt={itinerary.destination}
+                                      height="100px"
+                                      sx={{
+                                        cursor: "pointer",
+                                      }}
+                                    />
+                                    <CardContent>
+                                      <IconButton
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleDeleteClick(itinerary);
+                                        }}
+                                        sx={{
+                                          cursor: "pointer",
+                                          position: "absolute",
+                                          top: "8px",
+                                          right: "8px",
+                                          backgroundColor:
+                                            "rgba(128, 128, 128, 0.7)",
+                                          color: "red",
+                                          borderRadius: "50%",
+                                          padding: "5px",
+                                          zIndex: 100,
+                                          "&:hover": {
+                                            backgroundColor:
+                                              "rgba(128, 128, 128, 1)",
+                                          },
+                                        }}
+                                      >
+                                        <DeleteIcon />
+                                      </IconButton>
+                                      <Typography
+                                        onClick={() =>
+                                          handleItineraryClick(itinerary)
+                                        }
+                                        variant="body2"
+                                      >
+                                        Created: {itinerary.createdAt}
+                                      </Typography>
+                                    </CardContent>
+                                  </Card>
+                                </Box>
+                              ))}
+                            </Slider>
+                          ) : (
+                            <Typography>No itineraries found.</Typography>
+                          )}
+                        </Box>
+                        <Box mt={3} display="flex" justifyContent="center">
+                          <Button
+                            variant="contained"
+                            onClick={() => setEditing(true)}
+                            sx={{ mx: 1 }}
+                          >
+                            Edit Profile
+                          </Button>
+                        </Box>
+                      </>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+            </Box>
           </Box>
-        )}
-      </Box>
-    )}
-  </DialogContent>
-  <DialogActions>
-    <Button onClick={handleCloseDialog} color="primary">
-      Close
-    </Button>
-  </DialogActions>
-</Dialog>
-                    </Box>
-                    <Box mt={3} display="flex" justifyContent="center">
-                      <Button
-                        variant="contained"
-                        onClick={() => setEditing(true)}
-                        sx={{ mx: 1 }}
-                      >
-                        Edit Profile
-                      </Button>
-                    </Box>
-                  </>
-                )}
-              </CardContent>
-            </Card>
-          )}
-        </Box>
-      </Box>
+        </Container>
+      </div>
     </Box>
   );
 };
