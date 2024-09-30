@@ -432,57 +432,135 @@ function ItineraryDisplay({ itinerary }) {
     ]
   };
 
+  // const db = getFirestore();
+  // const [activities, setActivities] = useState([]);
+  // const getUnsplashImage = async (query) => {
+  //   try {
+  //     const response = await fetch(`https://api.unsplash.com/search/photos?query=${query}&client_id=ru4dv45kZRdAOvO8HyrOy56ycwuE4NyMXb51m_Uc1HU`);
+  //     const data = await response.json();
+  //     return data.results[0]?.urls?.small || "fallback_image_url_here";
+  //   } catch (error) {
+  //     console.error("Error fetching image from Unsplash:", error);
+  //     return "https://tourscanner.com/blog/wp-content/uploads/2018/02/25_website_featured__0BsXQ-1.jpg";
+  //   }
+  // };
+
+  // const fetchActivities = async (destination) => {
+  //   try {
+  //     const activitiesCollection = collection(db, "Activities");
+  //     const q = firestoreQuery(
+  //       activitiesCollection,
+  //       where("city", "==", destination)
+  //     );
+
+  //     const querySnapshot = await getDocs(q);
+  //     const activitiesList = [];
+  //     querySnapshot.forEach((doc) => {
+  //       activitiesList.push({ id: doc.id, ...doc.data() });
+  //     });
+
+  //     setActivities(activitiesList);
+  //   } catch (error) {
+  //     console.error("Error fetching activities:", error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   if (itinerary.destination) {
+  //     fetchActivities(itinerary.destination);
+  //   }
+  // }, [itinerary.destination]);
+
+  // const destination = itinerary.destination; // Define destination here
+
+  // // Limit the activities to 15
+  // const limitedActivities = activities.slice(0, 15);
+  // const settingsActs = {
+  //   dots: true, // Enable dots
+  //   infinite: true,
+  //   speed: 500,
+  //   slidesToShow: 3,
+  //   slidesToScroll: 1,
+  //   responsive: [
+  //     {
+  //       breakpoint: 960,
+  //       settings: {
+  //         slidesToShow: 1,
+  //         slidesToScroll: 1,
+  //         dots: true, // Ensure dots are enabled for responsive views as well
+  //       },
+  //     },
+  //   ],
+  // };
+
   const db = getFirestore();
-  const [activities, setActivities] = useState([]);
+const [activities, setActivities] = useState([]);
 
-  const fetchActivities = async (destination) => {
-    try {
-      const activitiesCollection = collection(db, "Activities");
-      const q = firestoreQuery(
-        activitiesCollection,
-        where("city", "==", destination)
-      );
+// Function to fetch images from Unsplash
+const getUnsplashImage = async (query) => {
+  try {
+    const response = await fetch(`https://api.unsplash.com/search/photos?query=${query}&client_id=ru4dv45kZRdAOvO8HyrOy56ycwuE4NyMXb51m_Uc1HU`);
+    const data = await response.json();
+    return data.results[0]?.urls?.small || "fallback_image_url_here";
+  } catch (error) {
+    console.error("Error fetching image from Unsplash:", error);
+    return "https://tourscanner.com/blog/wp-content/uploads/2018/02/25_website_featured__0BsXQ-1.jpg"; // Fallback image
+  }
+};
 
-      const querySnapshot = await getDocs(q);
-      const activitiesList = [];
-      querySnapshot.forEach((doc) => {
-        activitiesList.push({ id: doc.id, ...doc.data() });
-      });
+// Function to fetch activities from Firestore and get images from Unsplash
+const fetchActivities = async (destination) => {
+  try {
+    const activitiesCollection = collection(db, "Activities");
+    const q = firestoreQuery(
+      activitiesCollection,
+      where("city", "==", destination)
+    );
 
-      setActivities(activitiesList);
-    } catch (error) {
-      console.error("Error fetching activities:", error);
+    const querySnapshot = await getDocs(q);
+    const activitiesList = [];
+
+    // Loop through each activity, fetch its corresponding image from Unsplash
+    for (const doc of querySnapshot.docs.slice(0, 15)) {
+      const activityData = doc.data();
+      const imageUrl = await getUnsplashImage(activityData.name); // Use the activity name to search for an image
+      activitiesList.push({ id: doc.id, ...activityData, imageUrl }); // Add the image URL to the activity data
     }
-  };
 
-  useEffect(() => {
-    if (itinerary.destination) {
-      fetchActivities(itinerary.destination);
-    }
-  }, [itinerary.destination]);
+    setActivities(activitiesList); // Update state with activities and their images
+  } catch (error) {
+    console.error("Error fetching activities:", error);
+  }
+};
 
-  const destination = itinerary.destination; // Define destination here
+useEffect(() => {
+  if (itinerary.destination) {
+    fetchActivities(itinerary.destination);
+  }
+}, [itinerary.destination]);
 
-  // Limit the activities to 7
-  const limitedActivities = activities.slice(0, 15);
-  const settingsActs = {
-    dots: true, // Enable dots
-    infinite: true,
-    speed: 500,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    responsive: [
-      {
-        breakpoint: 960,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          dots: true, // Ensure dots are enabled for responsive views as well
-        },
+const destination = itinerary.destination; // Define destination here
+
+// Limit the activities to 15
+const limitedActivities = activities.slice(0, 10);
+
+const settingsActs = {
+  dots: true, // Enable dots
+  infinite: true,
+  speed: 500,
+  slidesToShow: 3,
+  slidesToScroll: 1,
+  responsive: [
+    {
+      breakpoint: 960,
+      settings: {
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        dots: true, // Ensure dots are enabled for responsive views as well
       },
-    ],
-  };
-
+    },
+  ],
+};
 
   return (
     <Box
@@ -736,15 +814,16 @@ function ItineraryDisplay({ itinerary }) {
                   justifyContent: 'space-between',
                   padding: '10px',
                 }}>
-                  {/* <CardMedia
-            component="img"
-            height="200"
-            sx={{
-                height: '200px', // Fixed height for image
-                objectFit: 'cover',}}
-            image={activity.image || "fallback_image_url_here"} // Default image in case none is provided
-            alt={activity.name}
-          /> */}
+                  <CardMedia
+                    component="img"
+                    height="200"
+                    sx={{
+                      height: '200px', // Fixed height for image
+                      objectFit: 'cover',
+                    }}
+                    image={activity.imageUrl || "fallback_image_url_here"} // Default image in case none is provided
+                    alt={activity.name}
+                  />
                   <CardContent>
                     <Typography variant="h6" gutterBottom>
                       {activity.name}
