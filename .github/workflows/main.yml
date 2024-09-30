@@ -6,6 +6,7 @@ on:
 env:
   CI: false
   REACT_APP_OPEN_AI_KEY : ${{ secrets.REACT_APP_OPEN_AI_KEY }}
+  REACT_APP_FIREBASE_APIKEY : ${{ secrets.REACT_APP_FIREBASE_APIKEY }}
 jobs:
   build:
     name: Build
@@ -54,3 +55,4 @@ jobs:
           CI: false
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
           REACT_APP_OPEN_AI_KEY : ${{ secrets.REACT_APP_OPEN_AI_KEY }}
+          REACT_APP_FIREBASE_APIKEY : ${{ secrets.REACT_APP_FIREBASE_APIKEY }}
