@@ -169,18 +169,18 @@ function ItineraryDisplay({ itinerary }) {
   } else {
     destinationImage = fallbackImageUrl;
   }
-  
-  
+
+
   useEffect(() => {
     // Directly set the AI-generated itinerary from the passed itinerary prop
     if (itinerary.itineraryText) {
       setGlobalAIText(itinerary.itineraryText);
     }
 
-    
+
 
     const destinationKey = itinerary.destination.toLowerCase();
-    
+
     const destinationParam = itinerary.destination;
     handleSearch(destinationParam.toLowerCase().replace(/\s+/g, ""));
     const fetchData = async () => {
@@ -240,7 +240,7 @@ function ItineraryDisplay({ itinerary }) {
   }, [itinerary]);
 
   const getDetails = () => {
-      const dynamicDuration = itinerary.duration;
+    const dynamicDuration = itinerary.duration;
 
     let durationDetails;
     if (dynamicDuration <= 3) {
@@ -250,7 +250,7 @@ function ItineraryDisplay({ itinerary }) {
     } else if (dynamicDuration <= 14) {
       durationDetails = "A deep dive into the city with plenty of time for relaxation and exploration.";
     } else {
-    durationDetails = "An extensive journey to fully explore all the attractions and hidden gems.";
+      durationDetails = "An extensive journey to fully explore all the attractions and hidden gems.";
     }
 
     const interestsDetails = {
@@ -266,8 +266,8 @@ function ItineraryDisplay({ itinerary }) {
     return {
       durationDetails,
       interestsDetails: itinerary.interests
-      .map((interest) => interestsDetails[interest])
-      .join(", "),
+        .map((interest) => interestsDetails[interest])
+        .join(", "),
     };
   };
 
@@ -405,82 +405,82 @@ function ItineraryDisplay({ itinerary }) {
   };
 
   const carouselSettings = {
-  dots: true,  // Show navigation dots
-  infinite: true,  // Infinite scroll
-  speed: 500,  // Transition speed
-  slidesToShow: 3,  // Number of cards to show at once
-  slidesToScroll: 1,  // How many to scroll on click
-  responsive: [  // Make the carousel responsive
-    {
-      breakpoint: 1024,  // Max width for this setting
-      settings: {
-        slidesToShow: 2,
-        slidesToScroll: 1,
-        infinite: true,
-        dots: true
-      }
-    },
-    {
-      breakpoint: 600,
-      settings: {
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        infinite: true,
-        dots: true
-      }
-    }
-  ]
-};
-
-const db = getFirestore();
-const [activities, setActivities] = useState([]);
-
-const fetchActivities = async (destination) => {
-  try {
-    const activitiesCollection = collection(db, "Activities");
-    const q = firestoreQuery(
-      activitiesCollection,
-      where("city", "==", destination)
-    );
-
-    const querySnapshot = await getDocs(q);
-    const activitiesList = [];
-    querySnapshot.forEach((doc) => {
-      activitiesList.push({ id: doc.id, ...doc.data() });
-    });
-
-    setActivities(activitiesList);
-  } catch (error) {
-    console.error("Error fetching activities:", error);
-  }
-};
-
-useEffect(() => {
-  if (itinerary.destination) {
-    fetchActivities(itinerary.destination);
-  }
-}, [itinerary.destination]);
-
-const destination = itinerary.destination; // Define destination here
-
-// Limit the activities to 7
-const limitedActivities = activities.slice(0, 7);
-const settingsActs = {
-  dots: true,
-  infinite: true,
-  speed: 500,
-  slidesToShow: 3,
-  slidesToScroll: 1,
-  responsive: [
-    {
-      breakpoint: 960,
-      settings: {
-        slidesToShow: 1,
-        slidesToScroll: 1,
+    dots: true,  // Show navigation dots
+    infinite: true,  // Infinite scroll
+    speed: 500,  // Transition speed
+    slidesToShow: 3,  // Number of cards to show at once
+    slidesToScroll: 1,  // How many to scroll on click
+    responsive: [  // Make the carousel responsive
+      {
+        breakpoint: 1024,  // Max width for this setting
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+          infinite: true,
+          dots: true
+        }
       },
-    },
-  ],
-};
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          infinite: true,
+          dots: true
+        }
+      }
+    ]
+  };
+
+  const db = getFirestore();
+  const [activities, setActivities] = useState([]);
+
+  const fetchActivities = async (destination) => {
+    try {
+      const activitiesCollection = collection(db, "Activities");
+      const q = firestoreQuery(
+        activitiesCollection,
+        where("city", "==", destination)
+      );
+
+      const querySnapshot = await getDocs(q);
+      const activitiesList = [];
+      querySnapshot.forEach((doc) => {
+        activitiesList.push({ id: doc.id, ...doc.data() });
+      });
+
+      setActivities(activitiesList);
+    } catch (error) {
+      console.error("Error fetching activities:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (itinerary.destination) {
+      fetchActivities(itinerary.destination);
+    }
+  }, [itinerary.destination]);
+
+  const destination = itinerary.destination; // Define destination here
+
+  // Limit the activities to 7
+  const limitedActivities = activities.slice(0, 7);
+  const settingsActs = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    responsive: [
+      {
+        breakpoint: 960,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  };
 
 
   return (
@@ -524,7 +524,7 @@ const settingsActs = {
                       height="400"
                       image={destinationImage}
                       // image={getImageUrl()}
-                       alt={getImageUrl()}
+                      alt={getImageUrl()}
                       onError={(e) => {
                         e.target.src = fallbackImageUrl; // Set fallback image if the primary image fails to load
                       }}
@@ -721,38 +721,40 @@ const settingsActs = {
 
       <br />
       <Card>
-      <h2 style={{marginLeft:"10px"}}>Activities in {destination}</h2>
+        <h2 style={{ marginLeft: "10px" }}>Activities in {destination}</h2>
 
-{limitedActivities.length > 0 ? (
-  <Slider {...settingsActs}>
-    {limitedActivities.map((activity, index) => (
-      <Box key={index} p={2}>
-        <Card sx={{width: '400px', // Fixed width
-  height: '400px', // Fixed height
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'space-between',
-  padding: '10px',}}>
-          {/* <CardMedia
+        {limitedActivities.length > 0 ? (
+          <Slider {...settingsActs}>
+            {limitedActivities.map((activity, index) => (
+              <Box key={index} p={2}>
+                <Card sx={{
+                  width: '400px', // Fixed width
+                  height: '400px', // Fixed height
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  padding: '10px',
+                }}>
+                  {/* <CardMedia
             component="img"
             height="200"
             image={activity.image || "fallback_image_url_here"} // Default image in case none is provided
             alt={activity.name}
           /> */}
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              {activity.name}
-            </Typography>
-            <Typography variant="body2" color="textSecondary" gutterBottom>
-              Category: {activity.category} / {activity.sub_category}
-            </Typography>
-            <Typography variant="body2" color="textSecondary">
-              Address: {activity.address}
-            </Typography>
-            <Typography variant="body1" paragraph>
-              {activity.description}
-            </Typography>
-            {/* <Button
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                      {activity.name}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" gutterBottom>
+                      Category: {activity.category} / {activity.sub_category}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      Address: {activity.address}
+                    </Typography>
+                    <Typography variant="body1" paragraph>
+                      {activity.description}
+                    </Typography>
+                    {/* <Button
               variant="contained"
               color="primary"
               href="#"
@@ -760,15 +762,15 @@ const settingsActs = {
             >
               Book Now
             </Button> */}
-          </CardContent>
-        </Card>
-      </Box>
-    ))}
-  </Slider>
-) : (
-  <Typography>No activities found for {destination}</Typography>
-)}
-  </Card>
+                  </CardContent>
+                </Card>
+              </Box>
+            ))}
+          </Slider>
+        ) : (
+          <Typography>No activities found for {destination}</Typography>
+        )}
+      </Card>
       <Box sx={{ mt: 2, display: "flex", gap: 2, justifyContent: "center" }}>
         <Button
           sx={{
