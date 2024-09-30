@@ -219,7 +219,7 @@ function ItineraryDisplay({ itinerary }) {
           destinationLocation,
           date,
           1,
-          10,
+          9, //9 flights instead of 10 so the layout looks better
         );
         if (flightOffers) {
           setFlights(flightOffers);
