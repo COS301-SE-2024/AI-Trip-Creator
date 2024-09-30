@@ -464,9 +464,9 @@ function ItineraryDisplay({ itinerary }) {
   const destination = itinerary.destination; // Define destination here
 
   // Limit the activities to 7
-  const limitedActivities = activities.slice(0, 7);
+  const limitedActivities = activities.slice(0, 15);
   const settingsActs = {
-    dots: true,
+    dots: true, // Enable dots
     infinite: true,
     speed: 500,
     slidesToShow: 3,
@@ -477,6 +477,7 @@ function ItineraryDisplay({ itinerary }) {
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
+          dots: true, // Ensure dots are enabled for responsive views as well
         },
       },
     ],
