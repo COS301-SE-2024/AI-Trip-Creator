@@ -425,13 +425,24 @@ function ItineraryForm({ onGenerateItinerary }) {
       },
     ];
 
-//Fetch activities to feed to AI based on destination/city
+
+
+    const currentLocation = preferences.currentLocation;
+    const destination = preferences.destination;
+    const travelerCategory = preferences.travelerCategory;
+    const duration = preferences.duration;
+    const budgetRange = preferences.budgetRange;
+    const interests = preferences.interests;
+    const groupSize = preferences.groupSize;
+    const priority = preferences.priority;
+
+    //Fetch activities to feed to AI based on destination/city
     const FilteredActivities = async (activitiesArray) => {
       try {
         const activitiesCollection = collection(db, "Activities");
         const q = query(
           activitiesCollection,
-          where("city", "==", preferences.destination),
+          where("city", "==", destination),
           //where("sub_category", "in", activitiesArray),
         );
     
@@ -443,21 +454,12 @@ function ItineraryForm({ onGenerateItinerary }) {
         });
     
     
-        // console.log("Activities:" + activities.join(", "));
+        console.log("Activities:" + activities.join(", "));
         return activities;
       } catch (error) {
         console.error("Error getting documents", error);
       }
     };
-
-    const currentLocation = preferences.currentLocation;
-    const destination = preferences.destination;
-    const travelerCategory = preferences.travelerCategory;
-    const duration = preferences.duration;
-    const budgetRange = preferences.budgetRange;
-    const interests = preferences.interests;
-    const groupSize = preferences.groupSize;
-    const priority = preferences.priority;
     
 
     // const prompt = "Generate an itinerary for my holiday with the the following data. The Holiday is 2 days long and i would like to eat twice a day. You will"
