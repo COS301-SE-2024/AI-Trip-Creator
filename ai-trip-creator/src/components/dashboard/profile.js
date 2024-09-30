@@ -27,8 +27,8 @@ import {
   CardMedia,
   Slider,
 } from "@mui/material";
-import DeleteIcon from '@mui/icons-material/Delete';
-import Carousel from 'react-material-ui-carousel';
+import DeleteIcon from "@mui/icons-material/Delete";
+import Carousel from "react-material-ui-carousel";
 import Sidebar from "./sidebar";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import {
@@ -136,7 +136,7 @@ const Profile = () => {
           const itinerariesSnapshot = await getDocs(itinerariesQuery);
           const itinerariesList = itinerariesSnapshot.docs.map((doc) => ({
             ...doc.data(),
-            id: doc.id,  // Ensure the ID is captured for deletion
+            id: doc.id, // Ensure the ID is captured for deletion
           }));
           setItineraries(itinerariesList);
         } catch (error) {
@@ -167,7 +167,9 @@ const Profile = () => {
       try {
         await deleteDoc(doc(db, "Itinerary", itineraryToDelete.id));
 
-        setItineraries(itineraries.filter(i => i.id !== itineraryToDelete.id));
+        setItineraries(
+          itineraries.filter((i) => i.id !== itineraryToDelete.id),
+        );
 
         console.log("Itinerary deleted successfully");
       } catch (error) {
@@ -312,31 +314,24 @@ const Profile = () => {
   ];
 
   const carouselSettings = {
-    dots: true,  // Show navigation dots
-    infinite: true,  // Infinite scroll
-    speed: 500,  // Transition speed
-    slidesToShow: 3,  // Number of cards to show at once
-    slidesToScroll: 1,  // How many to scroll on click
-    responsive: [  // Make the carousel responsive
-      {
-        breakpoint: 1024,  // Max width for this setting
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
-          infinite: true,
-          dots: true
-        }
+    autoPlay: false,
+    indicators: true,
+    navButtonsAlwaysVisible: true,
+    animation: "slide",
+    responsive: {
+      superLargeDesktop: {
+        breakpoint: { max: 4000, min: 1024 },
+        items: 3, // Display 3 items on large screens
       },
-      {
-        breakpoint: 600,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          infinite: true,
-          dots: true
-        }
-      }
-    ]
+      desktop: {
+        breakpoint: { max: 1024, min: 600 },
+        items: 2, // Display 2 items on tablets
+      },
+      mobile: {
+        breakpoint: { max: 600, min: 0 },
+        items: 1, // Display 1 item on mobile
+      },
+    },
   };
 
   return (
@@ -353,9 +348,14 @@ const Profile = () => {
       >
         <Sidebar />
       </Drawer>
-      <Box p={3} sx={{ ml: isSmUp ? "380px" : "0", overflowX: "hidden", width: "950px" }}>
+      <Box
+        p={3}
+        sx={{ ml: isSmUp ? "380px" : "0", overflowX: "hidden", width: "950px" }}
+      >
         <Box p={3} sx={{ minHeight: "50vh" }}>
-          <h1 style={{ marginTop: "-20px", marginLeft: "-50px" }}>My Profile</h1>
+          <h1 style={{ marginTop: "-20px", marginLeft: "-50px" }}>
+            My Profile
+          </h1>
           {loading ? (
             <Box
               display="flex"
@@ -365,7 +365,6 @@ const Profile = () => {
             >
               <CircularProgress />
             </Box>
-
           ) : (
             <Card
               sx={{
@@ -572,205 +571,214 @@ const Profile = () => {
                     <Box mt={4}>
                       <Typography variant="h6">My Itineraries</Typography>
                       {itineraries.length > 0 ? (
-                         <Carousel 
-                         indicators={true}  // Dots to indicate slides
-                         navButtonsAlwaysVisible={true}  // Navigation arrows always visible
-                       >
-                          {itineraries.map((itinerary, index) => {
-                            // Extract the title (text between "##" and "Day 1")
-                            const itineraryTitle = itinerary.itineraryText
-                              .split("**Day 1")[0] // Get the part before "Day 1"
-                              .replace("##", "") // Remove "##"
-                              .trim(); // Remove any extra spaces
-
-                            return (
-                              <Card
-                                key={index}
+                        <Carousel
+                          {...carouselSettings}
+                          style={{ height: "100px" }}
+                        >
+                          {" "}
+                          {/* Set height for the carousel */}
+                          {itineraries.map((itinerary, index) => (
+                            <Card
+                              key={index}
+                              onClick={() => handleItineraryClick(itinerary)}
+                              sx={{
+                                cursor: "pointer",
+                                mb: 2,
+                                height: "180px",
+                                width: "180px",
+                                position: "relative",
+                              }}
+                            >
+                              <CardMedia
+                                component="img"
+                                image={itinerary.image || "/placeholder.jpg"}
+                                alt={itinerary.destination}
+                                height="100px"
                                 sx={{
-                                  width: 200, // Adjust card width as needed
-                                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  alignItems: "center",
-                                  padding: 2,
-                                  cursor: "pointer",
-                                  position: "relative",
+                                  objectFit: "cover",
                                 }}
-                                onClick={() => handleItineraryClick(itinerary)}
+                              />
+                              <IconButton
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteClick(itinerary);
+                                }}
+                                sx={{
+                                  position: "absolute",
+                                  top: "60px",
+                                  left: "80px",
+                                  color: "white",
+                                }}
                               >
-                                <CardMedia
-                                  component="img"
-                                  image={itinerary.image}
-                                  alt={itinerary.destination}
-                                  onError={(e) => {
-                                    e.target.src = itinerary.altimage; // Set fallback image if the primary image fails to load
-                                  }}
-                                  style={{ width: "100%", height: "200px" }}
-                                />
-                                <Box
-                                  sx={{
-                                    position: "absolute",
-                                    bottom: 0, // Position text at the bottom of the image
-                                    backgroundColor: "rgba(0, 0, 0, 0.5)", // Optional dark overlay for contrast
-
-                                    left: 0,
-                                    width: "100%",
-                                    color: "white",
-                                    padding: 2,
-                                    "& *": {
-                                      color: "white !important", // Ensure all nested elements have white text
-                                    },
-                                  }}
-                                >
-                                  <Typography variant="body6">
-                                    Created {itinerary.createdAt}
-                                  </Typography>
-                                </Box>
-                                <IconButton
-                                  aria-label="delete"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDeleteClick(itinerary);
-                                  }}
-                                  sx={{
-                                    position: 'absolute',
-                                    top: 5,
-                                    right: 5,
-                                    color: 'white',
-                                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                                    '&:hover': {
-                                      backgroundColor: 'rgba(255, 0, 0, 0.7)',
-                                    },
-                                  }}
-                                >
-                                  <DeleteIcon />
-                                </IconButton>
-                              </Card>
-                            );
-                          })}
-                          </Carousel>
+                                <DeleteIcon />
+                              </IconButton>
+                              <CardContent>
+                                <Typography variant="body2">
+                                  Created: {itinerary.createdAt}
+                                </Typography>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </Carousel>
                       ) : (
                         <Typography>No itineraries found.</Typography>
                       )}
                       <Dialog
-        open={deleteConfirmOpen}
-        onClose={handleDeleteCancel}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        >
-        <DialogTitle id="alert-dialog-title">{"Delete Itinerary?"}</DialogTitle>
-        <DialogContent>
-          <Typography>
-            Are you sure you want to delete this itinerary? This action cannot be undone.
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDeleteCancel} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleDeleteConfirm} color="primary" autoFocus>
-            Delete
-          </Button>
-        </DialogActions>
-        </Dialog>
-        <Dialog
-  open={Boolean(selectedItinerary)}
-  onClose={handleCloseDialog}
-  fullWidth
-  maxWidth="md" // Set dialog size
->
-  <DialogTitle>Itinerary Details</DialogTitle>
-  <DialogContent>
-    {selectedItinerary && (
-      <Box>
-        {/* Destination image at the top with full width */}
-        <CardMedia
-          component="img"
-          height="300"
-          image={selectedItinerary.image}
-          alt={selectedItinerary.destination}
-          onError={(e) => {
-            e.target.src = selectedItinerary.altimage; // Set fallback image
-          }}
-        />
+                        open={deleteConfirmOpen}
+                        onClose={handleDeleteCancel}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                      >
+                        <DialogTitle id="alert-dialog-title">
+                          {"Delete Itinerary?"}
+                        </DialogTitle>
+                        <DialogContent>
+                          <Typography>
+                            Are you sure you want to delete this itinerary? This
+                            action cannot be undone.
+                          </Typography>
+                        </DialogContent>
+                        <DialogActions>
+                          <Button onClick={handleDeleteCancel} color="primary">
+                            Cancel
+                          </Button>
+                          <Button
+                            onClick={handleDeleteConfirm}
+                            color="primary"
+                            autoFocus
+                          >
+                            Delete
+                          </Button>
+                        </DialogActions>
+                      </Dialog>
+                      <Dialog
+                        open={Boolean(selectedItinerary)}
+                        onClose={handleCloseDialog}
+                        fullWidth
+                        maxWidth="md" // Set dialog size
+                      >
+                        <DialogTitle>Itinerary Details</DialogTitle>
+                        <DialogContent>
+                          {selectedItinerary && (
+                            <Box>
+                              {/* Destination image at the top with full width */}
+                              <CardMedia
+                                component="img"
+                                height="300"
+                                image={selectedItinerary.image}
+                                alt={selectedItinerary.destination}
+                                onError={(e) => {
+                                  e.target.src = selectedItinerary.altimage; // Set fallback image
+                                }}
+                              />
 
-        {/* Itinerary information */}
-        <Typography
-          variant="h4"
-          gutterBottom
-          style={{
-            fontWeight: "bold",
-            marginTop: "20px",
-            color: "#333", // Darker color for the title
-          }}
-        >
-          {selectedItinerary.title}
-        </Typography>
+                              {/* Itinerary information */}
+                              <Typography
+                                variant="h4"
+                                gutterBottom
+                                style={{
+                                  fontWeight: "bold",
+                                  marginTop: "20px",
+                                  color: "#333", // Darker color for the title
+                                }}
+                              >
+                                {selectedItinerary.title}
+                              </Typography>
 
-        <Typography
-          variant="body1"
-          gutterBottom
-          style={{
-            color: "#666", // Slightly lighter for subtitle
-            marginBottom: "10px",
-          }}
-        >
+                              <Typography
+                                variant="body1"
+                                gutterBottom
+                                style={{
+                                  color: "#666", // Slightly lighter for subtitle
+                                  marginBottom: "10px",
+                                }}
+                              ></Typography>
 
-        </Typography>
+                              <Typography
+                                variant="body2"
+                                color="textSecondary"
+                                gutterBottom
+                                style={{ fontStyle: "italic" }}
+                              >
+                                Created on {selectedItinerary.createdAt}
+                              </Typography>
 
-        <Typography
-          variant="body2"
-          color="textSecondary"
-          gutterBottom
-          style={{ fontStyle: "italic" }}
-        >
-          Created on {selectedItinerary.createdAt}
-        </Typography>
-
-        {/* Day-by-day itinerary */}
-        {selectedItinerary.itineraryText && (
-          <Box mt={2}>
-            <Grid container spacing={2}>
-              {selectedItinerary.itineraryText
-                .split(/(?=\*\*Day \d+:)/g) // Split by "Day"
-                .filter((day) => day.trim() !== "") // Filter out empty days
-                .map((dayText, index) => (
-                  <Grid item xs={12} key={index}>
-                    <Card
-                      style={{
-                        borderRadius: "10px",
-                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Soft shadow for card
-                        backgroundColor: "#fafafa", // Light background for readability
-                      }}
-                    >
-                      <CardContent>
-                        {/* Use ReactMarkdown to render markdown content */}
-                        <ReactMarkdown
-                          children={dayText}
-                          remarkPlugins={[remarkGfm]} // Enable GitHub Flavored Markdown
-                          components={{
-                            h1: ({node, ...props}) => <Typography variant="h6" style={{ fontWeight: "bold", marginBottom: "10px", color: "#333" }} {...props} />,
-                            p: ({node, ...props}) => <Typography variant="body1" style={{ color: "#555", lineHeight: "1.5" }} {...props} />,
-                            ul: ({node, ...props}) => <ul style={{ marginLeft: "20px" }} {...props} />,
-                            li: ({node, ...props}) => <li style={{ color: "#555" }} {...props} />,
-                          }}
-                        />
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
-            </Grid>
-          </Box>
-        )}
-      </Box>
-    )}
-  </DialogContent>
-  <DialogActions>
-    <Button onClick={handleCloseDialog} color="primary">
-      Close
-    </Button>
-  </DialogActions>
-</Dialog>
+                              {/* Day-by-day itinerary */}
+                              {selectedItinerary.itineraryText && (
+                                <Box mt={2}>
+                                  <Grid container spacing={2}>
+                                    {selectedItinerary.itineraryText
+                                      .split(/(?=\*\*Day \d+:)/g) // Split by "Day"
+                                      .filter((day) => day.trim() !== "") // Filter out empty days
+                                      .map((dayText, index) => (
+                                        <Grid item xs={12} key={index}>
+                                          <Card
+                                            style={{
+                                              borderRadius: "10px",
+                                              boxShadow:
+                                                "0 4px 8px rgba(0, 0, 0, 0.1)", // Soft shadow for card
+                                              backgroundColor: "#fafafa", // Light background for readability
+                                            }}
+                                          >
+                                            <CardContent>
+                                              {/* Use ReactMarkdown to render markdown content */}
+                                              <ReactMarkdown
+                                                children={dayText}
+                                                remarkPlugins={[remarkGfm]} // Enable GitHub Flavored Markdown
+                                                components={{
+                                                  h1: ({ node, ...props }) => (
+                                                    <Typography
+                                                      variant="h6"
+                                                      style={{
+                                                        fontWeight: "bold",
+                                                        marginBottom: "10px",
+                                                        color: "#333",
+                                                      }}
+                                                      {...props}
+                                                    />
+                                                  ),
+                                                  p: ({ node, ...props }) => (
+                                                    <Typography
+                                                      variant="body1"
+                                                      style={{
+                                                        color: "#555",
+                                                        lineHeight: "1.5",
+                                                      }}
+                                                      {...props}
+                                                    />
+                                                  ),
+                                                  ul: ({ node, ...props }) => (
+                                                    <ul
+                                                      style={{
+                                                        marginLeft: "20px",
+                                                      }}
+                                                      {...props}
+                                                    />
+                                                  ),
+                                                  li: ({ node, ...props }) => (
+                                                    <li
+                                                      style={{ color: "#555" }}
+                                                      {...props}
+                                                    />
+                                                  ),
+                                                }}
+                                              />
+                                            </CardContent>
+                                          </Card>
+                                        </Grid>
+                                      ))}
+                                  </Grid>
+                                </Box>
+                              )}
+                            </Box>
+                          )}
+                        </DialogContent>
+                        <DialogActions>
+                          <Button onClick={handleCloseDialog} color="primary">
+                            Close
+                          </Button>
+                        </DialogActions>
+                      </Dialog>
                     </Box>
                     <Box mt={3} display="flex" justifyContent="center">
                       <Button
