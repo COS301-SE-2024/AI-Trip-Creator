@@ -34,7 +34,13 @@ import {
   getDocs,
   addDoc,
 } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  setDoc,
+} from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+
 
 import johannesburgImg from "./destinations/johannesburg.jpeg";
 import pretoriaImg from "./destinations/Pretoria.jpeg";
@@ -426,6 +432,57 @@ function ItineraryDisplay({ itinerary }) {
   ]
 };
 
+const db = getFirestore();
+const [activities, setActivities] = useState([]);
+
+const fetchActivities = async (destination) => {
+  try {
+    const activitiesCollection = collection(db, "Activities");
+    const q = firestoreQuery(
+      activitiesCollection,
+      where("city", "==", destination)
+    );
+
+    const querySnapshot = await getDocs(q);
+    const activitiesList = [];
+    querySnapshot.forEach((doc) => {
+      activitiesList.push({ id: doc.id, ...doc.data() });
+    });
+
+    setActivities(activitiesList);
+  } catch (error) {
+    console.error("Error fetching activities:", error);
+  }
+};
+
+useEffect(() => {
+  if (itinerary.destination) {
+    fetchActivities(itinerary.destination);
+  }
+}, [itinerary.destination]);
+
+const destination = itinerary.destination; // Define destination here
+
+// Limit the activities to 7
+const limitedActivities = activities.slice(0, 7);
+const settingsActs = {
+  dots: true,
+  infinite: true,
+  speed: 500,
+  slidesToShow: 3,
+  slidesToScroll: 1,
+  responsive: [
+    {
+      breakpoint: 960,
+      settings: {
+        slidesToShow: 1,
+        slidesToScroll: 1,
+      },
+    },
+  ],
+};
+
+
   return (
     <Box
       sx={{
@@ -510,9 +567,10 @@ function ItineraryDisplay({ itinerary }) {
       <Card mt={2}>
         <CardContent>
           {/* Accommodation Carousel */}
-          <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
+          {/* <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
             Recommended Accommodations
-          </Typography>
+          </Typography> */}
+          <h2>Recommended Accommodations</h2>
           {loading ? (
             <Typography>Loading accommodations...</Typography>
           ) : error ? (
@@ -585,9 +643,10 @@ function ItineraryDisplay({ itinerary }) {
       <br />
       <Card mt={2}>
         <CardContent>
-          <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
+          {/* <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
             Flight Options
-          </Typography>
+          </Typography> */}
+          <h2>Flight Options</h2>
 
           {flights.length === 0 ? (
             <Typography color="textSecondary">
@@ -659,6 +718,57 @@ function ItineraryDisplay({ itinerary }) {
           )}
         </CardContent>
       </Card>
+
+      <br />
+      <Card>
+      <h2>Activities in {destination}</h2>
+
+{limitedActivities.length > 0 ? (
+  <Slider {...settingsActs}>
+    {limitedActivities.map((activity, index) => (
+      <Box key={index} p={2}>
+        <Card sx={{width: '400px', // Fixed width
+  height: '400px', // Fixed height
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  padding: '10px',}}>
+          {/* <CardMedia
+            component="img"
+            height="200"
+            image={activity.image || "fallback_image_url_here"} // Default image in case none is provided
+            alt={activity.name}
+          /> */}
+          <CardContent>
+            <Typography variant="h6" gutterBottom>
+              {activity.name}
+            </Typography>
+            <Typography variant="body2" color="textSecondary" gutterBottom>
+              Category: {activity.category} / {activity.sub_category}
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              Address: {activity.address}
+            </Typography>
+            <Typography variant="body1" paragraph>
+              {activity.description}
+            </Typography>
+            {/* <Button
+              variant="contained"
+              color="primary"
+              href="#"
+              fullWidth
+            >
+              Book Now
+            </Button> */}
+          </CardContent>
+        </Card>
+      </Box>
+    ))}
+  </Slider>
+) : (
+  <Typography>No activities found for {destination}</Typography>
+)}
+  </Card>
       <Box sx={{ mt: 2, display: "flex", gap: 2, justifyContent: "center" }}>
         <Button
           sx={{
