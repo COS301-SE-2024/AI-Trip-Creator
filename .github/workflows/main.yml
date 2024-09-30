@@ -51,6 +51,6 @@ jobs:
         with:
           args: deploy --only hosting
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
           CI: false
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
           REACT_APP_OPEN_AI_KEY : ${{ secrets.REACT_APP_OPEN_AI_KEY }}
