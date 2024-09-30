@@ -638,7 +638,7 @@ function ItineraryForm({ onGenerateItinerary }) {
     <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column">
       <Sidebar/>
       {/* Main Heading Outside the Form */}
-      <h1 style={{marginLeft: "-900px", marginTop: "10px"}}>Itinerary</h1>
+      <h1 style={{marginLeft: "-750px", marginTop: "10px"}}>Itinerary</h1>
       <h2 style={{ size: "45px", textAlign: "center" }}>
         Create Your Itinerary
       </h2>

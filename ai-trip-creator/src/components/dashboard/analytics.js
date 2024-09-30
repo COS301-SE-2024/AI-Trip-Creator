@@ -1250,7 +1250,7 @@ const Analytics = () => {
         sx={{ ml: isSmUp ? "240px" : "0", overflowX: "hidden" }}
       >
         <Container maxWidth="lg">
-          <h1 style={{marginLeft: "-120px", marginTop: "10px"}}>Analytics Dashboard</h1>
+          <h1 style={{marginLeft: "-30px", marginTop: "10px"}}>Analytics Dashboard</h1>
           <h2>Analytics</h2>
 
           <Grid container spacing={3}>
