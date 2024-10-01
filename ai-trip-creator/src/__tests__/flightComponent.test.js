@@ -721,6 +721,29 @@ import Flights from "../components/dashboard/flights";
 import { BrowserRouter as Router } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
+// Mock Firebase initialization
+jest.mock("firebase/app", () => ({
+    initializeApp: jest.fn(),
+  }));
+  
+  // Mock Firebase auth and firestore functions
+  jest.mock("firebase/auth", () => ({
+    getAuth: jest.fn(),
+  }));
+  
+  jest.mock("firebase/firestore", () => ({
+    getFirestore: jest.fn(),
+  }));
+  
+  // Mock the firebase-config.js to prevent real Firebase initialization
+  jest.mock("../firebase/firebase-config", () => ({
+    app: {}, // Mock the Firebase app object
+    auth: {}, // Mock Firebase Auth
+    firestore: {}, // Mock Firestore
+    db: {}, // Mock Firestore instance
+    analytics: {}, // Mock Analytics
+  }));
+
 // Mock the flight offers fetching
 jest.mock("../components/dashboard/flights", () => ({
   ...jest.requireActual("../components/dashboard/flights"),
