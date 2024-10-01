@@ -176,6 +176,32 @@ const Dashboard = () => {
         <h1 style={{ marginLeft: "28px", marginTop: "30px" }}>
           AI Trip Planning
         </h1>
+        {showCards && (
+          <Box sx={{ display: "flex", gap: 2, padding: 2 }}>
+            <Card sx={{ width: "48%" }}>
+              <CardContent>
+                <Typography variant="h6">
+                  Step 1: Start by Telling Us About Your Trip
+                </Typography>
+                <Typography>
+                  Provide details like your destination, travel dates, and
+                  preferences to create a personalized itinerary.
+                </Typography>
+              </CardContent>
+            </Card>
+            <Card sx={{ width: "48%" }}>
+              <CardContent>
+                <Typography variant="h6">
+                  Step 2: Customize Your Itinerary
+                </Typography>
+                <Typography>
+                  Once your itinerary is generated, it will automatically be
+                  saved to the database.
+                </Typography>
+              </CardContent>
+            </Card>
+          </Box>
+        )}
 
         <Box sx={{ flex: 1, overflowY: "auto", padding: 2 }}>
           {responses.map((response, index) => (
