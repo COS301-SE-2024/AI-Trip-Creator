@@ -16,13 +16,13 @@ describe('Itinerary Form Component', () => {
     cy.contains('Itinerary Form').should('be.visible');
   });
 
-  // it('renders form fields and submit button', () => {
-  //   // Ensure the form fields and the submit button are rendered
-  //   cy.get('label').contains('Starting Location').should('be.visible');
-  //   cy.get('label').contains('Destination').should('be.visible');
-  //   cy.get('input[type="date"]').should('be.visible');
-  //   cy.get('button').contains('Generate Itinerary').should('be.visible');
-  // });
+  it('renders form fields and submit button', () => {
+    // Ensure the form fields and the submit button are rendered
+    cy.get('label').contains('Starting Location').should('be.visible');
+    cy.get('label').contains('Destination').should('be.visible');
+    cy.get('input[type="date"]').should('be.visible');
+    cy.get('button').contains('Generate Itinerary').should('be.visible');
+  });
 
   // it('disables submit button when form is incomplete', () => {
   //   // Check that the submit button is disabled if the form is incomplete
@@ -40,7 +40,7 @@ describe('Itinerary Form Component', () => {
   //   cy.get('button').contains('Generate Itinerary').should('not.be.disabled');
   // });
 
-  it('displays generated itinerary after form submission', () => {
+  it('displays generated itinerary in ItineraryDisplay after form submission', () => {
     // Mock the AI generation logic (replace this as necessary if you have actual API calls)
     cy.intercept('POST', '**/generate-itinerary', {
       fixture: 'itineraryResponse.json'
@@ -58,7 +58,9 @@ describe('Itinerary Form Component', () => {
     // Wait for the itinerary generation to finish
     cy.wait('@generateItinerary');
 
-    // Verify that the generated itinerary is displayed
+    // Verify that the generated itinerary is displayed by ItineraryDisplay
     cy.contains('Here is your itinerary').should('be.visible');
+    cy.contains('Day 1').should('be.visible');
+    cy.contains('Arrive in Cape Town').should('be.visible'); // Example of specific itinerary content
   });
 });
