@@ -32,6 +32,7 @@ import {
   useTheme,
   Slider,
   Rating,
+  Container,
 } from "@mui/material";
 import Sidebar from "./sidebar";
 import { DatePicker } from "@mui/lab";
@@ -112,7 +113,6 @@ const fetchFilteredActivities = async (activitiesArray) => {
     querySnapshot.forEach((doc) => {
       activities.push({ id: doc.id, ...doc.data() });
     });
-
 
     console.log("Activities:" + activities.join(", "));
     return activities;
@@ -281,8 +281,6 @@ function ItineraryForm({ onGenerateItinerary }) {
   //   itineraryText: '',
   // });
 
-  
-
   const [responseText, setResponseText] = useState("");
   async function run() {
     //let acts = fetchFilteredActivities(await fetchDocumentById('9CFwYt87JCRRLe8XKF8mY5TEcSu2') );
@@ -425,8 +423,6 @@ function ItineraryForm({ onGenerateItinerary }) {
       },
     ];
 
-
-
     const currentLocation = preferences.currentLocation;
     const destination = preferences.destination;
     const travelerCategory = preferences.travelerCategory;
@@ -445,22 +441,20 @@ function ItineraryForm({ onGenerateItinerary }) {
           where("city", "==", destination),
           //where("sub_category", "in", activitiesArray),
         );
-    
+
         const querySnapshot = await getDocs(q);
-    
+
         let activities = [];
         querySnapshot.forEach((doc) => {
           activities.push({ id: doc.id, ...doc.data() });
         });
-    
-    
+
         console.log("Activities:" + activities.join(", "));
         return activities;
       } catch (error) {
         console.error("Error getting documents", error);
       }
     };
-    
 
     // const prompt = "Generate an itinerary for my holiday with the the following data. The Holiday is 2 days long and i would like to eat twice a day. You will"
     //                 + " make sure the category is restaurant when choosing a place to eat. i am limit to 2-3 activities a day. Ake sure to include price and descripton at each activity.";
@@ -599,27 +593,28 @@ function ItineraryForm({ onGenerateItinerary }) {
     const returnDateObj = new Date(returnDate);
 
     if (isNaN(departureDateObj.getTime()) || isNaN(returnDateObj.getTime())) {
-      console.error('Invalid departure or return date');
-      return 0;  // Return 0 if dates are invalid
+      console.error("Invalid departure or return date");
+      return 0; // Return 0 if dates are invalid
     }
-  
+
     // Check if departure is before return
     if (departureDateObj > returnDateObj) {
-      console.error('Departure date must be earlier than return date');
+      console.error("Departure date must be earlier than return date");
       return 0;
     }
-  
+
     // Calculate the time difference in milliseconds
     const timeDifference = returnDateObj - departureDateObj;
-  
+
     // Convert the time difference to days
-    const durationInDays = Math.round(timeDifference / (1000 * 60 * 60 * 24)) - 1;
-  
+    const durationInDays =
+      Math.round(timeDifference / (1000 * 60 * 60 * 24)) - 1;
+
     return durationInDays;
   };
 
-  const[departureDate, setDepartureDate] = useState("");
-  const[returnDate, setReturnDate] = useState("");
+  const [departureDate, setDepartureDate] = useState("");
+  const [returnDate, setReturnDate] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -632,7 +627,7 @@ function ItineraryForm({ onGenerateItinerary }) {
       ...preferences,
       departureDate,
       returnDate,
-      duration: tripDuration, 
+      duration: tripDuration,
       itineraryText: exportVariable, // Pass the generated AI text
     });
   };
@@ -664,305 +659,313 @@ function ItineraryForm({ onGenerateItinerary }) {
 
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark";
-  
-  
+
   return (
-    <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column">
-      <Sidebar/>
-      {/* Main Heading Outside the Form */}
-      <h1 style={{marginLeft: "-750px", marginTop: "10px"}}>Itinerary</h1>
-      <h2 style={{ size: "45px", textAlign: "center" }}>
-        Create Your Itinerary
-      </h2>
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      sx={{
-        mt: 3,
-        p: 4,
-        backgroundColor: "#f5f5f5",
-        borderRadius: 2,
-        boxShadow: 1,
-        maxWidth: "calc(100vw - 640px)",
-        marginLeft: "640px",
-        margin: "auto",
-        backgroundColor: isDarkMode ? "#424242" : "#ffffff",
-      }}
-    >
-
-      {/* <Typography variant="h4" gutterBottom align="center" 
-      sx ={{
-        fontFamily: "Poppins",
-        fontWeight: "10px",
-      }}>
-        Create Your Itinerary
-      </Typography> */}
-      
-
-      <Grid container spacing={4} justifyContent="center">
-        <Grid item xs={12} sm={6}>
-          <FormControl required fullWidth>
-            <InputLabel id="current-location">Starting Location</InputLabel>
-            <Select
-              sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-              labelId="current-location"
-              name="currentLocation"
-              value={preferences.currentLocation}
-              onChange={handleChange}
-              label="Starting Location"
-            >
-              <MenuItem
-                sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-                value=""
-                disabled
-              >
-                Select a location
-              </MenuItem>
-              {locations.map((location) => (
-                <MenuItem
-                  sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-                  key={location.name}
-                  value={location.name}
-                >
-                  {location.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
-
-        <Grid item xs={12} sm={6}>
-          <FormControl required fullWidth>
-            <InputLabel id="destination-label">Destination</InputLabel>
-            <Select
-              sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-              labelId="destination-label"
-              name="destination"
-              value={preferences.destination}
-              onChange={handleChange}
-              label="Destination"
-            >
-              <MenuItem
-                sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-                value=""
-                disabled
-              >
-                Select a destination
-              </MenuItem>
-              {locations
-                .filter(
-                  (location) => location.name !== preferences.currentLocation,
-                )
-                .map((location) => (
-                  <MenuItem
-                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-                    key={location.name}
-                    value={location.name}
-                  >
-                    {location.name}
-                  </MenuItem>
-                ))}
-            </Select>
-          </FormControl>
-        </Grid>
-
-        <Grid item xs={12} sm={6}>
-        <TextField
-    label="Departure Date"
-    type="date"
-    value={departureDate}
-    onChange={(e) => setDepartureDate(e.target.value)}
-    fullWidth
-    InputLabelProps={{
-      shrink: true,
-    }}
-  />
-</Grid>
-
-<Grid item xs={12} sm={6}>
-  <TextField
-    label="Return Date"
-    type="date"
-    value={returnDate}
-      onChange={(e) => setReturnDate(e.target.value)}
-      fullWidth
-      InputLabelProps={{
-        shrink: true,
+    <Box display="flex">
+      <Sidebar
+        style={{
+          position: "fixed",
+          width: "250px",
+          height: "100%",
+          top: 0,
+          left: 0,
         }}
-        />
-        </Grid>
-
-        <Grid item xs={12} sm={6}>
-          <FormControl required fullWidth>
-            <InputLabel id="traveler-category-label">
-              Traveler Category
-            </InputLabel>
-            <Select
-              sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-              labelId="traveler-category-label"
-              name="travelerCategory"
-              value={preferences.travelerCategory}
-              onChange={handleChange}
-              label="Traveler Category"
-            >
-              <MenuItem
-                sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-                value=""
-                disabled
-              >
-                Select a category
-              </MenuItem>
-              <MenuItem
-                value="Family"
-                sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-              >
-                Family
-              </MenuItem>
-              <MenuItem
-                value="Singles"
-                sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-              >
-                Singles
-              </MenuItem>
-              <MenuItem
-                value="Couples"
-                sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-              >
-                Couples
-              </MenuItem>
-              <MenuItem
-                value="Group"
-                sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
-              >
-                Other
-              </MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-
-        <Grid item xs={12} sm={6}>
-          <FormControl required fullWidth>
-            <Autocomplete
-              multiple
-              options={interests}
-              getOptionLabel={(option) => option}
-              value={preferences.interests}
-              onChange={handleInterestsChange}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  variant="outlined"
-                  label="Interests"
-                  placeholder="Select interests"
-                />
-              )}
-              renderTags={(value, getTagProps) =>
-                value.map((option, index) => (
-                  <Chip
-                    key={option}
-                    label={option}
-                    {...getTagProps({ index })}
-                  />
-                ))
-              }
-            />
-          </FormControl>
-        </Grid>
-
-        <Grid item xs={12} sm={6}>
-          <Typography gutterBottom>Budget Range</Typography>
-          <Slider
-            value={preferences.budgetRange}
-            onChange={handleBudgetRangeChange}
-            valueLabelDisplay="auto"
-            min={1000}
-            max={100000}
-            aria-labelledby="budget-range-slider"
-          />
-          <Box mt={2}>
-            <Typography>
-              Selected Range: R{preferences.budgetRange[0]} - R
-              {preferences.budgetRange[1]}
-            </Typography>
-          </Box>
-        </Grid>
-
-        {/* Conditional rendering based on traveler category */}
-        {preferences.travelerCategory === "Family" ? (
-          <>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Number of Adults"
-                name="adults"
-                value={familySize.adults}
-                onChange={handleFamilyChange}
-                type="number"
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Number of Kids"
-                name="kids"
-                value={familySize.kids}
-                onChange={handleFamilyChange}
-                type="number"
-                fullWidth
-              />
-            </Grid>
-          </>
-        ) : (
-          <Grid item xs={12} sm={6}>
-            <Typography gutterBottom>Group Size</Typography>
-            <Slider
-              value={preferences.groupSize}
-              onChange={handleGroupSizeChange}
-              step={1}
-              marks
-              min={1}
-              max={20}
-              valueLabelDisplay="auto"
-              aria-labelledby="group-size-slider"
-            />
-          </Grid>
-        )}
-
-        <Grid item xs={12} sm={6}>
-          <Typography gutterBottom>Priority</Typography>
-          <ToggleButtonGroup
+      />
+      <div
+        style={{
+          marginLeft: "250px",
+          padding: "20px",
+          overflowY: "auto",
+          width: "100%",
+        }}
+      >
+        <Container>
+          <h1 style={{}}>Itinerary Form</h1>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
             sx={{
-              "& .MuiToggleButton-root": {
-                "&.Mui-selected": {
-                  backgroundColor: "#1976d2",
-                  color: "#fff",
-                },
-              },
+              overflowX: "hidden",
+              width: "950px",
             }}
-            value={preferences.priority}
-            exclusive
-            onChange={handlePriorityChange}
-            aria-label="priority"
-            fullWidth
           >
-            <ToggleButton value="Budget" aria-label="budget">
-              Budget
-            </ToggleButton>
-            <ToggleButton value="Comfort" aria-label="comfort">
-              Comfort
-            </ToggleButton>
-            <ToggleButton value="Experience" aria-label="experience">
-              Experience
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </Grid>
+            <Grid container spacing={4} justifyContent="center">
+              <Grid item xs={12} sm={6}>
+                <FormControl required fullWidth>
+                  <InputLabel id="current-location">
+                    Starting Location
+                  </InputLabel>
+                  <Select
+                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                    labelId="current-location"
+                    name="currentLocation"
+                    value={preferences.currentLocation}
+                    onChange={handleChange}
+                    label="Starting Location"
+                  >
+                    <MenuItem
+                      sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                      value=""
+                      disabled
+                    >
+                      Select a location
+                    </MenuItem>
+                    {locations.map((location) => (
+                      <MenuItem
+                        sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                        key={location.name}
+                        value={location.name}
+                      >
+                        {location.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
 
-        <Grid item xs={12}>
-          <Button type="submit" variant="contained" color="primary" fullWidth>
-            Generate Itinerary
-          </Button>
-        </Grid>
-      </Grid>
-    </Box>
+              <Grid item xs={12} sm={6}>
+                <FormControl required fullWidth>
+                  <InputLabel id="destination-label">Destination</InputLabel>
+                  <Select
+                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                    labelId="destination-label"
+                    name="destination"
+                    value={preferences.destination}
+                    onChange={handleChange}
+                    label="Destination"
+                  >
+                    <MenuItem
+                      sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                      value=""
+                      disabled
+                    >
+                      Select a destination
+                    </MenuItem>
+                    {locations
+                      .filter(
+                        (location) =>
+                          location.name !== preferences.currentLocation,
+                      )
+                      .map((location) => (
+                        <MenuItem
+                          sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                          key={location.name}
+                          value={location.name}
+                        >
+                          {location.name}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Departure Date"
+                  type="date"
+                  value={departureDate}
+                  onChange={(e) => setDepartureDate(e.target.value)}
+                  fullWidth
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Return Date"
+                  type="date"
+                  value={returnDate}
+                  onChange={(e) => setReturnDate(e.target.value)}
+                  fullWidth
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <FormControl required fullWidth>
+                  <InputLabel id="traveler-category-label">
+                    Traveler Category
+                  </InputLabel>
+                  <Select
+                    sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                    labelId="traveler-category-label"
+                    name="travelerCategory"
+                    value={preferences.travelerCategory}
+                    onChange={handleChange}
+                    label="Traveler Category"
+                  >
+                    <MenuItem
+                      sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                      value=""
+                      disabled
+                    >
+                      Select a category
+                    </MenuItem>
+                    <MenuItem
+                      value="Family"
+                      sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                    >
+                      Family
+                    </MenuItem>
+                    <MenuItem
+                      value="Singles"
+                      sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                    >
+                      Singles
+                    </MenuItem>
+                    <MenuItem
+                      value="Couples"
+                      sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                    >
+                      Couples
+                    </MenuItem>
+                    <MenuItem
+                      value="Group"
+                      sx={{ color: isDarkMode ? "#ffffff" : "#000000" }}
+                    >
+                      Other
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <FormControl required fullWidth>
+                  <Autocomplete
+                    multiple
+                    options={interests}
+                    getOptionLabel={(option) => option}
+                    value={preferences.interests}
+                    onChange={handleInterestsChange}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        variant="outlined"
+                        label="Interests"
+                        placeholder="Select interests"
+                      />
+                    )}
+                    renderTags={(value, getTagProps) =>
+                      value.map((option, index) => (
+                        <Chip
+                          key={option}
+                          label={option}
+                          {...getTagProps({ index })}
+                        />
+                      ))
+                    }
+                  />
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <Typography gutterBottom>Budget Range</Typography>
+                <Box ml={2} mr={2} sx={{ marginRight: "50px" }}>
+                  <Slider
+                    p={2}
+                    value={preferences.budgetRange}
+                    onChange={handleBudgetRangeChange}
+                    valueLabelDisplay="auto"
+                    min={1000}
+                    max={100000}
+                    aria-labelledby="budget-range-slider"
+                  />
+                </Box>
+                <Box mt={2}>
+                  <Typography>
+                    Selected Range: R{preferences.budgetRange[0]} - R
+                    {preferences.budgetRange[1]}
+                  </Typography>
+                </Box>
+              </Grid>
+
+              {/* Conditional rendering based on traveler category */}
+              {preferences.travelerCategory === "Family" ? (
+                <>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      label="Number of Adults"
+                      name="adults"
+                      value={familySize.adults}
+                      onChange={handleFamilyChange}
+                      type="number"
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      label="Number of Kids"
+                      name="kids"
+                      value={familySize.kids}
+                      onChange={handleFamilyChange}
+                      type="number"
+                      fullWidth
+                    />
+                  </Grid>
+                </>
+              ) : (
+                <Grid item xs={12} sm={6}>
+                  <Typography gutterBottom>Group Size</Typography>
+                  <Slider
+                    value={preferences.groupSize}
+                    onChange={handleGroupSizeChange}
+                    step={1}
+                    marks
+                    min={1}
+                    max={20}
+                    valueLabelDisplay="auto"
+                    aria-labelledby="group-size-slider"
+                  />
+                </Grid>
+              )}
+
+              <Grid item xs={12} sm={6}>
+                <Typography gutterBottom>Priority</Typography>
+                <ToggleButtonGroup
+                  sx={{
+                    "& .MuiToggleButton-root": {
+                      "&.Mui-selected": {
+                        backgroundColor: "#1976d2",
+                        color: "#fff",
+                      },
+                    },
+                  }}
+                  value={preferences.priority}
+                  exclusive
+                  onChange={handlePriorityChange}
+                  aria-label="priority"
+                  fullWidth
+                >
+                  <ToggleButton value="Budget" aria-label="budget">
+                    Budget
+                  </ToggleButton>
+                  <ToggleButton value="Comfort" aria-label="comfort">
+                    Comfort
+                  </ToggleButton>
+                  <ToggleButton value="Experience" aria-label="experience">
+                    Experience
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </Grid>
+
+              <Grid item xs={12}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                >
+                  Generate Itinerary
+                </Button>
+              </Grid>
+            </Grid>
+          </Box>
+        </Container>
+      </div>
     </Box>
   );
 }
