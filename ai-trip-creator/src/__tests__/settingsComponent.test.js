@@ -23,7 +23,7 @@ jest.mock("firebase/auth", () => ({
 jest.mock("../components/dashboard/sidebar", () => () => <div>Mocked Sidebar</div>);
 
 // Mock the themeContext to test toggleTheme
-jest.mock("../themeContext/themeContext", () => ({
+jest.mock("../components/themeContext/themeContext", () => ({
   useTheme: () => ({
     toggleTheme: jest.fn(),
   }),
