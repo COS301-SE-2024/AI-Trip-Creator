@@ -865,6 +865,7 @@ function ItineraryForm({ onGenerateItinerary }) {
               <Grid item xs={12} sm={6}>
                 <Typography gutterBottom>Budget Range</Typography>
                 <Slider
+                  p={2}
                   value={preferences.budgetRange}
                   onChange={handleBudgetRangeChange}
                   valueLabelDisplay="auto"
