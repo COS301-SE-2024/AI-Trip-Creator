@@ -864,15 +864,17 @@ function ItineraryForm({ onGenerateItinerary }) {
 
               <Grid item xs={12} sm={6}>
                 <Typography gutterBottom>Budget Range</Typography>
-                <Slider
-                  p={2}
-                  value={preferences.budgetRange}
-                  onChange={handleBudgetRangeChange}
-                  valueLabelDisplay="auto"
-                  min={1000}
-                  max={100000}
-                  aria-labelledby="budget-range-slider"
-                />
+                <Box ml={2} mr={2} sx={{ marginRight: "50px" }}>
+                  <Slider
+                    p={2}
+                    value={preferences.budgetRange}
+                    onChange={handleBudgetRangeChange}
+                    valueLabelDisplay="auto"
+                    min={1000}
+                    max={100000}
+                    aria-labelledby="budget-range-slider"
+                  />
+                </Box>
                 <Box mt={2}>
                   <Typography>
                     Selected Range: R{preferences.budgetRange[0]} - R
