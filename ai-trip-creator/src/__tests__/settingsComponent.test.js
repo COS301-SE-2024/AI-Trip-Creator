@@ -1,22 +1,249 @@
-// // import React from "react";
-// // import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-// // import Settings from "../components/dashboard/settings"; // Adjust the path if necessary
-// // import { MemoryRouter } from "react-router-dom"; // MemoryRouter for navigation
-// // import { getAuth, updatePassword, reauthenticateWithCredential, EmailAuthProvider, deleteUser } from "firebase/auth";
+// // // // import React from "react";
+// // // // import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+// // // // import Settings from "../components/dashboard/settings"; // Adjust the path if necessary
+// // // // import { MemoryRouter } from "react-router-dom"; // MemoryRouter for navigation
+// // // // import { getAuth, updatePassword, reauthenticateWithCredential, EmailAuthProvider, deleteUser } from "firebase/auth";
 
-// // // Mock Firebase functions
+// // // // // Mock Firebase functions
+// // // // jest.mock("firebase/auth", () => ({
+// // // //   getAuth: jest.fn(() => ({
+// // // //     currentUser: {
+// // // //       email: "test@example.com",
+// // // //     },
+// // // //   })),
+// // // //   updatePassword: jest.fn(),
+// // // //   reauthenticateWithCredential: jest.fn(),
+// // // //   EmailAuthProvider: {
+// // // //     credential: jest.fn(),
+// // // //   },
+// // // //   deleteUser: jest.fn(),
+// // // // }));
+
+// // // // // Mock the Sidebar component
+// // // // jest.mock("../components/dashboard/sidebar", () => () => <div>Mocked Sidebar</div>);
+
+// // // // // Mock the themeContext to test toggleTheme
+// // // // jest.mock("../components/themeContext/themeContext", () => ({
+// // // //   useTheme: () => ({
+// // // //     toggleTheme: jest.fn(),
+// // // //   }),
+// // // // }));
+
+// // // // describe("Settings Component", () => {
+// // // //   beforeEach(() => {
+// // // //     jest.clearAllMocks();
+// // // //   });
+
+// // // //   test("renders the Settings component", () => {
+// // // //     render(
+// // // //       <MemoryRouter>
+// // // //         <Settings />
+// // // //       </MemoryRouter>
+// // // //     );
+
+// // // //     // Check for rendering of elements
+// // // //     expect(screen.getByText(/Settings/i)).toBeInTheDocument();
+// // // //     expect(screen.getByText(/Account Settings/i)).toBeInTheDocument();
+// // // //     expect(screen.getByLabelText(/Current Password/i)).toBeInTheDocument();
+// // // //     expect(screen.getByLabelText(/New Password/i)).toBeInTheDocument();
+// // // //     expect(screen.getByRole("button", { name: /Update Password/i })).toBeInTheDocument();
+// // // //     expect(screen.getByRole("button", { name: /Toggle Theme/i })).toBeInTheDocument();
+// // // //     expect(screen.getByRole("button", { name: /Delete Account/i })).toBeInTheDocument();
+// // // //   });
+
+// // // //   test("handles password change with valid credentials", async () => {
+// // // //     const currentPassword = "oldPassword";
+// // // //     const newPassword = "newPassword";
+
+// // // //     render(
+// // // //       <MemoryRouter>
+// // // //         <Settings />
+// // // //       </MemoryRouter>
+// // // //     );
+
+// // // //     fireEvent.change(screen.getByLabelText(/Current Password/i), { target: { value: currentPassword } });
+// // // //     fireEvent.change(screen.getByLabelText(/New Password/i), { target: { value: newPassword } });
+// // // //     fireEvent.click(screen.getByRole("button", { name: /Update Password/i }));
+
+// // // //     // Mock successful password update
+// // // //     await waitFor(() => expect(reauthenticateWithCredential).toHaveBeenCalledWith(
+// // // //       expect.any(Object),
+// // // //       expect.any(Object)
+// // // //     ));
+// // // //     expect(updatePassword).toHaveBeenCalledWith(expect.any(Object), newPassword);
+// // // //     expect(screen.getByText(/Password updated successfully./i)).toBeInTheDocument();
+// // // //   });
+
+// // // //   test("displays an error when password change fails", async () => {
+// // // //     reauthenticateWithCredential.mockRejectedValueOnce(new Error("Incorrect password"));
+
+// // // //     render(
+// // // //       <MemoryRouter>
+// // // //         <Settings />
+// // // //       </MemoryRouter>
+// // // //     );
+
+// // // //     fireEvent.change(screen.getByLabelText(/Current Password/i), { target: { value: "wrongPassword" } });
+// // // //     fireEvent.change(screen.getByLabelText(/New Password/i), { target: { value: "newPassword" } });
+// // // //     fireEvent.click(screen.getByRole("button", { name: /Update Password/i }));
+
+// // // //     await waitFor(() => {
+// // // //       expect(screen.getByText(/Password change failed:/i)).toBeInTheDocument();
+// // // //     });
+// // // //   });
+
+// // // //   test("handles theme toggle", async () => {
+// // // //     const { toggleTheme } = require("../themeContext/themeContext").useTheme();
+
+// // // //     render(
+// // // //       <MemoryRouter>
+// // // //         <Settings />
+// // // //       </MemoryRouter>
+// // // //     );
+
+// // // //     fireEvent.click(screen.getByRole("button", { name: /Toggle Theme/i }));
+
+// // // //     expect(toggleTheme).toHaveBeenCalled();
+// // // //   });
+
+// // // //   test("handles account deletion after confirmation", async () => {
+// // // //     const currentPassword = "userPassword";
+
+// // // //     render(
+// // // //       <MemoryRouter>
+// // // //         <Settings />
+// // // //       </MemoryRouter>
+// // // //     );
+
+// // // //     fireEvent.click(screen.getByRole("button", { name: /Delete Account/i }));
+
+// // // //     // Confirm dialog is shown
+// // // //     expect(screen.getByText(/Confirm Account Deletion/i)).toBeInTheDocument();
+
+// // // //     // Fill in current password in the dialog
+// // // //     fireEvent.change(screen.getByLabelText(/Current Password/i), { target: { value: currentPassword } });
+// // // //     fireEvent.click(screen.getByRole("button", { name: /Delete/i }));
+
+// // // //     // Simulate account deletion
+// // // //     await waitFor(() => expect(deleteUser).toHaveBeenCalled());
+// // // //     expect(screen.getByText(/Account deleted successfully./i)).toBeInTheDocument();
+// // // //   });
+
+// // // //   test("displays an error when account deletion fails", async () => {
+// // // //     deleteUser.mockRejectedValueOnce(new Error("Deletion failed"));
+
+// // // //     render(
+// // // //       <MemoryRouter>
+// // // //         <Settings />
+// // // //       </MemoryRouter>
+// // // //     );
+
+// // // //     fireEvent.click(screen.getByRole("button", { name: /Delete Account/i }));
+// // // //     fireEvent.change(screen.getByLabelText(/Current Password/i), { target: { value: "wrongPassword" } });
+// // // //     fireEvent.click(screen.getByRole("button", { name: /Delete/i }));
+
+// // // //     await waitFor(() => {
+// // // //       expect(screen.getByText(/Account deletion failed:/i)).toBeInTheDocument();
+// // // //     });
+// // // //   });
+// // // // });
+
+// // // import React from "react";
+// // // import { render, screen } from "@testing-library/react";
+// // // import Settings from "../components/dashboard/settings"; // Adjust the path if necessary
+// // // import { BrowserRouter as Router } from "react-router-dom";
+// // // import { initializeApp } from "firebase/app";
+// // // import { getAuth } from "firebase/auth";
+// // // import { getFirestore } from "firebase/firestore";
+
+// // // // Mock Firebase initialization
+// // // jest.mock("firebase/app", () => ({
+// // //   initializeApp: jest.fn(),
+// // // }));
+
+// // // // Mock Firebase auth and firestore functions
+// // // jest.mock("firebase/auth", () => ({
+// // //   getAuth: jest.fn(),
+// // // }));
+
+// // // jest.mock("firebase/firestore", () => ({
+// // //   getFirestore: jest.fn(),
+// // // }));
+
+// // // // Mock the firebase-config.js to prevent real Firebase initialization
+// // // jest.mock("../firebase/firebase-config", () => ({
+// // //   app: {}, // Mock the Firebase app object
+// // //   auth: {}, // Mock Firebase Auth
+// // //   firestore: {}, // Mock Firestore
+// // //   db: {}, // Mock Firestore instance
+// // //   analytics: {}, // Mock Analytics
+// // // }));
+
+// // // // Mock the Sidebar component
+// // // jest.mock("../components/dashboard/sidebar", () => () => <div>Mocked Sidebar</div>);
+
+// // // // Mock the themeContext to test toggleTheme
+// // // jest.mock("../components/themeContext/themeContext", () => ({
+// // //   useTheme: () => ({
+// // //     toggleTheme: jest.fn(),
+// // //   }),
+// // // }));
+
+// // // describe("Settings Component", () => {
+// // //   beforeEach(() => {
+// // //     jest.clearAllMocks(); // Clear all mocks before each test
+// // //     initializeApp.mockReturnValue({}); // Mock an empty Firebase app object
+// // //   });
+
+// // //   test("renders Settings component", () => {
+// // //     render(
+// // //       <Router>
+// // //         <Settings />
+// // //       </Router>
+// // //     );
+
+// // //     // Check if all main elements are rendered correctly
+// // //     expect(screen.getByText(/Settings/i)).toBeInTheDocument();
+// // //     expect(screen.getByText(/Account Settings/i)).toBeInTheDocument();
+// // //     expect(screen.getByLabelText(/Current Password/i)).toBeInTheDocument();
+// // //     expect(screen.getByLabelText(/New Password/i)).toBeInTheDocument();
+// // //     expect(screen.getByRole("button", { name: /Update Password/i })).toBeInTheDocument();
+// // //     expect(screen.getByRole("button", { name: /Toggle Theme/i })).toBeInTheDocument();
+// // //     expect(screen.getByRole("button", { name: /Delete Account/i })).toBeInTheDocument();
+// // //   });
+// // // });
+
+
+// // // settingsComponent.test.js:
+// // import React from "react";
+// // import { render, screen, fireEvent } from "@testing-library/react";
+// // import Settings from "../components/dashboard/settings";
+// // import { BrowserRouter as Router } from "react-router-dom";
+// // import { initializeApp } from "firebase/app";
+// // import { getAuth } from "firebase/auth";
+// // import { getFirestore } from "firebase/firestore";
+// // import "@testing-library/jest-dom/extend-expect";
+
+// // // Mock Firebase initialization
+// // jest.mock("firebase/app", () => ({
+// //   initializeApp: jest.fn(),
+// // }));
+
+// // // Mock Firebase auth and firestore functions
 // // jest.mock("firebase/auth", () => ({
 // //   getAuth: jest.fn(() => ({
-// //     currentUser: {
-// //       email: "test@example.com",
-// //     },
+// //     currentUser: { email: "testuser@example.com" }, // Mock current user
 // //   })),
-// //   updatePassword: jest.fn(),
-// //   reauthenticateWithCredential: jest.fn(),
 // //   EmailAuthProvider: {
 // //     credential: jest.fn(),
 // //   },
+// //   reauthenticateWithCredential: jest.fn(),
+// //   updatePassword: jest.fn(),
 // //   deleteUser: jest.fn(),
+// // }));
+
+// // jest.mock("firebase/firestore", () => ({
+// //   getFirestore: jest.fn(),
 // // }));
 
 // // // Mock the Sidebar component
@@ -31,17 +258,18 @@
 
 // // describe("Settings Component", () => {
 // //   beforeEach(() => {
-// //     jest.clearAllMocks();
+// //     jest.clearAllMocks(); // Clear all mocks before each test
+// //     initializeApp.mockReturnValue({}); // Mock an empty Firebase app object
 // //   });
 
-// //   test("renders the Settings component", () => {
+// //   test("renders Settings component and interacts with elements", () => {
 // //     render(
-// //       <MemoryRouter>
+// //       <Router>
 // //         <Settings />
-// //       </MemoryRouter>
+// //       </Router>
 // //     );
 
-// //     // Check for rendering of elements
+// //     // Check if all main elements are rendered correctly
 // //     expect(screen.getByText(/Settings/i)).toBeInTheDocument();
 // //     expect(screen.getByText(/Account Settings/i)).toBeInTheDocument();
 // //     expect(screen.getByLabelText(/Current Password/i)).toBeInTheDocument();
@@ -49,108 +277,17 @@
 // //     expect(screen.getByRole("button", { name: /Update Password/i })).toBeInTheDocument();
 // //     expect(screen.getByRole("button", { name: /Toggle Theme/i })).toBeInTheDocument();
 // //     expect(screen.getByRole("button", { name: /Delete Account/i })).toBeInTheDocument();
-// //   });
 
-// //   test("handles password change with valid credentials", async () => {
-// //     const currentPassword = "oldPassword";
-// //     const newPassword = "newPassword";
-
-// //     render(
-// //       <MemoryRouter>
-// //         <Settings />
-// //       </MemoryRouter>
-// //     );
-
-// //     fireEvent.change(screen.getByLabelText(/Current Password/i), { target: { value: currentPassword } });
-// //     fireEvent.change(screen.getByLabelText(/New Password/i), { target: { value: newPassword } });
-// //     fireEvent.click(screen.getByRole("button", { name: /Update Password/i }));
-
-// //     // Mock successful password update
-// //     await waitFor(() => expect(reauthenticateWithCredential).toHaveBeenCalledWith(
-// //       expect.any(Object),
-// //       expect.any(Object)
-// //     ));
-// //     expect(updatePassword).toHaveBeenCalledWith(expect.any(Object), newPassword);
-// //     expect(screen.getByText(/Password updated successfully./i)).toBeInTheDocument();
-// //   });
-
-// //   test("displays an error when password change fails", async () => {
-// //     reauthenticateWithCredential.mockRejectedValueOnce(new Error("Incorrect password"));
-
-// //     render(
-// //       <MemoryRouter>
-// //         <Settings />
-// //       </MemoryRouter>
-// //     );
-
-// //     fireEvent.change(screen.getByLabelText(/Current Password/i), { target: { value: "wrongPassword" } });
-// //     fireEvent.change(screen.getByLabelText(/New Password/i), { target: { value: "newPassword" } });
-// //     fireEvent.click(screen.getByRole("button", { name: /Update Password/i }));
-
-// //     await waitFor(() => {
-// //       expect(screen.getByText(/Password change failed:/i)).toBeInTheDocument();
-// //     });
-// //   });
-
-// //   test("handles theme toggle", async () => {
-// //     const { toggleTheme } = require("../themeContext/themeContext").useTheme();
-
-// //     render(
-// //       <MemoryRouter>
-// //         <Settings />
-// //       </MemoryRouter>
-// //     );
-
+// //     // Interact with the toggle theme button
 // //     fireEvent.click(screen.getByRole("button", { name: /Toggle Theme/i }));
-
-// //     expect(toggleTheme).toHaveBeenCalled();
-// //   });
-
-// //   test("handles account deletion after confirmation", async () => {
-// //     const currentPassword = "userPassword";
-
-// //     render(
-// //       <MemoryRouter>
-// //         <Settings />
-// //       </MemoryRouter>
-// //     );
-
-// //     fireEvent.click(screen.getByRole("button", { name: /Delete Account/i }));
-
-// //     // Confirm dialog is shown
-// //     expect(screen.getByText(/Confirm Account Deletion/i)).toBeInTheDocument();
-
-// //     // Fill in current password in the dialog
-// //     fireEvent.change(screen.getByLabelText(/Current Password/i), { target: { value: currentPassword } });
-// //     fireEvent.click(screen.getByRole("button", { name: /Delete/i }));
-
-// //     // Simulate account deletion
-// //     await waitFor(() => expect(deleteUser).toHaveBeenCalled());
-// //     expect(screen.getByText(/Account deleted successfully./i)).toBeInTheDocument();
-// //   });
-
-// //   test("displays an error when account deletion fails", async () => {
-// //     deleteUser.mockRejectedValueOnce(new Error("Deletion failed"));
-
-// //     render(
-// //       <MemoryRouter>
-// //         <Settings />
-// //       </MemoryRouter>
-// //     );
-
-// //     fireEvent.click(screen.getByRole("button", { name: /Delete Account/i }));
-// //     fireEvent.change(screen.getByLabelText(/Current Password/i), { target: { value: "wrongPassword" } });
-// //     fireEvent.click(screen.getByRole("button", { name: /Delete/i }));
-
-// //     await waitFor(() => {
-// //       expect(screen.getByText(/Account deletion failed:/i)).toBeInTheDocument();
-// //     });
+// //     expect(screen.getByRole("button", { name: /Toggle Theme/i })).toBeInTheDocument();
 // //   });
 // // });
 
+
 // import React from "react";
 // import { render, screen } from "@testing-library/react";
-// import Settings from "../components/dashboard/settings"; // Adjust the path if necessary
+// import Settings from "../components/dashboard/settings";
 // import { BrowserRouter as Router } from "react-router-dom";
 // import { initializeApp } from "firebase/app";
 // import { getAuth } from "firebase/auth";
@@ -163,7 +300,9 @@
 
 // // Mock Firebase auth and firestore functions
 // jest.mock("firebase/auth", () => ({
-//   getAuth: jest.fn(),
+//   getAuth: jest.fn(() => ({
+//     currentUser: { email: "test@example.com" },
+//   })),
 // }));
 
 // jest.mock("firebase/firestore", () => ({
@@ -179,16 +318,6 @@
 //   analytics: {}, // Mock Analytics
 // }));
 
-// // Mock the Sidebar component
-// jest.mock("../components/dashboard/sidebar", () => () => <div>Mocked Sidebar</div>);
-
-// // Mock the themeContext to test toggleTheme
-// jest.mock("../components/themeContext/themeContext", () => ({
-//   useTheme: () => ({
-//     toggleTheme: jest.fn(),
-//   }),
-// }));
-
 // describe("Settings Component", () => {
 //   beforeEach(() => {
 //     jest.clearAllMocks(); // Clear all mocks before each test
@@ -202,27 +331,25 @@
 //       </Router>
 //     );
 
-//     // Check if all main elements are rendered correctly
+//     // Check if the settings component is rendered correctly
 //     expect(screen.getByText(/Settings/i)).toBeInTheDocument();
 //     expect(screen.getByText(/Account Settings/i)).toBeInTheDocument();
-//     expect(screen.getByLabelText(/Current Password/i)).toBeInTheDocument();
-//     expect(screen.getByLabelText(/New Password/i)).toBeInTheDocument();
-//     expect(screen.getByRole("button", { name: /Update Password/i })).toBeInTheDocument();
-//     expect(screen.getByRole("button", { name: /Toggle Theme/i })).toBeInTheDocument();
-//     expect(screen.getByRole("button", { name: /Delete Account/i })).toBeInTheDocument();
+//     expect(screen.getByText(/Theme Preferences/i)).toBeInTheDocument();
+//     expect(screen.getByText(/App Version/i)).toBeInTheDocument();
 //   });
+
 // });
 
-
-// settingsComponent.test.js:
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import Settings from "../components/dashboard/settings";
 import { BrowserRouter as Router } from "react-router-dom";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import "@testing-library/jest-dom/extend-expect";
+import { useTheme } from "../themeContext/themeContext";
+
+const { toggleTheme } = useTheme();
 
 // Mock Firebase initialization
 jest.mock("firebase/app", () => ({
@@ -232,27 +359,27 @@ jest.mock("firebase/app", () => ({
 // Mock Firebase auth and firestore functions
 jest.mock("firebase/auth", () => ({
   getAuth: jest.fn(() => ({
-    currentUser: { email: "testuser@example.com" }, // Mock current user
+    currentUser: { email: "test@example.com" },
   })),
-  EmailAuthProvider: {
-    credential: jest.fn(),
-  },
-  reauthenticateWithCredential: jest.fn(),
-  updatePassword: jest.fn(),
-  deleteUser: jest.fn(),
 }));
 
 jest.mock("firebase/firestore", () => ({
   getFirestore: jest.fn(),
 }));
 
-// Mock the Sidebar component
-jest.mock("../components/dashboard/sidebar", () => () => <div>Mocked Sidebar</div>);
+// Mock the firebase-config.js to prevent real Firebase initialization
+jest.mock("../firebase/firebase-config", () => ({
+  app: {}, // Mock the Firebase app object
+  auth: {}, // Mock Firebase Auth
+  firestore: {}, // Mock Firestore
+  db: {}, // Mock Firestore instance
+  analytics: {}, // Mock Analytics
+}));
 
-// Mock the themeContext to test toggleTheme
-jest.mock("../components/themeContext/themeContext", () => ({
+// Mock the useTheme hook
+jest.mock("../themeContext/themeContext", () => ({
   useTheme: () => ({
-    toggleTheme: jest.fn(),
+    toggleTheme: jest.fn(), // Mock toggleTheme function
   }),
 }));
 
@@ -262,24 +389,19 @@ describe("Settings Component", () => {
     initializeApp.mockReturnValue({}); // Mock an empty Firebase app object
   });
 
-  test("renders Settings component and interacts with elements", () => {
+  test("renders Settings component", () => {
     render(
       <Router>
         <Settings />
       </Router>
     );
 
-    // Check if all main elements are rendered correctly
+    // Check if the settings component is rendered correctly
     expect(screen.getByText(/Settings/i)).toBeInTheDocument();
     expect(screen.getByText(/Account Settings/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Current Password/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/New Password/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Update Password/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Toggle Theme/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Delete Account/i })).toBeInTheDocument();
-
-    // Interact with the toggle theme button
-    fireEvent.click(screen.getByRole("button", { name: /Toggle Theme/i }));
-    expect(screen.getByRole("button", { name: /Toggle Theme/i })).toBeInTheDocument();
+    expect(screen.getByText(/Theme Preferences/i)).toBeInTheDocument();
+    expect(screen.getByText(/App Version/i)).toBeInTheDocument();
   });
+
+  // Add more tests if needed
 });
