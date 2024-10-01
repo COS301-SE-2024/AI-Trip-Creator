@@ -161,6 +161,7 @@ import Accommodation from './components/dashboard/accommodation';
 import Help from './components/dashboard/help';
 import Analytics from './components/dashboard/analytics';
 import Itinerary from './components/dashboard/Itinerary';
+import ItineraryForm from './components/dashboard/ItineraryForm';
 import Accommodations from './components/dashboard/accommodation';
 import { UserProvider } from './components/UserContext/UserContext';
 import { ThemeProviderWrapper } from './components/themeContext/themeContext';
@@ -202,6 +203,7 @@ const App = () => {
                   }
                 />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/itineraryForm" element={<ItineraryForm />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/flights" element={<Flights />} />
