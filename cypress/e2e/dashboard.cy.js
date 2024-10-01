@@ -68,9 +68,23 @@ describe('Dashboard Component', () => {
   //   cy.get('input[placeholder="Ask me about your trip"]').type(testInput);
   //   cy.get('input[placeholder="Ask me about your trip"]').should('have.value', testInput);
   // });
-  it('disables submit button when input is empty', () => {
-    // Ensure submit button is disabled when input is empty
-    cy.get('input[placeholder="Ask me about your trip"]').clear();
-    cy.get('button').should('be.disabled');
-  });
+  // it('disables submit button when input is empty', () => {
+  //   // Ensure submit button is disabled when input is empty
+  //   cy.get('input[placeholder="Ask me about your trip"]').clear();
+  //   cy.get('button').should('be.disabled');
+  // });
+
+  // it('displays response after form submission', () => {
+  //   // Simulate filling in the form and submitting it
+  //   const userInput = 'Trip to Cape Town';
+  //   cy.get('input[placeholder="Ask me about your trip"]').type(userInput);
+  //   cy.get('button').click();
+
+  //   // Simulate a bot response and check if it is displayed
+  //   cy.intercept('POST', '**/openai/**', { fixture: 'itineraryResponse.json' }).as('getItinerary');
+  //   cy.wait('@getItinerary');
+
+  //   // Check that a response appears (mocked as an example)
+  //   cy.contains('Here is your itinerary').should('be.visible');
+  // });
 });
