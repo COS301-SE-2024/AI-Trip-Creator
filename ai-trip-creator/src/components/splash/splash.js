@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {  ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import {
   Button,
   Dialog,
@@ -24,7 +24,7 @@ import {
 } from "react-icons/fa";
 import { AiOutlineStar, AiOutlineMenu } from "react-icons/ai";
 import { Link } from "react-scroll";
-import CssBaseline from '@mui/material/CssBaseline';
+import CssBaseline from "@mui/material/CssBaseline";
 
 const theme = createTheme({
   typography: {
@@ -75,8 +75,6 @@ const reviews = [
   // Add more reviews as needed
 ];
 
-
-
 const images = [
   "https://images.unsplash.com/photo-1519985176271-adb1088fa94c",
   "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
@@ -95,18 +93,17 @@ const ReviewCard = () => {
 
   const goToNextReview = () => {
     setCurrentReviewIndex((prevIndex) =>
-      prevIndex === reviews.length - 1 ? 0 : prevIndex + 1
+      prevIndex === reviews.length - 1 ? 0 : prevIndex + 1,
     );
   };
 
   const goToPreviousReview = () => {
     setCurrentReviewIndex((prevIndex) =>
-      prevIndex === 0 ? reviews.length - 1 : prevIndex - 1
+      prevIndex === 0 ? reviews.length - 1 : prevIndex - 1,
     );
   };
 
   const currentReview = reviews[currentReviewIndex];
-
 
   return (
     <Box
@@ -211,13 +208,13 @@ const ImageCarousel = () => {
 
   const goToNextImage = () => {
     setCurrentImageIndex((prevIndex) =>
-      prevIndex === images.length - 1 ? 0 : prevIndex + 1
+      prevIndex === images.length - 1 ? 0 : prevIndex + 1,
     );
   };
 
   const goToPreviousImage = () => {
     setCurrentImageIndex((prevIndex) =>
-      prevIndex === 0 ? images.length - 1 : prevIndex - 1
+      prevIndex === 0 ? images.length - 1 : prevIndex - 1,
     );
   };
 
@@ -348,12 +345,13 @@ const SplashPage = ({ setIsLoggedIn }) => {
   const closeLogin = () => setVisibleLogin(false);
   const openSignup = () => setVisibleSignup(true);
   const closeSignup = () => setVisibleSignup(false);
-  
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-        
+      <Box
+        sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
+      >
         {/* Animated Heading */}
         <Box sx={{ textAlign: "center", py: 4, backgroundColor: "#f4f6f8" }}>
           <Slide direction="down" in={true} mountOnEnter unmountOnExit>
@@ -364,7 +362,7 @@ const SplashPage = ({ setIsLoggedIn }) => {
                 fontSize: "4rem",
                 fontWeight: 700,
                 lineHeight: 1.2,
-                 color: theme.palette.primary.main,
+                color: theme.palette.primary.main,
                 color: "#5A7BB8",
                 textShadow: "2px 2px 4px rgba(0, 0, 0, 0.3)",
               }}
@@ -378,7 +376,7 @@ const SplashPage = ({ setIsLoggedIn }) => {
         <AppBar
           position="sticky"
           sx={{
-           backgroundColor: theme.palette.primary.main,
+            backgroundColor: theme.palette.primary.main,
             backgroundColor: "white",
             top: 0,
             boxShadow: "none",
@@ -422,22 +420,12 @@ const SplashPage = ({ setIsLoggedIn }) => {
               >
                 <Button sx={{ mx: 2, color: "#5A7BB8e" }}>Gallery</Button>
               </Link>
-              <Link
-                activeClass="active"
-                to="reviews"
-                spy={true}
-                smooth={true}
-                offset={-70}
-                duration={500}
-              >
-                <Button sx={{ mx: 2, color: "#5A7BB8e" }}>Reviews</Button>
-              </Link>
             </Toolbar>
           </Container>
         </AppBar>
 
         {/* Hero Section */}
-        
+
         <Box
           id="hero"
           sx={{
@@ -456,20 +444,26 @@ const SplashPage = ({ setIsLoggedIn }) => {
             {/* <Typography variant="h2" component="h1" gutterBottom>
               Plan Your Perfect Trip
             </Typography> */}
-            <Typography sx = {{
-              fontSize: "4rem",
-              color: "white",
-              fontWeight: 700,
-              lineHeight: 1.2,
-              marginBottom: "2rem",
-              textShadow: "2px 2px 4px rgba(0, 0, 0, 0.3)",
-              "&:hover": {
-                transform: "scale(1.05)",
-              },
-            }}>
+            <Typography
+              sx={{
+                fontSize: "4rem",
+                color: "white",
+                fontWeight: 700,
+                lineHeight: 1.2,
+                marginBottom: "2rem",
+                textShadow: "2px 2px 4px rgba(0, 0, 0, 0.3)",
+                "&:hover": {
+                  transform: "scale(1.05)",
+                },
+              }}
+            >
               Plan Your Perfect Trip
             </Typography>
-            <Typography variant="h6" component="p" sx={{ mb: 4, color: "white" }}>
+            <Typography
+              variant="h6"
+              component="p"
+              sx={{ mb: 4, color: "white" }}
+            >
               Discover new destinations, create your itinerary, and explore with
               ease.
             </Typography>
@@ -487,13 +481,13 @@ const SplashPage = ({ setIsLoggedIn }) => {
               color="inherit"
               size="large"
               onClick={openLogin}
-              sx = {{ 
-                mr:2, 
-                width:"120px", 
+              sx={{
+                mr: 2,
+                width: "120px",
                 "&:hover": {
-                      transform: "scale(1.02)",
-                      boxShadow: "0 6px 10px #FFFFFF",
-                    },
+                  transform: "scale(1.02)",
+                  boxShadow: "0 6px 10px #FFFFFF",
+                },
               }}
             >
               Login
@@ -501,152 +495,134 @@ const SplashPage = ({ setIsLoggedIn }) => {
           </Container>
         </Box>
         {visibleLogin && (
-        <Dialog open={visibleLogin} onClose={closeLogin}>
-          <DialogTitle>Login</DialogTitle>
-          <DialogContent>
-            <Login
-              setIsLoggedIn={setIsLoggedIn}
-              closeLogin={closeLogin}
-              openSignup={openSignup}
-            />
-          </DialogContent>
-        </Dialog>
-      )}
+          <Dialog open={visibleLogin} onClose={closeLogin}>
+            <DialogTitle>Login</DialogTitle>
+            <DialogContent>
+              <Login
+                setIsLoggedIn={setIsLoggedIn}
+                closeLogin={closeLogin}
+                openSignup={openSignup}
+              />
+            </DialogContent>
+          </Dialog>
+        )}
 
-      {visibleSignup && (
-        <Dialog open={visibleSignup} onClose={closeSignup}>
-          <DialogTitle>Signup</DialogTitle>
-          <DialogContent>
-            <Signup closeSignup={closeSignup} openLogin={openLogin} />
-          </DialogContent>
-        </Dialog>
-      )}
+        {visibleSignup && (
+          <Dialog open={visibleSignup} onClose={closeSignup}>
+            <DialogTitle>Signup</DialogTitle>
+            <DialogContent>
+              <Signup closeSignup={closeSignup} openLogin={openLogin} />
+            </DialogContent>
+          </Dialog>
+        )}
 
-      {(visibleLogin || visibleSignup) && (
-        <Box
-          sx={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            background: "rgba(0, 0, 0, 0.5)",
-            zIndex: 500,
-          }}
-          onClick={() => {
-            closeLogin();
-            closeSignup();
-          }}
-        />
-      )}
-        
+        {(visibleLogin || visibleSignup) && (
+          <Box
+            sx={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              background: "rgba(0, 0, 0, 0.5)",
+              zIndex: 500,
+            }}
+            onClick={() => {
+              closeLogin();
+              closeSignup();
+            }}
+          />
+        )}
 
         {/* How It Works Section */}
-        <Box id="howItWorks" sx={{ minHeight: "100vh", backgroundColor: "#ffffff" }}>
-        <Container id="howItWorks" maxWidth="lg" sx={{ my: 8 }}>
-          <Typography variant="h4" component="h2" align="center" gutterBottom>
-            How It Works
-          </Typography>
-          <Grid container spacing={4} sx={{ mt: 4 }}>
-            <Grid item xs={12} md={4}>
-              <Box sx={{ textAlign: "center", padding: 2 }}>
-                <FaSearchLocation size={48} color={theme.palette.primary.main} />
-                <Typography variant="h6" component="h3" sx={{ mt: 2 }}>
-                  Search
-                </Typography>
-                <Typography variant="body1">
-                  Find your ideal trip by searching our extensive database of
-                  destinations.
-                </Typography>
-              </Box>
+        <Box
+          id="howItWorks"
+          sx={{ minHeight: "100vh", backgroundColor: "#ffffff" }}
+        >
+          <Container id="howItWorks" maxWidth="lg" sx={{ my: 8 }}>
+            <Typography variant="h4" component="h2" align="center" gutterBottom>
+              How It Works
+            </Typography>
+            <Grid container spacing={4} sx={{ mt: 4 }}>
+              <Grid item xs={12} md={4}>
+                <Box sx={{ textAlign: "center", padding: 2 }}>
+                  <FaSearchLocation
+                    size={48}
+                    color={theme.palette.primary.main}
+                  />
+                  <Typography variant="h6" component="h3" sx={{ mt: 2 }}>
+                    Search
+                  </Typography>
+                  <Typography variant="body1">
+                    Find your ideal trip by searching our extensive database of
+                    destinations.
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <Box sx={{ textAlign: "center", padding: 2 }}>
+                  <FaRegCalendarAlt
+                    size={48}
+                    color={theme.palette.primary.main}
+                  />
+                  <Typography variant="h6" component="h3" sx={{ mt: 2 }}>
+                    Plan
+                  </Typography>
+                  <Typography variant="body1">
+                    Organize your itinerary with our easy-to-use planning tools.
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <Box sx={{ textAlign: "center", padding: 2 }}>
+                  <FaMapMarkedAlt
+                    size={48}
+                    color={theme.palette.primary.main}
+                  />
+                  <Typography variant="h6" component="h3" sx={{ mt: 2 }}>
+                    Explore
+                  </Typography>
+                  <Typography variant="body1">
+                    Discover hidden gems and popular spots with expert
+                    recommendations.
+                  </Typography>
+                </Box>
+              </Grid>
             </Grid>
-            <Grid item xs={12} md={4}>
-              <Box sx={{ textAlign: "center", padding: 2 }}>
-                <FaRegCalendarAlt size={48} color={theme.palette.primary.main} />
-                <Typography variant="h6" component="h3" sx={{ mt: 2 }}>
-                  Plan
-                </Typography>
-                <Typography variant="body1">
-                  Organize your itinerary with our easy-to-use planning tools.
-                </Typography>
-              </Box>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Box sx={{ textAlign: "center", padding: 2 }}>
-                <FaMapMarkedAlt size={48} color={theme.palette.primary.main} />
-                <Typography variant="h6" component="h3" sx={{ mt: 2 }}>
-                  Explore
-                </Typography>
-                <Typography variant="body1">
-                  Discover hidden gems and popular spots with expert
-                  recommendations.
-                </Typography>
-              </Box>
-            </Grid>
-          </Grid>
-        </Container>
+          </Container>
         </Box>
 
         {/* Gallery Section */}
-        <Box id="gallery" sx={{ minHeight: "100vh", backgroundColor: "#e3f2fd" }}>
-        <Box id="gallery" sx={{ backgroundColor: "#f4f6f8", py: 8 }}>
-          <Container maxWidth="lg">
-            <Typography variant="h4" component="h2" align="center" gutterBottom>
-              Gallery
-            </Typography>
-            <ImageCarousel />
-          </Container>
-        </Box>
+        <Box
+          id="gallery"
+          sx={{ minHeight: "100vh", backgroundColor: "#e3f2fd" }}
+        >
+          <Box id="gallery" sx={{ backgroundColor: "#f4f6f8", py: 8 }}>
+            <Container maxWidth="lg">
+              <Typography
+                variant="h4"
+                component="h2"
+                align="center"
+                gutterBottom
+              >
+                Gallery
+              </Typography>
+              <ImageCarousel />
+            </Container>
+          </Box>
         </Box>
 
         {/* Reviews Section */}
-        <Box id="reviews" sx={{ minHeight: "100vh", backgroundColor: "#ffffff" }}>
-        <Box id="reviews" sx={{ backgroundColor: "#ffffff", py: 8 }}>
-          <Container maxWidth="lg">
-            <Typography variant="h4" component="h2" align="center" gutterBottom>
-              What Our Users Say
-            </Typography>
-            <Grid container spacing={4} sx={{ mt: 4 }}>
-              <Grid item xs={12} md={6}>
-                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                  <ReviewCard />
-                </Box>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Box
-                  sx={{
-                    backgroundColor: "background.paper",
-                    padding: "2rem",
-                    borderRadius: "8px",
-                    boxShadow: "0px 2px 10px rgba(0,0,0,0.1)",
-                    height: "100%",
-                  }}
-                >
-                  <Typography variant="h4" component="h2" sx={{ mb: 2 }}>
-                    Trusted by Thousands
-                  </Typography>
-                  <Box sx={{ display: "flex", mb: 2 }}>
-                    <AiOutlineStar size={28} style={{ marginRight: "15px" }} />
-                    <Box>
-                      <Typography variant="h6">
-                        Top-rated Experience
-                      </Typography>
-                      <Typography variant="body1">
-                        Our customers love the ease of planning and quality of
-                        service we provide.
-                      </Typography>
-                    </Box>
-                  </Box>
-                  <ReviewCard />
-                </Box>
-              </Grid>
-            </Grid>
-          </Container>
-        </Box>
-        </Box>
 
         {/* Footer */}
-        <Box sx={{ backgroundColor: theme.palette.primary.main, color: "white", py: 4, mt: "auto" }}>
+        <Box
+          sx={{
+            backgroundColor: theme.palette.primary.main,
+            color: "white",
+            py: 4,
+            mt: "auto",
+          }}
+        >
           <Container maxWidth="lg">
             <Typography variant="body1" align="center">
               © {new Date().getFullYear()} Trip Creator. All rights reserved.
