@@ -1,6 +1,16 @@
 import React, { useState } from "react";
 import Sidebar from "./sidebar";
-import { Card, CardContent, Typography, Box, Grid, Button, MenuItem, TextField, Alert } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  Grid,
+  Button,
+  MenuItem,
+  TextField,
+  Alert,
+} from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { FaPlaneDeparture, FaPlaneArrival, FaDollarSign } from "react-icons/fa";
 
@@ -16,7 +26,13 @@ const convertPriceToZar = (price, fromCurrency) => {
   }
 };
 
-const getFlightOffers = async (originLocation, destinationLocation, departureDate, adults, maxOffers) => {
+const getFlightOffers = async (
+  originLocation,
+  destinationLocation,
+  departureDate,
+  adults,
+  maxOffers,
+) => {
   const tokenUrl = "https://test.api.amadeus.com/v1/security/oauth2/token";
 
   try {
@@ -35,7 +51,9 @@ const getFlightOffers = async (originLocation, destinationLocation, departureDat
     const tokenData = await tokenResponse.json();
     const accessToken = tokenData.access_token;
 
-    const searchUrl = new URL("https://test.api.amadeus.com/v2/shopping/flight-offers");
+    const searchUrl = new URL(
+      "https://test.api.amadeus.com/v2/shopping/flight-offers",
+    );
     const params = {
       originLocationCode: originLocation,
       destinationLocationCode: destinationLocation,
@@ -44,7 +62,9 @@ const getFlightOffers = async (originLocation, destinationLocation, departureDat
       max: maxOffers.toString(),
     };
 
-    Object.keys(params).forEach((key) => searchUrl.searchParams.append(key, params[key]));
+    Object.keys(params).forEach((key) =>
+      searchUrl.searchParams.append(key, params[key]),
+    );
 
     const searchResponse = await fetch(searchUrl.toString(), {
       method: "GET",
@@ -86,7 +106,13 @@ const Flights = () => {
       }
       setErrorMessage(""); // Clear any previous errors
 
-      const flightOffers = await getFlightOffers(origin, destination, departureDate, 1, 9);
+      const flightOffers = await getFlightOffers(
+        origin,
+        destination,
+        departureDate,
+        1,
+        9,
+      );
       if (flightOffers) {
         setFlights(flightOffers);
       } else {
@@ -112,7 +138,14 @@ const Flights = () => {
         <h1>Flight Offers</h1>
 
         {/* Search Form */}
-        <Box sx={{ marginBottom: "2rem" }}>
+        <Box
+          mb={5}
+          p={2}
+          border={1}
+          borderColor="grey.300"
+          borderRadius="8px"
+          sx={{ marginBottom: "2rem" }}
+        >
           <TextField
             select
             label="Origin"
@@ -152,7 +185,12 @@ const Flights = () => {
             }}
           />
 
-          <Button variant="contained" color="primary" onClick={handleSearchFlights} disabled={!origin || !destination || !departureDate}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSearchFlights}
+            disabled={!origin || !destination || !departureDate}
+          >
             Search Flights
           </Button>
 
@@ -191,17 +229,34 @@ const Flights = () => {
                 >
                   <CardContent>
                     <h2>
-                      <FaPlaneDeparture style={{ marginRight: "8px", color: isDarkMode ? "#90caf9" : "#1976d2" }} />
-                      {firstSegment.departure.iataCode} to {lastSegment.arrival.iataCode}
+                      <FaPlaneDeparture
+                        style={{
+                          marginRight: "8px",
+                          color: isDarkMode ? "#90caf9" : "#1976d2",
+                        }}
+                      />
+                      {firstSegment.departure.iataCode} to{" "}
+                      {lastSegment.arrival.iataCode}
                     </h2>
                     <Typography>
-                      <FaPlaneArrival style={{ marginRight: "8px", color: isDarkMode ? "#90caf9" : "#1976d2" }} />
+                      <FaPlaneArrival
+                        style={{
+                          marginRight: "8px",
+                          color: isDarkMode ? "#90caf9" : "#1976d2",
+                        }}
+                      />
                       Departure: {departureTime} | Arrival: {arrivalTime}
                     </Typography>
                     {/* <Typography>Carrier Code: {carrierCode}</Typography> */}
                     <Typography>
-                      <FaDollarSign style={{ marginRight: "8px", color: isDarkMode ? "#ffd700" : "#ffb300" }} />
-                      Total Price: {totalPrice} {flight.price.currency} | {totalPriceInZar} ZAR
+                      <FaDollarSign
+                        style={{
+                          marginRight: "8px",
+                          color: isDarkMode ? "#ffd700" : "#ffb300",
+                        }}
+                      />
+                      Total Price: {totalPrice} {flight.price.currency} |{" "}
+                      {totalPriceInZar} ZAR
                     </Typography>
                   </CardContent>
                 </Card>
@@ -441,4 +496,3 @@ export default Flights;
 // };
 
 // export default Flights;
-

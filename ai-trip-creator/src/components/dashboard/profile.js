@@ -444,7 +444,7 @@ const Profile = () => {
               width: "950px",
             }}
           >
-            <Box p={3} sx={{ minHeight: "50vh" }}>
+            <Box sx={{ minHeight: "50vh" }}>
               {loading ? (
                 <Box
                   display="flex"
