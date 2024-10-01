@@ -713,3 +713,77 @@
 //     expect(screen.getByText(/Total Price: 1000 EUR | 19210.00 ZAR/i)).toBeInTheDocument();
 //   });
 // });
+
+// flightsComponent.test.js
+import React from "react";
+import { render, screen, fireEvent } from "@testing-library/react";
+import Flights from "../components/dashboard/flights";
+import { BrowserRouter as Router } from "react-router-dom";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+
+// Mock the flight offers fetching
+jest.mock("../components/dashboard/flights", () => ({
+  ...jest.requireActual("../components/dashboard/flights"),
+  getFlightOffers: jest.fn(),
+}));
+
+describe("Flights Component", () => {
+  const theme = createTheme({
+    palette: {
+      mode: "light", // You can toggle this between "light" and "dark" for testing both modes
+    },
+  });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test("renders Flights component with search form", () => {
+    render(
+      <ThemeProvider theme={theme}>
+        <Router>
+          <Flights />
+        </Router>
+      </ThemeProvider>
+    );
+
+    // Check if the search form elements are present
+    expect(screen.getByLabelText(/Origin/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Destination/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Departure Date/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Search Flights/i })).toBeInTheDocument();
+  });
+
+  test("displays error when origin and destination are the same", () => {
+    render(
+      <ThemeProvider theme={theme}>
+        <Router>
+          <Flights />
+        </Router>
+      </ThemeProvider>
+    );
+
+    // Fill the form with the same origin and destination
+    fireEvent.change(screen.getByLabelText(/Origin/i), { target: { value: "JNB" } });
+    fireEvent.change(screen.getByLabelText(/Destination/i), { target: { value: "JNB" } });
+    fireEvent.change(screen.getByLabelText(/Departure Date/i), { target: { value: "2024-10-10" } });
+
+    fireEvent.click(screen.getByRole("button", { name: /Search Flights/i }));
+
+    // Check if the error message is displayed
+    expect(screen.getByText(/Origin and destination cannot be the same/i)).toBeInTheDocument();
+  });
+
+  test("search button is disabled when form is incomplete", () => {
+    render(
+      <ThemeProvider theme={theme}>
+        <Router>
+          <Flights />
+        </Router>
+      </ThemeProvider>
+    );
+
+    // Check that the button is disabled when the form is not fully filled
+    expect(screen.getByRole("button", { name: /Search Flights/i })).toBeDisabled();
+  });
+});
