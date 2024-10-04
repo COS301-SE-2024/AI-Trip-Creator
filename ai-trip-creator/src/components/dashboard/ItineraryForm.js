@@ -1291,7 +1291,38 @@ function ItineraryForm() {
     { label: "Lanseria (HLA)", code: "HLA" },
   ];
 
+  // Handle start location change
+const handleStartLocationChange = (e) => {
+  setStartLocation(e.target.value);
+  setSelectedFlights([]);  // Clear selected flights when the start location is changed
+  setFlights([]); // Clear flights to prevent selection in the same position
+};
+
+// Handle end location change
+const handleEndLocationChange = (e) => {
+  setEndLocation(e.target.value);
+  setSelectedFlights([]);  // Clear selected flights when the end location is changed
+  setFlights([]); // Clear flights to prevent selection in the same position
+};
+
+
   // Handle flight search
+  // const handleSearchFlights = async () => {
+  //   if (startLocation && endLocation && departureDate) {
+  //     if (startLocation === endLocation) {
+  //       setErrorMessage("Origin and destination cannot be the same.");
+  //       return;
+  //     }
+  //     setErrorMessage("");
+
+  //     const flightOffers = await getFlightOffers(startLocation, endLocation, departureDate, 1, 9);
+  //     if (flightOffers) {
+  //       setFlights(flightOffers);
+  //     } else {
+  //       console.log("No flight offers available.");
+  //     }
+  //   }
+  // };
   const handleSearchFlights = async () => {
     if (startLocation && endLocation && departureDate) {
       if (startLocation === endLocation) {
@@ -1299,15 +1330,17 @@ function ItineraryForm() {
         return;
       }
       setErrorMessage("");
-
+      setSelectedFlights([]); // Clear selected flights when performing a new search
+  
       const flightOffers = await getFlightOffers(startLocation, endLocation, departureDate, 1, 9);
       if (flightOffers) {
-        setFlights(flightOffers);
+        setFlights(flightOffers);  // Update the flights
       } else {
         console.log("No flight offers available.");
       }
     }
   };
+  
 
   // Separate fetching for activities and accommodations
   const fetchAccommodations = async (endLocations) => {
