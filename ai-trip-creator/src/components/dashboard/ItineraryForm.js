@@ -1291,86 +1291,17 @@ function ItineraryForm() {
     { label: "Lanseria (HLA)", code: "HLA" },
   ];
 
-  const handleStartLocationChange = (e) => {
-    setStartLocation(e.target.value);
-    setFlights([]);  // Clear flights to trigger new search results
-  };
-
-  const handleEndLocationChange = (e) => {
-    setEndLocation(e.target.value);
-    setFlights([]);  // Clear flights to trigger new search results
-  };
-
-
-  // Handle flight search
-  // const handleSearchFlights = async () => {
-  //   if (startLocation && endLocation && departureDate) {
-  //     if (startLocation === endLocation) {
-  //       setErrorMessage("Origin and destination cannot be the same.");
-  //       return;
-  //     }
-  //     setErrorMessage("");
-
-  //     const flightOffers = await getFlightOffers(startLocation, endLocation, departureDate, 1, 9);
-  //     if (flightOffers) {
-  //       setFlights(flightOffers);
-  //     } else {
-  //       console.log("No flight offers available.");
-  //     }
-  //   }
+  // const handleStartLocationChange = (e) => {
+  //   setStartLocation(e.target.value);
+  //   setFlights([]);  // Clear flights to trigger new search results
   // };
 
-  // const handleSearchFlights = async () => {
-  //   if (startLocation && endLocation && departureDate) {
-  //     if (startLocation === endLocation) {
-  //       setErrorMessage("Origin and destination cannot be the same.");
-  //       return;
-  //     }
-  //     setErrorMessage("");
-  //     setSelectedFlights([]); // Clear selected flights when performing a new search
-
-  //     const flightOffers = await getFlightOffers(startLocation, endLocation, departureDate, 1, 9);
-  //     if (flightOffers) {
-  //       setFlights(flightOffers);  // Update the flights
-  //     } else {
-  //       console.log("No flight offers available.");
-  //     }
-  //   }
+  // const handleEndLocationChange = (e) => {
+  //   setEndLocation(e.target.value);
+  //   setFlights([]);  // Clear flights to trigger new search results
   // };
 
-  // const handleSearchFlights = async () => {
-  //   if (startLocation && endLocation && departureDate) {
-  //     if (startLocation === endLocation) {
-  //       setErrorMessage("Origin and destination cannot be the same.");
-  //       return;
-  //     }
-  //     setErrorMessage("");
 
-  //     const flightOffers = await getFlightOffers(startLocation, endLocation, departureDate, 1, 9);
-  //     if (flightOffers) {
-  //       setFlights(flightOffers);  // Load new flight options, but keep the selected ones
-  //     } else {
-  //       console.log("No flight offers available.");
-  //     }
-  //   }
-  // };
-
-  // const handleSearchFlights = async () => {
-  //   if (startLocation && endLocation && departureDate) {
-  //     if (startLocation === endLocation) {
-  //       setErrorMessage("Origin and destination cannot be the same.");
-  //       return;
-  //     }
-  //     setErrorMessage("");
-
-  //     const flightOffers = await getFlightOffers(startLocation, endLocation, departureDate, 1, 9);
-  //     if (flightOffers) {
-  //       setFlights(flightOffers);  // Update available flights
-  //     } else {
-  //       console.log("No flight offers available.");
-  //     }
-  //   }
-  // };
 
   const handleSearchFlights = async () => {
     if (startLocation && endLocation && departureDate) {
@@ -1378,12 +1309,12 @@ function ItineraryForm() {
         setErrorMessage("Origin and destination cannot be the same.");
         return;
       }
-  
+
       setErrorMessage("");
-      
+
       // Clear the current flights to reset visual selections for the new search
-      setFlights([]); 
-  
+      setFlights([]);
+
       const flightOffers = await getFlightOffers(startLocation, endLocation, departureDate, 1, 9);
       if (flightOffers) {
         setFlights(flightOffers);  // Load new flight options
@@ -1392,7 +1323,7 @@ function ItineraryForm() {
       }
     }
   };
-  
+
 
   // Separate fetching for activities and accommodations
   const fetchAccommodations = async (endLocations) => {
@@ -1449,94 +1380,11 @@ function ItineraryForm() {
     }
   };
 
-  // const handleFlightToggle = (flight) => {
-  //   const firstSegment = flight.itineraries[0].segments[0];
-  //   const lastSegment = flight.itineraries[0].segments[flight.itineraries[0].segments.length - 1];
-
-  //   const flightObject = {
-  //     id: flight.id,
-  //     startLocation: firstSegment.departure.iataCode,
-  //     endLocation: lastSegment.arrival.iataCode,
-  //     departureTime: firstSegment.departure.at.split("T")[1],
-  //     arrivalTime: lastSegment.arrival.at.split("T")[1],
-  //     price: flight.price.total,
-  //     currency: flight.price.currency,
-  //     priceInZar: flight.priceInZar,
-  //   };
-
-  //   //setSelectedFlights((prev) => [...prev, flightObject]);
-
-  //   setSelectedFlights((prevSelected) => {
-  //     const flightExists = prevSelected.some((f) => f.id === flightObject.id);
-
-  //     // Toggle the flight selection
-  //     const updatedFlights = flightExists
-  //       ? prevSelected.filter((f) => f.id !== flightObject.id) // Remove the flight if it's already selected
-  //       : [...prevSelected, flightObject]; // Add the flight if not selected
-
-  //     // Fetch new accommodations and activities based on updated selected flights
-  //     const endLocations = [...new Set(updatedFlights.map((f) => f.endLocation))];
-  //     fetchAccommodations(endLocations);
-  //     fetchActivities(endLocations);
-
-  //     return updatedFlights;
-  //   });
-  // };
-
-  // const handleFlightToggle = (flight) => {
-  //   const firstSegment = flight.itineraries[0].segments[0];
-  //   const lastSegment = flight.itineraries[0].segments[flight.itineraries[0].segments.length - 1];
-
-  //   const flightObject = {
-  //     id: flight.id,
-  //     startLocation: firstSegment.departure.iataCode,
-  //     endLocation: lastSegment.arrival.iataCode,
-  //     departureTime: firstSegment.departure.at.split("T")[1],
-  //     arrivalTime: lastSegment.arrival.at.split("T")[1],
-  //     price: flight.price.total,
-  //     currency: flight.price.currency,
-  //     priceInZar: flight.priceInZar,
-  //   };
-
-  //   setSelectedFlights((prevSelected) => {
-  //     const flightExists = prevSelected.some((f) => f.id === flightObject.id);
-
-  //     // If the flight is already selected, remove it; otherwise, add it
-  //     return flightExists
-  //       ? prevSelected.filter((f) => f.id !== flightObject.id)
-  //       : [...prevSelected, flightObject];
-  //   });
-  // };
-
-  // const handleFlightToggle = (flight) => {
-  //   const firstSegment = flight.itineraries[0].segments[0];
-  //   const lastSegment = flight.itineraries[0].segments[flight.itineraries[0].segments.length - 1];
-
-  //   const flightObject = {
-  //     id: flight.id,
-  //     startLocation: firstSegment.departure.iataCode,
-  //     endLocation: lastSegment.arrival.iataCode,
-  //     departureTime: firstSegment.departure.at.split("T")[1],
-  //     arrivalTime: lastSegment.arrival.at.split("T")[1],
-  //     price: flight.price.total,
-  //     currency: flight.price.currency,
-  //     priceInZar: flight.priceInZar,
-  //   };
-
-  //   setSelectedFlights((prevSelected) => {
-  //     const flightExists = prevSelected.some((f) => f.id === flightObject.id);
-
-  //     // If the flight is already selected, remove it; otherwise, add it
-  //     return flightExists
-  //       ? prevSelected.filter((f) => f.id !== flightObject.id)
-  //       : [...prevSelected, flightObject];
-  //   });
-  // };
 
   const handleFlightToggle = (flight) => {
     const firstSegment = flight.itineraries[0].segments[0];
     const lastSegment = flight.itineraries[0].segments[flight.itineraries[0].segments.length - 1];
-  
+
     const flightObject = {
       id: flight.id,
       startLocation: firstSegment.departure.iataCode,
@@ -1547,52 +1395,17 @@ function ItineraryForm() {
       currency: flight.price.currency,
       priceInZar: flight.priceInZar,
     };
-  
+
     setSelectedFlights((prevSelected) => {
       const flightExists = prevSelected.some((f) => f.id === flightObject.id);
-  
+
       // If the flight is already selected, remove it; otherwise, add it
       return flightExists
         ? prevSelected.filter((f) => f.id !== flightObject.id)
         : [...prevSelected, flightObject];
     });
   };
-  
 
-
-  // // Toggle flight selection and fetch accommodations and activities
-  // const handleAddFlight = (flight) => {
-  //   const firstSegment = flight.itineraries[0].segments[0];
-  //   const lastSegment = flight.itineraries[0].segments[flight.itineraries[0].segments.length - 1];
-
-  //   const flightObject = {
-  //     id: flight.id,
-  //     startLocation: firstSegment.departure.iataCode,
-  //     endLocation: lastSegment.arrival.iataCode,
-  //     departureTime: firstSegment.departure.at.split("T")[1],
-  //     arrivalTime: lastSegment.arrival.at.split("T")[1],
-  //     price: flight.price.total,
-  //     currency: flight.price.currency,
-  //     priceInZar: flight.priceInZar,
-  //   };
-
-  //   setSelectedFlights((prevSelected) => {
-  //     const flightExists = prevSelected.some((f) => f.id === flightObject.id);
-
-  //     // If the flight is already selected, remove it; otherwise, add it
-  //     const updatedFlights = flightExists
-  //       ? prevSelected.filter((f) => f.id !== flightObject.id)
-  //       : [...prevSelected, flightObject];
-
-  //     // Fetch accommodations and activities based on updated selected flights
-  //     const endLocations = [...new Set(updatedFlights.map((f) => f.endLocation))];
-
-  //     fetchAccommodations(endLocations);
-  //     fetchActivities(endLocations);
-
-  //     return updatedFlights;
-  //   });
-  // };
 
   // Handle accommodation selection
   const handleAccommodationSelection = (accommodationId) => {
@@ -1687,46 +1500,14 @@ function ItineraryForm() {
 
             {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
 
-            {/* <Grid container spacing={2} sx={{ marginTop: "2rem" }}>
+
+
+            <Grid container spacing={2} sx={{ marginTop: "2rem" }}>
               {flights.map((flight, index) => {
                 const firstSegment = flight.itineraries[0].segments[0];
                 const lastSegment = flight.itineraries[0].segments[flight.itineraries[0].segments.length - 1];
 
-                return (
-                  <Grid item xs={12} sm={6} md={4} key={index}>
-                    <Card
-                      onClick={() => handleAddFlight(flight)}
-                      sx={{
-                        cursor: "pointer",
-                        backgroundColor: selectedFlights.some(
-                          (f) => f.startLocation === firstSegment.departure.iataCode && f.endLocation === lastSegment.arrival.iataCode
-                        )
-                          ? "#d1e7dd"
-                          : "white",
-                      }}
-                    >
-                      <CardContent>
-                        <Typography>
-                          <FaPlaneDeparture /> {firstSegment.departure.iataCode} to {lastSegment.arrival.iataCode}
-                        </Typography>
-                        <Typography>
-                          <FaPlaneArrival /> Departure: {firstSegment.departure.at.split("T")[1]} | Arrival: {lastSegment.arrival.at.split("T")[1]}
-                        </Typography>
-                        <Typography>
-                          <FaDollarSign /> {flight.price.total} {flight.price.currency} ({flight.priceInZar} ZAR)
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                );
-              })}
-            </Grid> */}
-
-            {/* <Grid container spacing={2} sx={{ marginTop: "2rem" }}>
-              {flights.map((flight, index) => {
-                const firstSegment = flight.itineraries[0].segments[0];
-                const lastSegment = flight.itineraries[0].segments[flight.itineraries[0].segments.length - 1];
-
+                // Check if this specific flight from the current search has been selected before
                 const isFlightSelected = selectedFlights.some(f => f.id === flight.id);
 
                 return (
@@ -1743,7 +1524,7 @@ function ItineraryForm() {
                           <FaDollarSign /> {flight.price.total} {flight.price.currency} ({flight.priceInZar} ZAR)
                         </Typography>
 
-                        
+                        {/* Add/Remove button */}
                         <Button
                           variant="contained"
                           color={isFlightSelected ? "secondary" : "primary"}
@@ -1757,119 +1538,7 @@ function ItineraryForm() {
                   </Grid>
                 );
               })}
-            </Grid> */}
-
-            {/* <Grid container spacing={2} sx={{ marginTop: "2rem" }}>
-              {flights.map((flight, index) => {
-                const firstSegment = flight.itineraries[0].segments[0];
-                const lastSegment = flight.itineraries[0].segments[flight.itineraries[0].segments.length - 1];
-
-                const isFlightSelected = selectedFlights.some(f => f.id === flight.id);
-
-                return (
-                  <Grid item xs={12} sm={6} md={4} key={index}>
-                    <Card sx={{ cursor: "pointer", backgroundColor: isFlightSelected ? "#d1e7dd" : "white" }}>
-                      <CardContent>
-                        <Typography>
-                          <FaPlaneDeparture /> {firstSegment.departure.iataCode} to {lastSegment.arrival.iataCode}
-                        </Typography>
-                        <Typography>
-                          <FaPlaneArrival /> Departure: {firstSegment.departure.at.split("T")[1]} | Arrival: {lastSegment.arrival.at.split("T")[1]}
-                        </Typography>
-                        <Typography>
-                          <FaDollarSign /> {flight.price.total} {flight.price.currency} ({flight.priceInZar} ZAR)
-                        </Typography>
-
-                        
-                        <Button
-                          variant="contained"
-                          color={isFlightSelected ? "secondary" : "primary"}
-                          onClick={() => handleFlightToggle(flight)}
-                          sx={{ marginTop: "1rem" }}
-                        >
-                          {isFlightSelected ? "Remove from Itinerary" : "Add to Itinerary"}
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                );
-              })}
-            </Grid> */}
-
-            {/* <Grid container spacing={2} sx={{ marginTop: "2rem" }}>
-              {flights.map((flight, index) => {
-                const firstSegment = flight.itineraries[0].segments[0];
-                const lastSegment = flight.itineraries[0].segments[flight.itineraries[0].segments.length - 1];
-
-                // Check if this flight is in the selectedFlights array to determine the visual selection
-                const isFlightSelected = selectedFlights.some(f => f.id === flight.id);
-
-                return (
-                  <Grid item xs={12} sm={6} md={4} key={index}>
-                    <Card sx={{ cursor: "pointer", backgroundColor: isFlightSelected ? "#d1e7dd" : "white" }}>
-                      <CardContent>
-                        <Typography>
-                          <FaPlaneDeparture /> {firstSegment.departure.iataCode} to {lastSegment.arrival.iataCode}
-                        </Typography>
-                        <Typography>
-                          <FaPlaneArrival /> Departure: {firstSegment.departure.at.split("T")[1]} | Arrival: {lastSegment.arrival.at.split("T")[1]}
-                        </Typography>
-                        <Typography>
-                          <FaDollarSign /> {flight.price.total} {flight.price.currency} ({flight.priceInZar} ZAR)
-                        </Typography>
-
-                        <Button
-                          variant="contained"
-                          color={isFlightSelected ? "secondary" : "primary"}
-                          onClick={() => handleFlightToggle(flight)}
-                          sx={{ marginTop: "1rem" }}
-                        >
-                          {isFlightSelected ? "Remove from Itinerary" : "Add to Itinerary"}
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                );
-              })}
-            </Grid> */}
-
-<Grid container spacing={2} sx={{ marginTop: "2rem" }}>
-  {flights.map((flight, index) => {
-    const firstSegment = flight.itineraries[0].segments[0];
-    const lastSegment = flight.itineraries[0].segments[flight.itineraries[0].segments.length - 1];
-
-    // Check if this specific flight from the current search has been selected before
-    const isFlightSelected = selectedFlights.some(f => f.id === flight.id);
-
-    return (
-      <Grid item xs={12} sm={6} md={4} key={index}>
-        <Card sx={{ cursor: "pointer", backgroundColor: isFlightSelected ? "#d1e7dd" : "white" }}>
-          <CardContent>
-            <Typography>
-              <FaPlaneDeparture /> {firstSegment.departure.iataCode} to {lastSegment.arrival.iataCode}
-            </Typography>
-            <Typography>
-              <FaPlaneArrival /> Departure: {firstSegment.departure.at.split("T")[1]} | Arrival: {lastSegment.arrival.at.split("T")[1]}
-            </Typography>
-            <Typography>
-              <FaDollarSign /> {flight.price.total} {flight.price.currency} ({flight.priceInZar} ZAR)
-            </Typography>
-
-            {/* Add/Remove button */}
-            <Button
-              variant="contained"
-              color={isFlightSelected ? "secondary" : "primary"}
-              onClick={() => handleFlightToggle(flight)}
-              sx={{ marginTop: "1rem" }}
-            >
-              {isFlightSelected ? "Remove from Itinerary" : "Add to Itinerary"}
-            </Button>
-          </CardContent>
-        </Card>
-      </Grid>
-    );
-  })}
-</Grid>
+            </Grid>
 
 
 
