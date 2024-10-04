@@ -487,6 +487,37 @@ function ItineraryForm() {
     });
   }, []);
 
+  const fetchActivitiesAndAccommodations = async (location) => {
+    setLoading(true);
+    try {
+      const db = getFirestore();
+      
+      // Fetch accommodations
+      const accommodationsRef = collection(db, "Accommodation");
+      const accommodationsQuery = firestoreQuery(accommodationsRef, where("city", "==", location));
+      const accommodationsSnapshot = await getDocs(accommodationsQuery);
+      const accommodationsResults = [];
+      accommodationsSnapshot.forEach(doc => accommodationsResults.push(doc.data()));
+      
+      setAccommodations(accommodationsResults);
+  
+      // Fetch activities
+      const activitiesRef = collection(db, "Activities");
+      const activitiesQuery = firestoreQuery(activitiesRef, where("city", "==", location));
+      const activitiesSnapshot = await getDocs(activitiesQuery);
+      const activitiesResults = [];
+      activitiesSnapshot.forEach(doc => activitiesResults.push(doc.data()));
+  
+      setActivities(activitiesResults);
+    } catch (error) {
+      console.error("Error fetching accommodations and activities:", error);
+      setError("Failed to fetch data. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+
   // Predefined South African airport codes
   const airportOptions = [
     { label: "Durban (DUR)", code: "DUR" },
@@ -534,19 +565,35 @@ function ItineraryForm() {
   };
 
   // Save the itinerary to Firebase
+  // const handleSubmit = async () => {
+  //   const itineraryData = {
+  //     itineraryName,
+  //     startLocation,
+  //     endLocation,
+  //     flights: selectedFlights,
+  //     userId,
+  //   };
+
+  //   await setDoc(doc(collection(db, "ItineraryCollection")), itineraryData);
+
+  //   console.log("Itinerary saved to Firebase", itineraryData);
+  // };
+
   const handleSubmit = async () => {
     const itineraryData = {
       itineraryName,
       startLocation,
       endLocation,
       flights: selectedFlights,
+      accommodations: selectedAccommodations,
+      activities: selectedActivities,
       userId,
     };
-
+  
     await setDoc(doc(collection(db, "ItineraryCollection")), itineraryData);
-
     console.log("Itinerary saved to Firebase", itineraryData);
   };
+  
 
   // Handle moving between steps
   const handleNextStep = () => setStep((prev) => prev + 1);
@@ -651,6 +698,60 @@ return (
         </Button>
       </>
     )}
+{step === 2 && (
+  <>
+    <h2>Step 2: Select Accommodations</h2>
+    <Grid container spacing={2}>
+      {accommodations.map((accommodation) => (
+        <Grid item xs={12} sm={6} md={4} key={accommodation.id}>
+          <Card
+            onClick={() => handleAccommodationSelection(accommodation.id)}
+            sx={{
+              cursor: "pointer",
+              backgroundColor: selectedAccommodations.includes(accommodation.id) ? "#d1e7dd" : "white",
+            }}
+          >
+            <CardContent>
+              <Typography>{accommodation.name}</Typography>
+              <Typography>{`Price: R${accommodation.price}/night`}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      ))}
+    </Grid>
+    <Button onClick={handlePreviousStep}>Back</Button>
+    <Button onClick={handleNextStep} variant="contained">
+      Next
+    </Button>
+  </>
+)}
+{step === 3 && (
+  <>
+    <h2>Step 3: Select Activities</h2>
+    <Grid container spacing={2}>
+      {activities.map((activity) => (
+        <Grid item xs={12} sm={6} md={4} key={activity.id}>
+          <Card
+            onClick={() => handleActivitySelection(activity.id)}
+            sx={{
+              cursor: "pointer",
+              backgroundColor: selectedActivities.includes(activity.id) ? "#d1e7dd" : "white",
+            }}
+          >
+            <CardContent>
+              <Typography>{activity.name}</Typography>
+              <Typography>{activity.description}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      ))}
+    </Grid>
+    <Button onClick={handlePreviousStep}>Back</Button>
+    <Button onClick={handleSubmit} variant="contained" color="primary">
+      Submit Itinerary
+    </Button>
+  </>
+)}
 
     {/* {step === 2 && (
       <>
