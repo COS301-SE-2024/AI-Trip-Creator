@@ -1441,6 +1441,9 @@ function ItineraryForm() {
   const handleNextStep = () => setStep((prev) => prev + 1);
   const handlePreviousStep = () => setStep((prev) => prev - 1);
 
+  const endLocations = selectedFlights.map(flight => flight.endLocation);
+  console.log(endLocations);
+
   return (
     <Box marginLeft="300px" alignContent="center" alignItems="center">
       <Box>
