@@ -533,8 +533,10 @@ function ItineraryForm() {
   };
 
   return (
+    <Box alignItems="center" alignContent="center" marginLeft="280px">
     <Box margin="20px">
-      <Typography variant="h4">Itinerary Form</Typography>
+      <h1 style={{marginLeft:"-40px", marginTop:"-10px"}}>Itinerary Form</h1>
+      <h2>Step 1: Flights</h2>
 
       <TextField label="Itinerary Name" value={itineraryName} onChange={(e) => setItineraryName(e.target.value)} fullWidth margin="normal" />
 
@@ -642,6 +644,7 @@ function ItineraryForm() {
       <Button variant="contained" sx={{ marginTop: "20px" }}>
         Next: Accommodations
       </Button>
+    </Box>
     </Box>
   );
 }
