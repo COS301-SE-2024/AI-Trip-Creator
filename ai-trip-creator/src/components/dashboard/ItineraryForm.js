@@ -191,7 +191,6 @@ function ItineraryForm() {
   };
 
   const getAccommodations = async (endLocation) => {
-    //setLoading(true);
     try {
       if (!userId) throw new Error("User is not authenticated");
 
@@ -215,8 +214,8 @@ function ItineraryForm() {
           index === self.findIndex((a) => a.name === accommodation.name),
       );
 
-      setActivities(uniqueResults);
-      console.log(uniqueResults);
+      setAccommodations(uniqueResults);
+      //console.log(uniqueResults);
       return uniqueResults;
     } catch (error) {
       console.error("Error fetching accommodations:", error);
@@ -225,10 +224,7 @@ function ItineraryForm() {
       //setLoading(false);
     }
   };
-  const getActivities = async (location) => {
-    console.log(getAirportName(endLocation), "fetch ctivities");
-    console.log(endLocation, "fetch location");
-    //setLoading(true);
+  const getActivities = async (endLocation) => {
     try {
       if (!userId) {
         throw new Error("User is not authenticated");
@@ -252,10 +248,10 @@ function ItineraryForm() {
       );
 
       setActivities(uniqueResults);
-      console.log(uniqueResults);
+      //console.log(uniqueResults);
       return uniqueResults;
     } catch (error) {
-      console.error("Error fetching activitiess:", error);
+      console.error("Error fetching activities:", error);
       setErrorMessage("Failed to fetch activities. Please try again.");
     } finally {
       //setLoading(false);
@@ -263,7 +259,7 @@ function ItineraryForm() {
   };
 
   const handleAccommodationToggle = (accommodation) => {
-    console.log("Toggling accommodation:", accommodation);
+    //console.log("Toggling accommodation:", accommodation);
     setSelectedAccommodations((prevSelected) => {
       const isSelected = prevSelected.some(
         (acc) => acc.name === accommodation.name,
