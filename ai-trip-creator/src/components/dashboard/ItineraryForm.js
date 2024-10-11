@@ -426,7 +426,7 @@ function ItineraryForm() {
                   onChange={(e) => setReturnFlight(e.target.checked)}
                 />
               }
-              label="Return Flight"
+              label="Return Flight?"
             />
 
             {returnFlight && (
