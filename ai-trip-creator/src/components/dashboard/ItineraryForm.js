@@ -210,8 +210,14 @@ function ItineraryForm() {
       querySnapshot.forEach((doc) => {
         results.push(doc.data());
       });
-      setAccommodations(results);
-      return results;
+      const uniqueResults = results.filter(
+        (accommodation, index, self) =>
+          index === self.findIndex((a) => a.name === accommodation.name),
+      );
+
+      setActivities(uniqueResults);
+      console.log(uniqueResults);
+      return uniqueResults;
     } catch (error) {
       console.error("Error fetching accommodations:", error);
       setErrorMessage("Failed to fetch accommodations. Please try again.");
@@ -239,12 +245,18 @@ function ItineraryForm() {
       querySnapshot.forEach((doc) => {
         results.push(doc.data());
       });
-      setActivities(results);
-      console.log(results);
-      return results;
+
+      const uniqueResults = results.filter(
+        (accommodation, index, self) =>
+          index === self.findIndex((a) => a.name === accommodation.name),
+      );
+
+      setActivities(uniqueResults);
+      console.log(uniqueResults);
+      return uniqueResults;
     } catch (error) {
-      console.error("Error fetching accommodations:", error);
-      setErrorMessage("Failed to fetch accommodations. Please try again.");
+      console.error("Error fetching activitiess:", error);
+      setErrorMessage("Failed to fetch activities. Please try again.");
     } finally {
       //setLoading(false);
     }
