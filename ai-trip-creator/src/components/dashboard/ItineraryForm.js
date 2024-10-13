@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Box, Typography, Card, CardContent, TextField, MenuItem, Grid, Alert } from "@mui/material";
+import { Button, Box, Typography, Card, CardContent, TextField, MenuItem, Grid, Alert, Chip } from "@mui/material";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { db } from "../../firebase/firebase-config";
 import { collection, getFirestore, query as firestoreQuery, where, getDocs, setDoc, doc } from "firebase/firestore";
@@ -76,6 +76,7 @@ function ItineraryForm() {
   const [userId, setUserId] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [endLocationFull, setEndLocationFull] = useState("");
 
   // Fetch user ID (UID)
   useEffect(() => {
@@ -89,12 +90,12 @@ function ItineraryForm() {
 
   // Predefined South African airport codes
   const airportOptions = [
-    { label: "Durban (DUR)", code: "DUR" },
-    { label: "Cape Town (CPT)", code: "CPT" },
-    { label: "Johannesburg (JNB)", code: "JNB" },
-    { label: "Port Elizabeth (PLZ)", code: "PLZ" },
-    { label: "East London (ELS)", code: "ELS" },
-    { label: "Lanseria (HLA)", code: "HLA" },
+    { label: "Durban (DUR)", code: "DUR", city: "Durban" },
+    { label: "Cape Town (CPT)", code: "CPT", city: "Cape Town" },
+    { label: "Johannesburg (JNB)", code: "JNB", city: "Johannesburg" },
+    { label: "Port Elizabeth (PLZ)", code: "PLZ", city: "Port Elizabeth" },
+    { label: "East London (ELS)", code: "ELS", city: "East London" },
+    { label: "Lanseria (HLA)", code: "HLA", city: "Johannesburg" }, // Note: Lanseria is in Johannesburg
   ];
 
   // const handleStartLocationChange = (e) => {
@@ -159,24 +160,49 @@ function ItineraryForm() {
     }
   };
 
-  const fetchActivities = async (endLocations) => {
-    if (endLocations.length === 0) {
-      setActivities([]);
-      return;
+  useEffect(() => {
+    if (step === 3 && endLocationFull) {
+      fetchActivities(endLocationFull); // Fetch activities based on the full city name
     }
+  }, [step, endLocationFull]);
 
+  // const fetchActivities = async (endLocations) => {
+  //   if (endLocations.length === 0) {
+  //     setActivities([]);
+  //     return;
+  //   }
+
+  //   setLoading(true);
+  //   try {
+  //     const db = getFirestore();
+  //     const activityResults = [];
+
+  //     for (const location of endLocations) {
+  //       const activitiesRef = collection(db, "Activities");
+  //       const activitiesQuery = firestoreQuery(activitiesRef, where("city", "==", location));
+  //       const activitiesSnapshot = await getDocs(activitiesQuery);
+  //       activitiesSnapshot.forEach((doc) => activityResults.push(doc.data()));
+  //     }
+
+  //     setActivities(activityResults);
+  //   } catch (error) {
+  //     console.error("Error fetching activities:", error);
+  //     setError("Failed to fetch activities. Please try again.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const fetchActivities = async (cityName) => {
     setLoading(true);
     try {
       const db = getFirestore();
+      const activitiesRef = collection(db, "Activities");
+      //const activitiesSnapshot = await getDocs(activitiesRef);
+      const activitiesQuery = firestoreQuery(activitiesRef, where("city", "==", cityName));
+      const activitiesSnapshot = await getDocs(activitiesQuery);
       const activityResults = [];
-
-      for (const location of endLocations) {
-        const activitiesRef = collection(db, "Activities");
-        const activitiesQuery = firestoreQuery(activitiesRef, where("city", "==", location));
-        const activitiesSnapshot = await getDocs(activitiesQuery);
-        activitiesSnapshot.forEach((doc) => activityResults.push(doc.data()));
-      }
-
+      activitiesSnapshot.forEach((doc) => activityResults.push(doc.data()));
       setActivities(activityResults);
     } catch (error) {
       console.error("Error fetching activities:", error);
@@ -185,7 +211,7 @@ function ItineraryForm() {
       setLoading(false);
     }
   };
-
+  
 
   const handleFlightToggle = (flight) => {
     const firstSegment = flight.itineraries[0].segments[0];
@@ -221,11 +247,28 @@ function ItineraryForm() {
   };
 
   // Handle activity selection
-  const handleActivitySelection = (activityId) => {
-    setSelectedActivities((prev) =>
-      prev.includes(activityId) ? prev.filter((id) => id !== activityId) : [...prev, activityId]
-    );
+  // const handleActivitySelection = (activityId) => {
+  //   setSelectedActivities((prev) =>
+  //     prev.includes(activityId) ? prev.filter((id) => id !== activityId) : [...prev, activityId]
+  //   );
+  // };
+
+  ////////////////////////////////////////////////////////////
+  // Added new function for choosing activities
+  const handleActivitySelection = (activity) => {
+    setSelectedActivities((prevSelected) => {
+      if (prevSelected.some(a => a.name === activity.name)) {
+        return prevSelected.filter(a => a.name !== activity.name);
+      } else {
+        return [...prevSelected, activity];
+      }
+    });
   };
+
+  const isActivitySelected = (activityName) => {
+    return selectedActivities.some(a => a.name === activityName);
+  };
+/////////////////////////////////////////////////////////////////
 
   // Save the itinerary to Firebase
   const handleSubmit = async () => {
@@ -239,16 +282,48 @@ function ItineraryForm() {
       userId,
     };
 
-    await setDoc(doc(collection(db, "ItineraryCollection")), itineraryData);
-    console.log("Itinerary saved to Firebase", itineraryData);
+    try 
+    {
+      await setDoc(doc(collection(db, "ItineraryCollection")), itineraryData);
+      console.log("Itinerary saved to Firebase", itineraryData);
+      alert("Itinerary saved successfully!");
+    } 
+    catch (error) 
+    {
+      console.error("Error saving itinerary:", error);
+      alert("Error saving itinerary. Please try again.");
+    }
+
+    // await setDoc(doc(collection(db, "ItineraryCollection")), itineraryData);
+    // console.log("Itinerary saved to Firebase", itineraryData);
+  };
+
+  const handleEndLocationChange = (e) => {
+    const selectedAirport = airportOptions.find(option => option.code === e.target.value);
+    setEndLocation(e.target.value);
+    setEndLocationFull(selectedAirport.city);
   };
 
   // Handle moving between steps
-  const handleNextStep = () => setStep((prev) => prev + 1);
+  //const handleNextStep = () => setStep((prev) => prev + 1);
+  // const handleNextStep = () => {
+  //   if (step === 1) {
+  //     // Fetch activities when moving to step 3
+  //     fetchActivities(endLocationFull);
+  //   }
+  //   setStep((prev) => prev + 1);
+  // };
+
+  const handleNextStep = () => {
+  setStep((prev) => prev + 1); // Move to the next step without fetching activities here
+};
+
   const handlePreviousStep = () => setStep((prev) => prev - 1);
 
   const endLocations = selectedFlights.map(flight => flight.endLocation);
   console.log(endLocations);
+
+  
 
   return (
     <Box marginLeft="300px" alignContent="center" alignItems="center">
@@ -282,7 +357,8 @@ function ItineraryForm() {
               select
               label="End Location"
               value={endLocation}
-              onChange={(e) => setEndLocation(e.target.value)}
+              //onChange={(e) => setEndLocation(e.target.value)}
+              onChange={handleEndLocationChange}
               fullWidth
               margin="normal"
             >
@@ -392,31 +468,62 @@ function ItineraryForm() {
 
         {step === 3 && (
           <>
-            <h2>Step 3: Select Activities</h2>
+            <h2>Step 3: Select Activities in {endLocationFull}</h2>
             {loading ? (
               <Typography>Loading activities...</Typography>
+            ) : error ? (
+              <Alert severity="error">{error}</Alert>
             ) : (
+              <>
+              <Typography variant="h6" sx={{ mb: 2 }}>
+                  Selected Activities: {selectedActivities.length}
+                </Typography>
+                <Box sx={{ mb: 2 }}>
+                  {selectedActivities.map((activity) => (
+                    <Chip
+                      key={activity.name}
+                      label={activity.name}
+                      onDelete={() => handleActivitySelection(activity)}
+                      sx={{ mr: 1, mb: 1 }}
+                    />
+                  ))}
+                </Box>
               <Grid container spacing={2}>
                 {activities.map((activity) => (
                   <Grid item xs={12} sm={6} md={4} key={activity.name}>
                     <Card
-                      onClick={() => handleActivitySelection(activity.name)}
+                      onClick={() => handleActivitySelection(activity)}
                       sx={{
                         cursor: "pointer",
-                        backgroundColor: selectedActivities.includes(activity.name) ? "#d1e7dd" : "white",
+                        backgroundColor: isActivitySelected(activity.name) ? "#d1e7dd" : "white",
+                        display: "flex",
+                        flexDirection: "column",  // Makes the card's content flow vertically
+                        justifyContent: "space-between", // Spaces the content evenly
+                        height: "100%", // Ensures the card takes up the entire grid space
+                        minHeight: "300px", // Sets a minimum height for consistency
                       }}
                     >
                       <CardContent>
-                        <Typography>{activity.name}</Typography>
-                        <Typography>{activity.description}</Typography>
+                      <Typography variant="h6">{activity.name}</Typography>
+                          <Typography>{activity.description}</Typography>
+                          <Typography>City: {activity.city}</Typography>
+                          {activity.price && (
+                            <Typography>Price: R{activity.price}</Typography>
+                          )}
+                          {activity.image && (
+                            <img src={activity.image} alt={activity.name} style={{ maxWidth: "100%", height: "150px", marginTop: "10px" }} />
+                          )}
                       </CardContent>
                     </Card>
                   </Grid>
                 ))}
               </Grid>
+              </>
             )}
-            <Button onClick={handlePreviousStep}>Back</Button>
-            <Button onClick={handleSubmit} variant="contained" color="primary">
+            {/* <Button onClick={handlePreviousStep}>Back</Button>
+            <Button onClick={handleSubmit} variant="contained" color="primary"> */}
+            <Button onClick={handlePreviousStep} sx={{ marginTop: "1rem", marginRight: "1rem" }}>Back</Button>
+            <Button onClick={handleSubmit} variant="contained" color="primary" sx={{ marginTop: "1rem" }}>
               Submit Itinerary
             </Button>
           </>
