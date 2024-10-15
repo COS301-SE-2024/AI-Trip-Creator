@@ -742,7 +742,7 @@ const Profile = () => {
                             ))}
                           </List>
                         </Box>
-                        <Box
+                        {/* <Box
                           mb={5}
                           p={2}
                           border={1}
@@ -818,7 +818,7 @@ const Profile = () => {
                           ) : (
                             <Typography>No itineraries found.</Typography>
                           )}
-                        </Box>
+                        </Box> */}
                         <Box mt={3} display="flex" justifyContent="center">
                           <Button
                             variant="contained"
