@@ -70,6 +70,7 @@ function ItineraryForm() {
   const [selectedFlights, setSelectedFlights] = useState([]); // Array of flight objects
   const [accommodations, setAccommodations] = useState([]);
   const [selectedAccommodations, setSelectedAccommodations] = useState([]);
+  const [visibleActivities, setVisibleActivities] = useState(12);
   const [activities, setActivities] = useState([]);
   const [selectedActivities, setSelectedActivities] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
@@ -323,7 +324,9 @@ function ItineraryForm() {
   const endLocations = selectedFlights.map(flight => flight.endLocation);
   console.log(endLocations);
 
-  
+  const handleLoadMore = () => {
+    setVisibleActivities((prevVisible) => prevVisible + 12); // Increase visible activities by 12
+  };
 
   return (
     <Box marginLeft="300px" alignContent="center" alignItems="center">
@@ -489,20 +492,20 @@ function ItineraryForm() {
                   ))}
                 </Box>
               <Grid container spacing={2}>
-                {activities.map((activity) => (
+                {activities.slice(0, visibleActivities).map((activity) => (
                   <Grid item xs={12} sm={6} md={4} key={activity.name}>
-                    <Card
-                      onClick={() => handleActivitySelection(activity)}
-                      sx={{
-                        cursor: "pointer",
-                        backgroundColor: isActivitySelected(activity.name) ? "#d1e7dd" : "white",
-                        display: "flex",
-                        flexDirection: "column",  // Makes the card's content flow vertically
-                        justifyContent: "space-between", // Spaces the content evenly
-                        height: "100%", // Ensures the card takes up the entire grid space
-                        minHeight: "300px", // Sets a minimum height for consistency
-                      }}
-                    >
+                  <Card
+                    onClick={() => handleActivitySelection(activity)}
+                    sx={{
+                      cursor: "pointer",
+                      backgroundColor: isActivitySelected(activity.name) ? "#d1e7dd" : "white",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      height: "100%",
+                      minHeight: "300px",
+                    }}
+                  >
                       <CardContent>
                       <Typography variant="h6">{activity.name}</Typography>
                           <Typography>{activity.description}</Typography>
@@ -523,11 +526,17 @@ function ItineraryForm() {
             {/* <Button onClick={handlePreviousStep}>Back</Button>
             <Button onClick={handleSubmit} variant="contained" color="primary"> */}
             <Button onClick={handlePreviousStep} sx={{ marginTop: "1rem", marginRight: "1rem" }}>Back</Button>
-            <Button onClick={handleSubmit} variant="contained" color="primary" sx={{ marginTop: "1rem" }}>
+            <Button onClick={handleSubmit} variant="contained" color="primary" sx={{ marginTop: "1rem", mx: 1 }}>
               Submit Itinerary
             </Button>
+            {visibleActivities < activities.length && (
+                <Button onClick={handleLoadMore} variant="contained" color="primary" sx={{ marginTop: "1rem", mx: 1 }}>
+                  Load More
+                </Button>
+              )}
           </>
         )}
+        
       </Box>
     </Box>
   );
