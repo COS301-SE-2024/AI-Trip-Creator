@@ -7,7 +7,18 @@ import os
 # Initialize Firebase Admin SDK with credentials
 def initialize_firebase():
     # Path to your service account key JSON file
-    service_account_path = "firebase-admin.json"
+    service_account_path = {
+        "type": "service_account",
+        "project_id": "ai-trip-creator",
+        "private_key_id": os.getenv("REACT_APP_private_key_id"),
+        "private_key": os.getenv("REACT_APP_private_key").replace('\\n', '\n'),
+        "client_email": "firebase-adminsdk-pni1c@ai-trip-creator.iam.gserviceaccount.com",
+        "client_id": "110601698672016433063",
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-pni1c%40ai-trip-creator.iam.gserviceaccount.com"
+    }
 
     # Initialize the app with a service account, granting admin privileges
     cred = credentials.Certificate(service_account_path)
