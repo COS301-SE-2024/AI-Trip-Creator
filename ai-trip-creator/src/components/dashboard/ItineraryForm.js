@@ -78,6 +78,8 @@ function ItineraryForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [endLocationFull, setEndLocationFull] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedSort, setSelectedSort] = useState("a-z"); // Sorting filter initialized to "A-Z"
 
   // Fetch user ID (UID)
   useEffect(() => {
@@ -94,7 +96,7 @@ function ItineraryForm() {
     { label: "Durban (DUR)", code: "DUR", city: "Durban" },
     { label: "Cape Town (CPT)", code: "CPT", city: "Cape Town" },
     { label: "Johannesburg (JNB)", code: "JNB", city: "Johannesburg" },
-    { label: "Port Elizabeth (PLZ)", code: "PLZ", city: "Port Elizabeth" },
+    { label: "Gqeberha (PLZ)", code: "PLZ", city: "Gqeberha" },
     { label: "East London (ELS)", code: "ELS", city: "East London" },
     { label: "Lanseria (HLA)", code: "HLA", city: "Johannesburg" }, // Note: Lanseria is in Johannesburg
   ];
@@ -131,6 +133,13 @@ function ItineraryForm() {
       }
     }
   };
+
+  const sortOptions = [
+    { label: "A - Z", value: "a-z" },
+    { label: "Z - A", value: "z-a" },
+    { label: "Price: Low to High", value: "price-low-high" },
+    { label: "Price: High to Low", value: "price-high-low" }
+  ];
 
 
   // Separate fetching for activities and accommodations
@@ -212,7 +221,6 @@ function ItineraryForm() {
       setLoading(false);
     }
   };
-  
 
   const handleFlightToggle = (flight) => {
     const firstSegment = flight.itineraries[0].segments[0];
@@ -269,7 +277,7 @@ function ItineraryForm() {
   const isActivitySelected = (activityName) => {
     return selectedActivities.some(a => a.name === activityName);
   };
-/////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////
 
   // Save the itinerary to Firebase
   const handleSubmit = async () => {
@@ -283,14 +291,12 @@ function ItineraryForm() {
       userId,
     };
 
-    try 
-    {
+    try {
       await setDoc(doc(collection(db, "ItineraryCollection")), itineraryData);
       console.log("Itinerary saved to Firebase", itineraryData);
       alert("Itinerary saved successfully!");
-    } 
-    catch (error) 
-    {
+    }
+    catch (error) {
       console.error("Error saving itinerary:", error);
       alert("Error saving itinerary. Please try again.");
     }
@@ -316,8 +322,12 @@ function ItineraryForm() {
   // };
 
   const handleNextStep = () => {
-  setStep((prev) => prev + 1); // Move to the next step without fetching activities here
-};
+    setStep((prev) => prev + 1); // Move to the next step without fetching activities here
+  };
+
+  const filteredActivities = activities.filter((activity) =>
+    selectedCategory ? activity.category === selectedCategory : true
+  );
 
   const handlePreviousStep = () => setStep((prev) => prev - 1);
 
@@ -327,6 +337,23 @@ function ItineraryForm() {
   const handleLoadMore = () => {
     setVisibleActivities((prevVisible) => prevVisible + 12); // Increase visible activities by 12
   };
+
+  const categoryOptions = ["Adventure", "Culture", "Sports", "Nature", "Restaurant", "Things to do"];
+
+  const sortedActivities = filteredActivities.sort((a, b) => {
+    switch (selectedSort) {
+      case "a-z":
+        return a.name.localeCompare(b.name); // Sort alphabetically (A-Z)
+      case "z-a":
+        return b.name.localeCompare(a.name); // Sort alphabetically (Z-A)
+      case "price-low-high":
+        return a.price - b.price; // Sort by price (Low to High)
+      case "price-high-low":
+        return b.price - a.price; // Sort by price (High to Low)
+      default:
+        return 0;
+    }
+  });
 
   return (
     <Box marginLeft="300px" alignContent="center" alignItems="center">
@@ -472,13 +499,43 @@ function ItineraryForm() {
         {step === 3 && (
           <>
             <h2>Step 3: Select Activities in {endLocationFull}</h2>
+
+            {/* Category Filter Dropdown */}
+            <TextField
+              select
+              label="Select Category"
+              value={selectedCategory}  // Add selectedCategory to the state
+              onChange={(e) => setSelectedCategory(e.target.value)}  // Update selectedCategory
+              fullWidth
+              margin="normal"
+            >
+              {categoryOptions.map((category) => (
+                <MenuItem key={category} value={category}>
+                  {category}
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              select
+              label="Sort Activities"
+              value={selectedSort}  // Current sorting method
+              onChange={(e) => setSelectedSort(e.target.value)}  // Update selectedSort on change
+              fullWidth
+              margin="normal"
+            >
+              {sortOptions.map((sortOption) => (
+                <MenuItem key={sortOption.value} value={sortOption.value}>
+                  {sortOption.label}
+                </MenuItem>
+              ))}
+            </TextField>
             {loading ? (
               <Typography>Loading activities...</Typography>
             ) : error ? (
               <Alert severity="error">{error}</Alert>
             ) : (
               <>
-              <Typography variant="h6" sx={{ mb: 2 }}>
+                <Typography variant="h6" sx={{ mb: 2 }}>
                   Selected Activities: {selectedActivities.length}
                 </Typography>
                 <Box sx={{ mb: 2 }}>
@@ -491,23 +548,23 @@ function ItineraryForm() {
                     />
                   ))}
                 </Box>
-              <Grid container spacing={2}>
-                {activities.slice(0, visibleActivities).map((activity) => (
-                  <Grid item xs={12} sm={6} md={4} key={activity.name}>
-                  <Card
-                    onClick={() => handleActivitySelection(activity)}
-                    sx={{
-                      cursor: "pointer",
-                      backgroundColor: isActivitySelected(activity.name) ? "#d1e7dd" : "white",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "space-between",
-                      height: "100%",
-                      minHeight: "300px",
-                    }}
-                  >
-                      <CardContent>
-                      <Typography variant="h6">{activity.name}</Typography>
+                <Grid container spacing={2}>
+                  {filteredActivities.slice(0, visibleActivities).map((activity) => (
+                    <Grid item xs={12} sm={6} md={4} key={activity.name}>
+                      <Card
+                        onClick={() => handleActivitySelection(activity)}
+                        sx={{
+                          cursor: "pointer",
+                          backgroundColor: isActivitySelected(activity.name) ? "#d1e7dd" : "white",
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
+                          height: "100%",
+                          minHeight: "300px",
+                        }}
+                      >
+                        <CardContent>
+                          <Typography variant="h6">{activity.name}</Typography>
                           <Typography>{activity.description}</Typography>
                           <Typography>City: {activity.city}</Typography>
                           {activity.price && (
@@ -516,27 +573,35 @@ function ItineraryForm() {
                           {activity.image && (
                             <img src={activity.image} alt={activity.name} style={{ maxWidth: "100%", height: "150px", marginTop: "10px" }} />
                           )}
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  ))}
+                </Grid>
               </>
             )}
-            {/* <Button onClick={handlePreviousStep}>Back</Button>
-            <Button onClick={handleSubmit} variant="contained" color="primary"> */}
-            <Button onClick={handlePreviousStep} sx={{ marginTop: "1rem", marginRight: "1rem" }}>Back</Button>
-            <Button onClick={handleSubmit} variant="contained" color="primary" sx={{ marginTop: "1rem", mx: 1 }}>
-              Submit Itinerary
-            </Button>
-            {visibleActivities < activities.length && (
-                <Button onClick={handleLoadMore} variant="contained" color="primary" sx={{ marginTop: "1rem", mx: 1 }}>
-                  Load More
-                </Button>
+
+{visibleActivities < activities.length && (
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                  <Button onClick={handleLoadMore} variant="contained" color="primary" sx={{ mx: 1 }}>
+                    Load More
+                  </Button>
+                </Box>
               )}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+              {/* Left-aligned container for Back and Submit Itinerary buttons */}
+              <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
+                <Button onClick={handlePreviousStep} sx={{ marginRight: "1rem" }}>Back</Button>
+                <Button onClick={handleSubmit} variant="contained" color="primary" sx={{ mx: 1 }}>
+                  Submit Itinerary
+                </Button>
+              </Box>
+
+              {/* Centered Load More button */}
+              
+            </Box>
           </>
         )}
-        
       </Box>
     </Box>
   );
