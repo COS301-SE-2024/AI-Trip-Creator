@@ -4,6 +4,7 @@ import {
   Box,
   Typography,
   Card,
+  CardMedia,
   CardContent,
   TextField,
   MenuItem,
@@ -403,7 +404,7 @@ function ItineraryForm() {
 
     // Apply sorting based on the criteria
     if (criteria === "price") {
-      filteredAccommodations.sort((a, b) => a.pricePerNight - b.pricePerNight);
+      filteredAccommodations.sort((a, b) => a.price - b.price);
     } else if (criteria === "rating") {
       filteredAccommodations.sort((a, b) => b.rating - a.rating);
     } else if (criteria === "name") {
@@ -951,9 +952,7 @@ function ItineraryForm() {
 
         {activeStep === 1 && (
           <Box>
-            <Typography variant="h6" sx={{ marginTop: "20px" }}>
-              Step 2: Accommodations
-            </Typography>
+            <h2>Step 2: Accommodations</h2>
 
             {loading ? (
               <CircularProgress sx={{ marginTop: "20px" }} />
@@ -962,7 +961,7 @@ function ItineraryForm() {
                 {Object.entries(accommodations).map(
                   ([location, locationAccommodations]) => (
                     <Box key={location} sx={{ marginBottom: "30px" }}>
-                      <Typography variant="h6">
+                      <Typography variant="2">
                         Accommodations in {getAirportName(location)}
                         <Button
                           variant="text"
@@ -1039,17 +1038,22 @@ function ItineraryForm() {
                                       handleAccommodationToggle(acc)
                                     }
                                   >
+                                    <CardMedia
+                                      component="img"
+                                      height="100"
+                                      image={acc.image}
+                                      alt={acc.name}
+                                    />
                                     <CardContent>
-                                      <Typography variant="h6">
-                                        {acc.name}
+                                      <Typography variant="h8">
+                                        <b>{acc.name}</b>
+                                        <br />R{acc.price} per night
+                                        <br />
+                                        Rating: {acc.rating} ⭐ -
+                                        <a href="{acc.link}">More info</a>
+                                        <br />
                                       </Typography>
-                                      <Typography>
-                                        {acc.pricePerNight} {acc.currency} per
-                                        night
-                                      </Typography>
-                                      <Typography>
-                                        Rating: {acc.rating} ⭐
-                                      </Typography>
+
                                       <Button
                                         variant="contained"
                                         size="small"
