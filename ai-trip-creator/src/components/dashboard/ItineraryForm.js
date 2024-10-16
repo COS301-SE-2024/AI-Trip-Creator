@@ -121,6 +121,8 @@ function ItineraryForm() {
   const [selectedActivities, setSelectedActivities] = useState([]);
   const [arrivalPlaces, setArrivalplaces] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showAccommodations, setShowAccommodations] = useState({});
+  const [filterCriteria, setFilterCriteria] = useState({});
   //fetch userid
   useEffect(() => {
     const auth = getAuth();
@@ -375,6 +377,40 @@ function ItineraryForm() {
       console.error("Error saving itinerary:", error);
       setErrorMessage("Failed to save itinerary. Please try again.");
     }
+  };
+
+  //filtering for accommodations
+  // Toggle the visibility of accommodations for a specific location
+  const handleToggle = (location) => {
+    setShowAccommodations((prevState) => ({
+      ...prevState,
+      [location]: !prevState[location],
+    }));
+  };
+
+  // Update the filter criteria
+  const handleFilterChange = (location, criteria) => {
+    setFilterCriteria((prevState) => ({
+      ...prevState,
+      [location]: criteria,
+    }));
+  };
+
+  // Function to filter accommodations based on the selected criteria
+  const applyFilters = (accommodations, criteria) => {
+    if (!criteria) return accommodations;
+    let filteredAccommodations = [...accommodations];
+
+    // Apply sorting based on the criteria
+    if (criteria === "price") {
+      filteredAccommodations.sort((a, b) => a.pricePerNight - b.pricePerNight);
+    } else if (criteria === "rating") {
+      filteredAccommodations.sort((a, b) => b.rating - a.rating);
+    } else if (criteria === "name") {
+      filteredAccommodations.sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    return filteredAccommodations;
   };
 
   return (
@@ -928,59 +964,114 @@ function ItineraryForm() {
                     <Box key={location} sx={{ marginBottom: "30px" }}>
                       <Typography variant="h6">
                         Accommodations in {getAirportName(location)}
+                        <Button
+                          variant="text"
+                          color="primary"
+                          onClick={() => handleToggle(location)}
+                          sx={{ marginLeft: "10px" }}
+                        >
+                          {showAccommodations[location] ? "Hide" : "Show"}
+                        </Button>
                       </Typography>
-                      <Grid container spacing={2} sx={{ marginTop: "10px" }}>
-                        {locationAccommodations.length > 0 ? (
-                          locationAccommodations.map((acc) => (
-                            <Grid item xs={12} sm={6} md={4} key={acc.name}>
-                              <Card
-                                variant={
-                                  selectedAccommodations.some(
-                                    (a) => a.name === acc.name,
-                                  )
-                                    ? "outlined"
-                                    : "elevation"
-                                }
-                                sx={{
-                                  cursor: "pointer",
-                                  borderColor: selectedAccommodations.some(
-                                    (a) => a.name === acc.name,
-                                  )
-                                    ? "primary.main"
-                                    : "grey.300",
-                                }}
-                                onClick={() => handleAccommodationToggle(acc)}
-                              >
-                                <CardContent>
-                                  <Typography variant="h6">
-                                    {acc.name}
-                                  </Typography>
-                                  <Typography>
-                                    {acc.pricePerNight} {acc.currency} per night
-                                  </Typography>
-                                  <Typography>
-                                    Rating: {acc.rating} ⭐
-                                  </Typography>
-                                  <Button
-                                    variant="contained"
-                                    size="small"
-                                    sx={{ marginTop: "10px" }}
+
+                      {showAccommodations[location] && (
+                        <>
+                          {/* Filter buttons */}
+                          <Box sx={{ marginTop: "10px", marginBottom: "10px" }}>
+                            <Button
+                              variant="outlined"
+                              onClick={() =>
+                                handleFilterChange(location, "price")
+                              }
+                              sx={{ marginRight: "10px" }}
+                            >
+                              Sort by Price
+                            </Button>
+                            <Button
+                              variant="outlined"
+                              onClick={() =>
+                                handleFilterChange(location, "rating")
+                              }
+                              sx={{ marginRight: "10px" }}
+                            >
+                              Sort by Rating
+                            </Button>
+                            <Button
+                              variant="outlined"
+                              onClick={() =>
+                                handleFilterChange(location, "name")
+                              }
+                            >
+                              Sort by Name
+                            </Button>
+                          </Box>
+                          <Grid
+                            container
+                            spacing={2}
+                            sx={{ marginTop: "10px" }}
+                          >
+                            {applyFilters(
+                              locationAccommodations,
+                              filterCriteria[location],
+                            ).length > 0 ? (
+                              applyFilters(
+                                locationAccommodations,
+                                filterCriteria[location],
+                              ).map((acc) => (
+                                <Grid item xs={12} sm={6} md={4} key={acc.name}>
+                                  <Card
+                                    variant={
+                                      selectedAccommodations.some(
+                                        (a) => a.name === acc.name,
+                                      )
+                                        ? "outlined"
+                                        : "elevation"
+                                    }
+                                    sx={{
+                                      cursor: "pointer",
+                                      borderColor: selectedAccommodations.some(
+                                        (a) => a.name === acc.name,
+                                      )
+                                        ? "primary.main"
+                                        : "grey.300",
+                                    }}
+                                    onClick={() =>
+                                      handleAccommodationToggle(acc)
+                                    }
                                   >
-                                    {selectedAccommodations.some(
-                                      (a) => a.name === acc.name,
-                                    )
-                                      ? "Remove"
-                                      : "Select"}
-                                  </Button>
-                                </CardContent>
-                              </Card>
-                            </Grid>
-                          ))
-                        ) : (
-                          <Typography>No accommodations found.</Typography>
-                        )}
-                      </Grid>
-                      <hr style={{ margin: "20px 0" }} /> {/* Separator */}
+                                    <CardContent>
+                                      <Typography variant="h6">
+                                        {acc.name}
+                                      </Typography>
+                                      <Typography>
+                                        {acc.pricePerNight} {acc.currency} per
+                                        night
+                                      </Typography>
+                                      <Typography>
+                                        Rating: {acc.rating} ⭐
+                                      </Typography>
+                                      <Button
+                                        variant="contained"
+                                        size="small"
+                                        sx={{ marginTop: "10px" }}
+                                      >
+                                        {selectedAccommodations.some(
+                                          (a) => a.name === acc.name,
+                                        )
+                                          ? "Remove"
+                                          : "Select"}
+                                      </Button>
+                                    </CardContent>
+                                  </Card>
+                                </Grid>
+                              ))
+                            ) : (
+                              <Typography>No accommodations found.</Typography>
+                            )}
+                          </Grid>
+                          <hr style={{ margin: "20px 0" }} /> {/* Separator */}
+                        </>
+                      )}
                     </Box>
                   ),
                 )}
