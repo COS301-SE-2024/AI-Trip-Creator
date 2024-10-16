@@ -515,40 +515,47 @@ return (
               {flights.length > 0 ? (
                 flights.map((flight, index) => (
                   <Grid item xs={12} sm={6} md={3} key={index}>
-                    <Card
+                    <Card 
                       onClick={() => handleFlightToggle(flight)}
                       sx={{
-                        boxShadow: selectedFlights.some((f) => f.id === flight.id) ? '0px 0px 8px 2px #7e57c2' : '0px 0px 5px 1px #bbb',
-                        border: selectedFlights.some((f) => f.id === flight.id) ? '1px solid #7e57c2' : '1px solid #ccc',
+                        // boxShadow: selectedFlights.some((f) => f.id === flight.id) ? '0px 0px 8px 2px #7e57c2' : '0px 0px 5px 1px #bbb',
+                        // border: selectedFlights.some((f) => f.id === flight.id) ? '1px solid #7e57c2' : '1px solid #ccc',
+                        boxShadow: '0px 0px 5px 1px #bbb',
                         transition: 'all 0.2s ease',
                         padding: '8px', // Reducing padding
                         fontSize: '0.9rem', // Smaller text size
                       }}
+                      alignItems="center" 
+                      alignContent="center"
+
                     >
-                      <CardContent>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                      <CardContent alignItems="center" alignContent="center">
+                        <Typography align= "center" variant="h6" sx={{ fontWeight: 'bold', mb: 1, ml: -2, fontSize: '28px'}}>
                           <FaPlaneDeparture /> {flight.itineraries[0].segments[0].departure.iataCode} → {flight.itineraries[0].segments[0].arrival.iataCode}
                         </Typography>
 
-                        <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                        <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -2, fontSize: '17px' }}>
                           <FaClock style={{ color: "#ff9800", marginRight: 4 }} />
                           Departure: {flight.itineraries[0].segments[0].departure.at.split("T")[1]}
                         </Typography>
-                        <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                        <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -2 , fontSize: '17px'}}>
                           <IoAirplaneSharp style={{ color: "#4caf50", marginRight: 4 }} />
                           Airline: {getAirlineName(flight.itineraries[0].segments[0].carrierCode)}
                         </Typography>
-                        <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                        <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -2, fontSize: '17px'}}>
                           <FaDollarSign style={{ color: "#f44336", marginRight: 4 }} />
                           Price: {flight.priceInZar} ZAR
                         </Typography>
-                        <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                        <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -2, fontSize: '17px' }}>
                           <FaPlaneArrival style={{ color: "#2196f3", marginRight: 4 }} />
                           Arrival: {flight.itineraries[0].segments[0].arrival.at.split("T")[1]}
                         </Typography>
-
+                        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: -2, fontSize: '17px' }}>
                         <Button
+                          
                           sx={{
+                            mt: 2,
+                            align: "center",
                             backgroundColor: selectedFlights.some((f) => f.id === flight.id) ? "#7e57c2" : "#2196f3",
                             color: "white",
                             '&:hover': {
@@ -558,9 +565,11 @@ return (
                             fontSize: "0.8rem" // Smaller button text
                           }}
                           variant="contained"
+                          
                         >
                           {selectedFlights.some((f) => f.id === flight.id) ? "Remove from Itinerary" : "Add to Itinerary"}
                         </Button>
+                        </Box>
                       </CardContent>
                     </Card>
                   </Grid>
