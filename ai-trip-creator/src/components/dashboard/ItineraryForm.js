@@ -122,6 +122,7 @@ function ItineraryForm() {
   const [selectedActivities, setSelectedActivities] = useState([]);
   const [arrivalPlaces, setArrivalplaces] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showActivities, setShowActivities] = useState({});
   const [showAccommodations, setShowAccommodations] = useState({});
   const [filterCriteria, setFilterCriteria] = useState({});
   //fetch userid
@@ -237,39 +238,52 @@ function ItineraryForm() {
       return accommodationsByLocation;
     } catch (error) {
       console.error("Error fetching accommodations:", error);
-      setErrorMessage("Failed to fetch accommodations. Please try again.");
+      // setErrorMessage("Failed to fetch accommodations. Please try again.");
     }
   };
 
-  const getActivities = async (endLocation) => {
+  const getActivities = async (endLocations) => {
     try {
-      if (!userId) {
-        throw new Error("User is not authenticated");
-      }
+      if (!userId) throw new Error("User is not authenticated");
 
       const db = getFirestore();
-      const activitiesRef = collection(db, "Activities");
-      const q = firestoreQuery(
-        activitiesRef,
-        where("city", "==", getAirportName(endLocation).replace(/\s+/g, "")),
-      );
-      const querySnapshot = await getDocs(q);
-      let results = [];
-      querySnapshot.forEach((doc) => {
-        results.push(doc.data());
-      });
+      const accommodationsByLocation = {};
 
-      const uniqueResults = results.filter(
-        (accommodation, index, self) =>
-          index === self.findIndex((a) => a.name === accommodation.name),
+      // Fetch activities for each end location
+      await Promise.all(
+        endLocations.map(async (location) => {
+          const accommodationsRef = collection(db, "LikedActivities");
+          const q = firestoreQuery(
+            accommodationsRef,
+            where(
+              "city",
+              "==",
+              getAirportName(location).toLowerCase().replace(/\s+/g, ""),
+            ),
+          );
+
+          const querySnapshot = await getDocs(q);
+          let results = [];
+          querySnapshot.forEach((doc) => {
+            results.push(doc.data());
+          });
+
+          // Remove duplicate accommodations
+          const uniqueResults = results.filter(
+            (accommodation, index, self) =>
+              index === self.findIndex((a) => a.name === accommodation.name),
+          );
+
+          // Store results by location
+          accommodationsByLocation[location] = uniqueResults;
+        }),
       );
 
-      setActivities(uniqueResults);
-      //console.log(uniqueResults);
-      return uniqueResults;
+      setActivities(accommodationsByLocation);
+      return accommodationsByLocation;
     } catch (error) {
       console.error("Error fetching activities:", error);
-      setErrorMessage("Failed to fetch activities. Please try again.");
+      //  setErrorMessage("Failed to fetch activities. Please try again.");
     } finally {
       //setLoading(false);
     }
@@ -334,7 +348,7 @@ function ItineraryForm() {
       setArrivalplaces(arrivalPlaces);
       const fetchedAccommodations = await getAccommodations(arrivalPlaces);
       setAccommodations(fetchedAccommodations);
-      const fetchedActivities = await getActivities(endLocation);
+      const fetchedActivities = await getActivities(arrivalPlaces);
       setActivities(fetchedActivities);
     } else if (activeStep === 1) {
       // Fetch Accommodations
@@ -376,7 +390,7 @@ function ItineraryForm() {
       // Optionally, reset the form or redirect the user
     } catch (error) {
       console.error("Error saving itinerary:", error);
-      setErrorMessage("Failed to save itinerary. Please try again.");
+      // setErrorMessage("Failed to save itinerary. Please try again.");
     }
   };
 
@@ -408,7 +422,43 @@ function ItineraryForm() {
     } else if (criteria === "rating") {
       filteredAccommodations.sort((a, b) => b.rating - a.rating);
     } else if (criteria === "name") {
-      filteredAccommodations.sort((a, b) => a.name.localeCompare(b.name));
+      filteredAccommodations.sort((a, b) => a.name - b.name);
+    }
+
+    return filteredAccommodations;
+  };
+
+  //filtering for activities
+  // Toggle the visibility of accommodations for a specific location
+  const handleToggleactivity = (location) => {
+    setShowActivities((prevState) => ({
+      ...prevState,
+      [location]: !prevState[location],
+    }));
+  };
+
+  // Update the filter criteria
+  const handleFilterChangeactivities = (location, criteria) => {
+    setFilterCriteria((prevState) => ({
+      ...prevState,
+      [location]: criteria,
+    }));
+  };
+
+  // Function to filter accommodations based on the selected criteria
+  const applyFiltersactivities = (accommodations, criteria) => {
+    if (!criteria) return accommodations;
+    let filteredAccommodations = [...accommodations];
+
+    // Apply sorting based on the criteria
+    if (criteria === "sub_categories") {
+      filteredAccommodations.sort(
+        (a, b) => a.sub_categories[0] - b.sub_categories[0],
+      );
+    } else if (criteria === "category") {
+      filteredAccommodations.sort((a, b) => b.category - a.category);
+    } else if (criteria === "name") {
+      filteredAccommodations.sort((a, b) => a.name - b.name);
     }
 
     return filteredAccommodations;
@@ -961,7 +1011,7 @@ function ItineraryForm() {
                 {Object.entries(accommodations).map(
                   ([location, locationAccommodations]) => (
                     <Box key={location} sx={{ marginBottom: "30px" }}>
-                      <Typography variant="2">
+                      <h2>
                         Accommodations in {getAirportName(location)}
                         <Button
                           variant="text"
@@ -971,7 +1021,7 @@ function ItineraryForm() {
                         >
                           {showAccommodations[location] ? "Hide" : "Show"}
                         </Button>
-                      </Typography>
+                      </h2>
 
                       {showAccommodations[location] && (
                         <>
@@ -1057,7 +1107,15 @@ function ItineraryForm() {
                                       <Button
                                         variant="contained"
                                         size="small"
-                                        sx={{ marginTop: "10px" }}
+                                        sx={{
+                                          marginTop: "10px",
+                                          backgroundColor:
+                                            selectedAccommodations.some(
+                                              (a) => a.name === acc.name,
+                                            )
+                                              ? "#7e57c2"
+                                              : "#2196f3",
+                                        }}
                                       >
                                         {selectedAccommodations.some(
                                           (a) => a.name === acc.name,
@@ -1112,49 +1170,142 @@ function ItineraryForm() {
             {loading ? (
               <CircularProgress sx={{ marginTop: "20px" }} />
             ) : (
-              <Grid container spacing={2} sx={{ marginTop: "10px" }}>
-                {activities.length > 0 ? (
-                  activities.map((act) => (
-                    <Grid item xs={12} sm={6} md={4} key={act.name}>
-                      <Card
-                        variant={
-                          selectedActivities.some((a) => a.name === act.name)
-                            ? "outlined"
-                            : "elevation"
-                        }
-                        sx={{
-                          cursor: "pointer",
-                          borderColor: selectedActivities.some(
-                            (a) => a.name === act.name,
-                          )
-                            ? "primary.main"
-                            : "grey.300",
-                        }}
-                        onClick={() => handleActivityToggle(act)}
-                      >
-                        <CardContent>
-                          <Typography variant="h6">{act.name}</Typography>
-                          <Typography>
-                            {act.price} {act.currency}
-                          </Typography>
-                          <Typography>Rating: {act.rating} ⭐</Typography>
-                          <Button
-                            variant="contained"
-                            size="small"
+              <Box sx={{ marginTop: "20px" }}>
+                {Object.entries(activities).map(
+                  ([location, locationActivities]) => (
+                    <Box key={location} sx={{ marginBottom: "30px" }}>
+                      <h2>
+                        Activities in {getAirportName(location)}
+                        <Button
+                          variant="text"
+                          color="primary"
+                          onClick={() => handleToggleactivity(location)}
+                          sx={{ marginLeft: "10px" }}
+                        >
+                          {showActivities[location] ? "Hide" : "Show"}
+                        </Button>
+                      </h2>
+
+                      {showActivities[location] && (
+                        <>
+                          {/* Filter buttons */}
+                          <Box sx={{ marginTop: "10px", marginBottom: "10px" }}>
+                            <Button
+                              variant="outlined"
+                              onClick={() =>
+                                handleFilterChangeactivities(
+                                  location,
+                                  "sub_categories",
+                                )
+                              }
+                              sx={{ marginRight: "10px" }}
+                            >
+                              Sort activity name
+                            </Button>
+                            <Button
+                              variant="outlined"
+                              onClick={() =>
+                                handleFilterChangeactivities(
+                                  location,
+                                  "category",
+                                )
+                              }
+                              sx={{ marginRight: "10px" }}
+                            >
+                              Sort by Category
+                            </Button>
+                            <Button
+                              variant="outlined"
+                              onClick={() =>
+                                handleFilterChangeactivities(location, "name")
+                              }
+                            >
+                              Sort by Name
+                            </Button>
+                          </Box>
+                          <Grid
+                            container
+                            spacing={2}
                             sx={{ marginTop: "10px" }}
                           >
-                            {selectedActivities.some((a) => a.name === act.name)
-                              ? "Remove"
-                              : "Select"}
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    </Grid>
-                  ))
-                ) : (
-                  <Typography>No activities found.</Typography>
+                            {applyFiltersactivities(
+                              locationActivities,
+                              filterCriteria[location],
+                            ).length > 0 ? (
+                              applyFiltersactivities(
+                                locationActivities,
+                                filterCriteria[location],
+                              ).map((acc) => (
+                                <Grid item xs={12} sm={6} md={4} key={acc.name}>
+                                  <Card
+                                    variant={
+                                      selectedActivities.some(
+                                        (a) => a.name === acc.name,
+                                      )
+                                        ? "outlined"
+                                        : "elevation"
+                                    }
+                                    sx={{
+                                      cursor: "pointer",
+                                      borderColor: selectedActivities.some(
+                                        (a) => a.name === acc.name,
+                                      )
+                                        ? "primary.main"
+                                        : "grey.300",
+                                    }}
+                                    onClick={() => handleActivityToggle(acc)}
+                                  >
+                                    <CardMedia
+                                      component="img"
+                                      height="100"
+                                      image={acc.image}
+                                      alt={acc.name}
+                                    />
+                                    <CardContent>
+                                      <Typography variant="h8">
+                                        <b>{acc.name}</b>
+                                        <br />
+                                        Category: {acc.category}
+                                        <br />
+                                        {acc.sub_categories[0]} -
+                                        <a href="{acc.info_url}">More info</a>
+                                        <br />
+                                      </Typography>
+
+                                      <Button
+                                        variant="contained"
+                                        size="small"
+                                        sx={{
+                                          marginTop: "10px",
+                                          backgroundColor:
+                                            selectedActivities.some(
+                                              (a) => a.name === acc.name,
+                                            )
+                                              ? "#7e57c2"
+                                              : "#2196f3",
+                                        }}
+                                      >
+                                        {selectedActivities.some(
+                                          (a) => a.name === acc.name,
+                                        )
+                                          ? "Remove"
+                                          : "Select"}
+                                      </Button>
+                                    </CardContent>
+                                  </Card>
+                                </Grid>
+                              ))
+                            ) : (
+                              <Typography>No activities found.</Typography>
+                            )}
+                          </Grid>
+                          <hr style={{ margin: "20px 0" }} /> {/* Separator */}
+                        </>
+                      )}
+                    </Box>
+                  ),
                 )}
-              </Grid>
+              </Box>
             )}
 
             {errorMessage && (
@@ -1205,7 +1356,7 @@ function ItineraryForm() {
               <Typography variant="h6">Accommodations:</Typography>
               {selectedAccommodations.map((acc, index) => (
                 <Typography key={index}>
-                  {acc.name} - {acc.pricePerNight} {acc.currency} per night
+                  {acc.name} - {acc.price} per night
                 </Typography>
               ))}
             </Box>
@@ -1214,7 +1365,8 @@ function ItineraryForm() {
               <Typography variant="h6">Activities:</Typography>
               {selectedActivities.map((act, index) => (
                 <Typography key={index}>
-                  {act.name} - {act.price} {act.currency}
+                  {act.name} - {act.category} {"   "}
+                  {act.sub_categories[0]}
                 </Typography>
               ))}
             </Box>
