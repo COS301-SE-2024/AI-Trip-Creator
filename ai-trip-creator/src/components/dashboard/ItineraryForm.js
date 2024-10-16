@@ -716,16 +716,16 @@ function ItineraryForm() {
                         {selectedFlights.some((f) => f.id === flight.id) ? "Remove from Itinerary" : "Add to Itinerary"}
                         </Button> */}
                         <Button 
-  sx={{
-    backgroundColor: selectedFlights.some((f) => f.id === flight.id) ? "purple" : "#1769aa",
-    '&:hover': {
-      backgroundColor: selectedFlights.some((f) => f.id === flight.id) ? '#570987' : '#1769aa',
-    },
-  }} 
-  variant="contained"
->
-  {selectedFlights.some((f) => f.id === flight.id) ? "Remove from Itinerary" : "Add to Itinerary"}
-</Button>
+                          sx={{
+                            backgroundColor: selectedFlights.some((f) => f.id === flight.id) ? "purple" : "#1769aa",
+                            '&:hover': {
+                                backgroundColor: selectedFlights.some((f) => f.id === flight.id) ? '#570987' : '#1769aa',
+                              },
+                          }} 
+                          variant="contained"
+                        >   
+                          {selectedFlights.some((f) => f.id === flight.id) ? "Remove from Itinerary" : "Add to Itinerary"}
+                        </Button>
 
                     </CardContent>
                   </Card>
