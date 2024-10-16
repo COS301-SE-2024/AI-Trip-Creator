@@ -685,8 +685,11 @@ function ItineraryForm() {
           </Button>
 
           {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
-          <Typography variant="h6">Departure Flights</Typography>
+          
           <Grid container spacing={2} sx={{ marginTop: "1rem", marginBottom: "15px" }}>
+            {/* <Typography variant="h6">Departure Flights</Typography> */}
+            <h2>Departure Flights</h2>
+            <Grid container spacing={2} sx={{ marginTop: "1rem", marginBottom: "15px" }}>
             
             {flights.length > 0 ? (
               flights.map((flight, index) => (
@@ -698,7 +701,32 @@ function ItineraryForm() {
                       </Typography>
                       <Typography>{flight.price.total} {flight.price.currency} ({flight.priceInZar} ZAR)</Typography>
                       <Typography>Class: {flight.travelerPricings[0].fareDetailsBySegment[0].class}, Cabin: {flight.travelerPricings[0].fareDetailsBySegment[0].cabin}</Typography>
-                      <Button variant="contained">{selectedFlights.some((f) => f.id === flight.id) ? "Remove from Itinerary" : "Add to Itinerary"}</Button>
+                      {/* <Button 
+                        sx={{
+                            backgroundColor: "purple",
+                            
+                            '&:hover': {
+                            backgroundColor: '#570987',
+      
+                            },
+                           }} 
+                           
+                           variant="contained"
+                      >
+                        {selectedFlights.some((f) => f.id === flight.id) ? "Remove from Itinerary" : "Add to Itinerary"}
+                        </Button> */}
+                        <Button 
+  sx={{
+    backgroundColor: selectedFlights.some((f) => f.id === flight.id) ? "purple" : "#1769aa",
+    '&:hover': {
+      backgroundColor: selectedFlights.some((f) => f.id === flight.id) ? '#570987' : '#1769aa',
+    },
+  }} 
+  variant="contained"
+>
+  {selectedFlights.some((f) => f.id === flight.id) ? "Remove from Itinerary" : "Add to Itinerary"}
+</Button>
+
                     </CardContent>
                   </Card>
                 </Grid>
@@ -707,11 +735,14 @@ function ItineraryForm() {
             ) : (
               <Typography>No flights found.</Typography>
             )}
+            </Grid>
             
 
             {returnFlight && returnFlights.length > 0 && (
               <>
-                <Typography variant="h6">Return Flights</Typography>
+                {/* <Typography variant="h6">Return Flights</Typography> */}
+                <h2>Return Flights</h2>
+                <Grid container spacing={2} sx={{ marginTop: "1rem", marginBottom: "15px" }}>
                 {returnFlights.map((flight, index) => (
                   <Grid item xs={12} sm={6} md={4} key={index}>
                     <Card onClick={() => handleFlightToggle(flight)}>
@@ -726,8 +757,11 @@ function ItineraryForm() {
                     </Card>
                   </Grid>
                 ))}
+                </Grid>
               </>
+              
             )}
+            
           </Grid>
 
           <Button marginTop="50px" padding="20px" variant="outlined" onClick={() => setShowFlightSearch(false)}>
@@ -736,7 +770,8 @@ function ItineraryForm() {
         </>
       )}
 
-      <Typography variant="h6" sx={{ marginTop: "20px" }}>Selected Flights</Typography>
+      {/* <Typography variant="h6" sx={{ marginTop: "20px" }}>Selected Flights</Typography> */}
+      <h2 style={{marginTop: "50px"}}>Selected Flights</h2>
       <Grid container spacing={2}>
         {selectedFlights.map((flight, index) => (
           <Grid item xs={12} sm={6} md={4} key={index}>
