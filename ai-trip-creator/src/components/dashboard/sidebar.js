@@ -188,6 +188,21 @@ const Sidebar = () => {
         <ListItem
           button
           component={Link}
+          to="/SavedItineraries"
+          sx={{
+            backgroundColor: isActive("/SavedItineraries") ? "#ffffff33" : "inherit",
+            color: isActive("/SavedItineraries") ? "#ffffff" : "inherit",
+            borderRadius: "50px",
+            margin: "2px 10px",
+            width: "200px",
+          }}
+        >
+          <FaListAlt style={{ marginRight: "10px" }} />
+          <ListItemText primary="Saved Itineraries" />
+        </ListItem>
+        <ListItem
+          button
+          component={Link}
           to="/profile"
           sx={{
             backgroundColor: isActive("/profile") ? "#ffffff33" : "inherit",
