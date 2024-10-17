@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { Card, CardContent, Typography, Button, Box } from "@mui/material";
 import Sidebar from "./sidebar";
@@ -6,13 +6,25 @@ import OpenAI from "openai";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { db, auth } from "../../firebase/firebase-config";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, doc, setDoc, query, where, getDocs, updateDoc } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+
 
 // Initialize the OpenAI client
 const openai = new OpenAI({
   apiKey: process.env.REACT_APP_OPEN_AI_KEY,
   dangerouslyAllowBrowser: true,
 });
+
+//functions for chatbot
+
+
+const currentUser = auth.currentUser;
+
+
+
+
 
 const questionsPrompt = `
 Which destination(s) are you visiting?
@@ -33,6 +45,280 @@ const Dashboard = () => {
   const [userInput, setUserInput] = useState("");
   const [responses, setResponses] = useState([]);
   const [showCards, setShowCards] = useState(true);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user); // Set user state on auth state change
+    });
+
+    return () => unsubscribe(); // Clean up subscription on unmount
+  }, []);
+
+  async function createItinerary(itineraryName, destination, budget, numDays, listDays) {
+   
+    
+    //const user_id = "Usern2556";
+  
+    // const currentUser =  auth.currentUser;
+  
+    // if (!currentUser) {
+    //   console.error('No authenticated user.');
+    //   return;
+    // }
+  
+    const user_id = user.uid;
+  
+    try {
+      // Reference to the "itineraries" collection
+      const itinerariesRef = collection(db, "ItineraryCollection");
+  
+      // Create a new itinerary document with a unique ID
+      const newItineraryRef = await addDoc(itinerariesRef, {
+        user_id: user_id,
+        itineraryName: itineraryName,
+        destination: destination,
+        budget: budget,
+        numDays: numDays,
+        createdAt: new Date().toISOString().split("T")[0], // Timestamp of creation
+      });
+  
+      console.log(`Itinerary '${itineraryName}' created successfully with ID: ${newItineraryRef.id}.`);
+  
+      // Insert each day of the itinerary into the sub-collection
+      const daysRef = collection(newItineraryRef, 'days'); // Reference to the "days" sub-collection
+  
+      await Promise.all(listDays.map(async (day) => {
+        const dayData = {
+          dayNumber: day.dayNumber,
+          flights: day.flights || [],
+          accommodation: day.accommodation || [],
+          activities: day.activities.map(activity => ({
+            name: activity.name,
+            time: activity.time,
+            description: activity.description || `Activity: ${activity.name} scheduled at ${activity.time}.`
+          })) || []
+        };
+  
+        // Add the day data to the "days" sub-collection
+        const dayDocRef = doc(daysRef, `day${day.dayNumber}`);
+        await setDoc(dayDocRef, dayData);
+      }));
+  
+      console.log(`All days added successfully to itinerary '${itineraryName}'.`);
+    } catch (error) {
+      console.error('Error creating itinerary:', error);
+    }
+  }
+  
+  
+  
+  async function getItinerary(itinerary_name) {
+    try {
+        const user_id = user.uid;
+        
+        // Reference to the ItineraryCollection
+        const itinerariesRef = collection(db, 'ItineraryCollection');
+        
+        // Query to find the itinerary by user_id and itinerary_name
+        const q = query(
+            itinerariesRef,
+            where('user_id', '==', user_id),
+            where('itineraryName', '==', itinerary_name)
+        );
+
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+            console.log(`No itinerary found for user: ${user_id} with name: ${itinerary_name}`);
+            return null;
+        }
+  
+        // Assuming there is only one document that matches the query
+        const itineraryDoc = querySnapshot.docs[0];
+        const itineraryData = itineraryDoc.data();
+
+        // Fetch the 'days' subcollection using collection method
+        const daysRef = collection(itineraryDoc.ref, 'days');
+        const daysSnapshot = await getDocs(daysRef);
+        const days = [];
+  
+        daysSnapshot.forEach(dayDoc => {
+            days.push(dayDoc.data());
+        });
+  
+        itineraryData.days = days;
+  
+        //console.log('Itinerary retrieved successfully:', itineraryData);
+        return itineraryData;
+    } catch (error) {
+        console.error('Error retrieving itinerary:', error);
+    }
+}
+  
+
+
+//import { collection, query, where, getDocs, doc, updateDoc, setDoc } from 'firebase/firestore';
+
+async function updateItinerary(itineraryName, updatedItinerary) {
+    try {
+        const user_id = user?.uid;  // Ensure `user.uid` is defined
+
+        if (!user_id) {
+            console.error("User ID is not defined.");
+            return;  // Exit if no user is logged in
+        }
+
+        // Validate that the updatedItinerary contains valid data
+        if (!updatedItinerary || !updatedItinerary.itineraryName || !updatedItinerary.destination || !updatedItinerary.budget || !updatedItinerary.numDays) {
+            console.error("Invalid itinerary data provided.");
+            return;  // Exit if the itinerary data is incomplete
+        }
+
+        // Reference to the ItineraryCollection
+        const itinerariesRef = collection(db, 'ItineraryCollection');
+
+        // Query to find the itinerary by user_id and itinerary_name
+        const q = query(
+            itinerariesRef,
+            where('user_id', '==', user_id),
+            where('itineraryName', '==', itineraryName)
+        );
+
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+            console.log(`No itinerary found for user: ${user_id} with name: ${itineraryName}`);
+            return null;  // No itinerary to update
+        }
+
+        // If multiple documents are found (which ideally shouldn't happen), we will log a message for debugging
+        if (querySnapshot.size > 1) {
+            console.warn(`Multiple itineraries found for user: ${user_id} with name: ${itineraryName}. This might be unexpected.`);
+        }
+
+        // Get the document ID for the matched itinerary
+        const itineraryDoc = querySnapshot.docs[0];  // Assuming the first document matches the user_id and itineraryName
+        const itineraryDocId = itineraryDoc.id;  // Get the document ID
+
+        // Validate that the correct itinerary document is being updated by checking the user_id and itineraryName
+        if (itineraryDoc.data().user_id !== user_id || itineraryDoc.data().itineraryName !== itineraryName) {
+            console.error("The document's user_id or itineraryName does not match the expected values.");
+            return;
+        }
+
+        // Reference to the specific itinerary document
+        const itineraryRef = doc(db, 'ItineraryCollection', itineraryDocId);
+
+        // Update the main itinerary data (fields in the main document)
+        const itineraryData = {
+            user_id: updatedItinerary.user_id || user_id,  // Fallback to current user's ID
+            itineraryName: updatedItinerary.itineraryName,
+            destination: updatedItinerary.destination,
+            budget: updatedItinerary.budget,
+            numDays: updatedItinerary.numDays
+        };
+
+        // Update the main itinerary document
+        await updateDoc(itineraryRef, itineraryData);
+
+        // Now, handle the days subcollection for this specific itinerary
+        await Promise.all(updatedItinerary.days.map(async (day) => {
+            const dayData = {
+                dayNumber: day.dayNumber,
+                flights: day.flights || [],
+                accommodation: day.accommodation || [],
+                activities: day.activities.map(activity => ({
+                    name: activity.name,
+                    time: activity.time,
+                    description: activity.description || `Activity: ${activity.name} scheduled at ${activity.time}.`
+                })) || []
+            };
+
+            // Update or create the day subcollection document under this specific itinerary
+            const dayRef = doc(itineraryRef, 'days', `day${day.dayNumber}`);
+            await setDoc(dayRef, dayData); // This will create or update the day document
+        }));
+
+        console.log(`Itinerary '${itineraryName}' updated successfully for user ${user_id}.`);
+    } catch (error) {
+        console.error('Error updating itinerary:', error);
+    }
+}
+
+
+  
+  const updated_itinerary = {
+    itineraryName: 'Summer Vacation',
+    destination: 'Durban',
+    budget: 2000,
+    numDays: 3,
+    days: [
+      {
+        dayNumber: 1,
+        flights: [
+          {
+            flightNumber: 'XYZ123',
+            departure: '10:00 AM',
+            arrival: '12:00 PM'
+          }
+        ],
+        accommodation: [
+          {
+            name: 'Hotel XYZ',
+            checkin: '2:00 PM'
+          }
+        ],
+        activities: [
+          {
+            name: 'City Tour',
+            time: '4:00 PM',
+            description: 'Join the guided city tour at 3:00 PM.'
+          }
+        ]
+      },
+      {
+        dayNumber: 2,
+        flights: [],
+        accommodation: [
+          {
+            name: 'Hotel ABC',
+            checkout: '11:00 AM'
+          }
+        ],
+        activities: [
+          {
+            name: 'Beach Visit',
+            time: '10:00 AM',
+            description: 'Relax at the beach starting at 10:00 AM.'
+          }
+        ]
+      },
+      {
+        dayNumber: 3,
+        flights: [],
+        accommodation: [
+          {
+            name: 'Hotel HIJ',
+            checkin: '1:00 PM'
+          }
+        ],
+        activities: [
+          {
+            name: 'Mountain Hike',
+            time: '10:00 AM',
+            description: 'Embark on a mountain hike at 10:00 AM.'
+          }
+        ]
+      }
+    ]
+  };
+  
+
+
+
+
 
   const handleInputChange = (e) => {
     setUserInput(e.target.value);
@@ -48,18 +334,20 @@ const Dashboard = () => {
     const newMessage = { type: "user", text: userInput };
     setResponses([...responses, newMessage]);
 
+    //calling and testing the updateItinerary function
+    updateItinerary('Summer Vacation', updated_itinerary);
     try {
       // Get the current user from Firebase Auth
       //const auth = getAuth();
-      const currentUser = auth.currentUser;
+      //const currentUser = auth.currentUser;
 
       // Check if the user is authenticated
-      if (!currentUser) {
-        console.error("No authenticated user.");
-        return;
-      }
+      // if (!currentUser) {
+      //   console.error("No authenticated user.");
+      //   return;
+      // }
 
-      const userId = currentUser.uid; // Get the user's UID
+      const userId = "currentUser.uid"; // Get the user's UID
 
       // Create an array of messages from the current responses state
       const messages = [
@@ -84,13 +372,13 @@ const Dashboard = () => {
       const response = await openai.chat.completions.create({
         model: "gpt-4",
         messages: messages,
-        max_tokens: 1000,
+        max_tokens: 5000,
       });
 
       const botMessage = response.choices[0].message.content;
 
       // Check if the response contains the phrase "Here is your itinerary"
-      if (botMessage.includes("Here is your itinerary")) {
+      if (botMessage.includes("Here is your itinerary AAAAAAAAAAA")) {
         // Remove the trigger phrase and the colon (":") that follows it
         const itineraryText = botMessage
           .replace("Here is your itinerary:", "")
