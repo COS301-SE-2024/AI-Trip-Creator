@@ -923,85 +923,87 @@ function ItineraryForm() {
 
             <Grid container spacing={2} sx={{ marginTop: "1rem", marginBottom: "15px" }}>
               <h2>Departure Flights</h2>
-              {flights.length > 0 ? (
-                flights.map((flight, index) => (
-                  <Grid item xs={12} sm={6} md={3} key={index}>
-                    <Card
-                      variant={
-                        selectedFlights.some(
-                          (f) => f.name === flight.name,
-                        )
-                          ? "outlined"
-                          : "elevation"
-                      }
-                      sx={{
-                        padding: "8px", borderColor: selectedFlights.some(
-                          (f) => f.id === flight.id,
-                        )
-                          ? "primary.main"
-                          : "grey.300",
-                      }}
-                      onClick={() => handleFlightToggle(flight)} >
-                      <CardContent>
-                      <Typography align= "center" variant="h6" sx={{ fontWeight: 'bold', mb: 1}}>
-                          <FaPlaneDeparture /> {flight.itineraries[0].segments[0].departure.iataCode} → {flight.itineraries[0].segments[0].arrival.iataCode}
-                     </Typography>
-
-                   <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -3, fontSize: '15.5px' }}>
-                         <FaClock style={{ color: "#ff9800", marginRight: 4 }} />
-                           Departure: {flight.itineraries[0].segments[0].departure.at.split("T")[1]}
-                       </Typography>
-                         <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -3, fontSize: '15.5px' }}>
-                           <FaPlaneArrival style={{ color: "#2196f3", marginRight: 4 }} />
-                        Arrival: {flight.itineraries[0].segments[0].arrival.at.split("T")[1]}
-                       </Typography>    
-                       <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -3 , fontSize: '15.5px'}}>
-                              <FcClock  style={{ color: "#1976d2", marginRight: 4 }} />
-                              Duration: {flight.itineraries[0].duration}
-                            </Typography>                    
-                         <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -3 , fontSize: '15.5px'}}>
-                           <IoAirplaneSharp style={{ color: "#4caf50", marginRight: 4 }} />
-                           Airline: {getAirlineName(flight.itineraries[0].segments[0].carrierCode)}
-                        </Typography>
-                        <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -1, fontSize: '15.5px'}}>
-                        <FaDollarSign style={{ color: "#f44336", marginRight: 4 }} />
-                           Price: {flight.priceInZar} ZAR
-                        </Typography>
-                        <Button
-                          variant="contained"
-                          size="small"
-                          sx={{
-                            
-                            marginTop: "10px",
-                            backgroundColor:
-                              selectedFlights.some(
-                                (f) => f.id === flight.id,
-                              )
-                                ? "#7e57c2"
-                                : "#2196f3",
-                          }}
-                        >
-                          {selectedFlights.some(
+              <Grid container spacing={2} sx={{ marginTop: "1rem", marginBottom: "15px" }}>
+                {flights.length > 0 ? (
+                  flights.map((flight, index) => (
+                    <Grid item xs={12} sm={6} md={3} key={index}>
+                      <Card
+                        variant={
+                          selectedFlights.some(
+                            (f) => f.name === flight.name,
+                          )
+                            ? "outlined"
+                            : "elevation"
+                        }
+                        sx={{
+                          padding: "8px", borderColor: selectedFlights.some(
                             (f) => f.id === flight.id,
                           )
-                            ? "Remove"
-                            : "Select"}
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))
-              ) : (
-                <Typography>No departure flights found.</Typography>
-              )}
+                            ? "primary.main"
+                            : "grey.300",
+                        }}
+                        onClick={() => handleFlightToggle(flight)} >
+                        <CardContent>
+                          <Typography align="center" variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                            <FaPlaneDeparture /> {flight.itineraries[0].segments[0].departure.iataCode} → {flight.itineraries[0].segments[0].arrival.iataCode}
+                          </Typography>
 
-              {returnFlight && (
+                          <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -3, fontSize: '15.5px' }}>
+                            <FaClock style={{ color: "#ff9800", marginRight: 4 }} />
+                            Departure: {flight.itineraries[0].segments[0].departure.at.split("T")[1]}
+                          </Typography>
+                          <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -3, fontSize: '15.5px' }}>
+                            <FaPlaneArrival style={{ color: "#2196f3", marginRight: 4 }} />
+                            Arrival: {flight.itineraries[0].segments[0].arrival.at.split("T")[1]}
+                          </Typography>
+                          <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -3, fontSize: '15.5px' }}>
+                            <FcClock style={{ color: "#1976d2", marginRight: 4 }} />
+                            Duration: {flight.itineraries[0].duration}
+                          </Typography>
+                          <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -3, fontSize: '15.5px' }}>
+                            <IoAirplaneSharp style={{ color: "#4caf50", marginRight: 4 }} />
+                            Airline: {getAirlineName(flight.itineraries[0].segments[0].carrierCode)}
+                          </Typography>
+                          <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -1, fontSize: '15.5px' }}>
+                            <FaDollarSign style={{ color: "#f44336", marginRight: 4 }} />
+                            Price: {flight.priceInZar} ZAR
+                          </Typography>
+                          <Button
+                            variant="contained"
+                            size="small"
+                            sx={{
+
+                              marginTop: "10px",
+                              backgroundColor:
+                                selectedFlights.some(
+                                  (f) => f.id === flight.id,
+                                )
+                                  ? "#7e57c2"
+                                  : "#2196f3",
+                            }}
+                          >
+                            {selectedFlights.some(
+                              (f) => f.id === flight.id,
+                            )
+                              ? "Remove"
+                              : "Select"}
+                          </Button>
+                        </CardContent>
+                      </Card>
+
+                    </Grid>
+                  ))
+                ) : (
+                  <Typography>No flights found.</Typography>
+                )}
+              </Grid>
+
+              {/* Return flights section */}
+              {returnFlight && returnFlights.length > 0 && (
                 <>
                   <h2>Return Flights</h2>
-                  {returnFlights.length > 0 ? (
-                    returnFlights.map((flight, index) => (
-
-
+                  <Grid container spacing={2}>
+                    {returnFlights.map((flight, index) => (
                       <Grid item xs={12} sm={6} md={3} key={index}>
                         <Card
                           variant={
@@ -1019,66 +1021,65 @@ function ItineraryForm() {
                               : "grey.300",
                           }}
                           onClick={() => handleFlightToggle(flight)} ><CardContent>
-                            <Typography align= "center" variant="h6" sx={{ fontWeight: 'bold', mb: 1}}>
-                          <FaPlaneDeparture /> {flight.itineraries[0].segments[0].departure.iataCode} → {flight.itineraries[0].segments[0].arrival.iataCode}
-                     </Typography>
+                            <Typography align="center" variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                              <FaPlaneDeparture /> {flight.itineraries[0].segments[0].departure.iataCode} → {flight.itineraries[0].segments[0].arrival.iataCode}
+                            </Typography>
 
-                   <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -3, fontSize: '15.5px' }}>
-                         <FaClock style={{ color: "#ff9800", marginRight: 4 }} />
-                           Departure: {flight.itineraries[0].segments[0].departure.at.split("T")[1]}
-                       </Typography>
-                         <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -3, fontSize: '15.5px' }}>
-                           <FaPlaneArrival style={{ color: "#2196f3", marginRight: 4 }} />
-                        Arrival: {flight.itineraries[0].segments[0].arrival.at.split("T")[1]}
-                       </Typography>    
-                       <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -3 , fontSize: '15.5px'}}>
-                              <FcClock  style={{ color: "#1976d2", marginRight: 4 }} />
+                            <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -3, fontSize: '15.5px' }}>
+                              <FaClock style={{ color: "#ff9800", marginRight: 4 }} />
+                              Departure: {flight.itineraries[0].segments[0].departure.at.split("T")[1]}
+                            </Typography>
+                            <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -3, fontSize: '15.5px' }}>
+                              <FaPlaneArrival style={{ color: "#2196f3", marginRight: 4 }} />
+                              Arrival: {flight.itineraries[0].segments[0].arrival.at.split("T")[1]}
+                            </Typography>
+                            <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -3, fontSize: '15.5px' }}>
+                              <FcClock style={{ color: "#1976d2", marginRight: 4 }} />
                               Duration: {flight.itineraries[0].duration}
-                            </Typography>                    
-                         <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -3 , fontSize: '15.5px'}}>
-                           <IoAirplaneSharp style={{ color: "#4caf50", marginRight: 4 }} />
-                           Airline: {getAirlineName(flight.itineraries[0].segments[0].carrierCode)}
-                        </Typography>
-                        <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -1, fontSize: '15.5px'}}>
-                        <FaDollarSign style={{ color: "#f44336", marginRight: 4 }} />
-                           Price: {flight.priceInZar} ZAR
-                        </Typography>
-                        <Button
-                          variant="contained"
-                          size="small"
-                          sx={{
-                            
-                            marginTop: "10px",
-                            backgroundColor:
-                              selectedFlights.some(
+                            </Typography>
+                            <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -3, fontSize: '15.5px' }}>
+                              <IoAirplaneSharp style={{ color: "#4caf50", marginRight: 4 }} />
+                              Airline: {getAirlineName(flight.itineraries[0].segments[0].carrierCode)}
+                            </Typography>
+                            <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -1, fontSize: '15.5px' }}>
+                              <FaDollarSign style={{ color: "#f44336", marginRight: 4 }} />
+                              Price: {flight.priceInZar} ZAR
+                            </Typography>
+                            <Button
+                              variant="contained"
+                              size="small"
+                              sx={{
+
+                                marginTop: "10px",
+                                backgroundColor:
+                                  selectedFlights.some(
+                                    (f) => f.id === flight.id,
+                                  )
+                                    ? "#7e57c2"
+                                    : "#2196f3",
+                              }}
+                            >
+                              {selectedFlights.some(
                                 (f) => f.id === flight.id,
                               )
-                                ? "#7e57c2"
-                                : "#2196f3",
-                          }}
-                        >
-                          {selectedFlights.some(
-                            (f) => f.id === flight.id,
-                          )
-                            ? "Remove"
-                            : "Select"}
-                        </Button>
+                                ? "Remove"
+                                : "Select"}
+                            </Button>
                           </CardContent>
                         </Card>
+
                       </Grid>
-                    ))
-                  ) : (
-                    <Typography>No return flights found.</Typography>
-                  )}
+                    ))}
+                  </Grid>
                 </>
               )}
             </Grid>
-
             <Button onClick={handleDone} variant="contained" color="primary" sx={{ marginTop: "20px" }}>
               Done
             </Button>
           </>
         )}
+
 
         {/* Display selected flights */}
         <Box>
