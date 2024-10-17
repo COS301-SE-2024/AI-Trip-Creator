@@ -32,7 +32,7 @@
 
 // // // // // // // // //     const searchResponse = await fetch(searchUrl.toString(), { method: "GET", headers: { Authorization: `Bearer ${access_token}` } });
 // // // // // // // // //     const flightData = await searchResponse.json();
-    
+
 // // // // // // // // //     flightData.data.forEach((flight) => {
 // // // // // // // // //       flight.priceInZar = convertPriceToZar(parseFloat(flight.price.total), flight.price.currency)?.toFixed(2) || "N/A";
 // // // // // // // // //     });
@@ -57,7 +57,7 @@
 // // // // // // // // //   const [showFlightSearch, setShowFlightSearch] = useState(false);
 // // // // // // // // //   const [errorMessage, setErrorMessage] = useState("");
 // // // // // // // // //   const [userId, setUserId] = useState("");
-  
+
 
 // // // // // // // // //   // Fetch user ID (UID)
 // // // // // // // // //   useEffect(() => {
@@ -202,7 +202,7 @@
 
 // // // // // // // // //                         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: -2, fontSize: '15.5px' }}>
 // // // // // // // // //                         <Button
-                          
+
 // // // // // // // // //                           sx={{
 // // // // // // // // //                             mt: 2,
 // // // // // // // // //                             align: "center",
@@ -215,7 +215,7 @@
 // // // // // // // // //                             fontSize: "0.8rem" // Smaller button text
 // // // // // // // // //                           }}
 // // // // // // // // //                           variant="contained"
-                          
+
 // // // // // // // // //                         >
 // // // // // // // // //                           {selectedFlights.some((f) => f.id === flight.id) ? "Remove from Itinerary" : "Add to Itinerary"}
 // // // // // // // // //                         </Button>
@@ -283,7 +283,7 @@
 // // // // // // // // //                           </Typography>
 
 // // // // // // // // //                           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: -2, fontSize: '15.5px' }}>
-                        
+
 // // // // // // // // //                           <Button
 // // // // // // // // //                             sx={{
 // // // // // // // // //                               mt: 2,
@@ -353,7 +353,7 @@
 // // // // // // // // //   </Box>
 // // // // // // // // // );
 
-  
+
 // // // // // // // // // }
 
 // // // // // // // // // export default ItineraryForm;
@@ -417,12 +417,12 @@
 // // // // // // // // //   //         </Button>
 
 // // // // // // // // //   //         {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
-          
+
 // // // // // // // // //   //         <Grid container spacing={2} sx={{ marginTop: "1rem", marginBottom: "15px" }}>
 // // // // // // // // //   //           {/* <Typography variant="h6">Departure Flights</Typography> */}
 // // // // // // // // //   //           <h2>Departure Flights</h2>
 // // // // // // // // //   //           <Grid container spacing={2} sx={{ marginTop: "1rem", marginBottom: "15px" }}>
-            
+
 // // // // // // // // //   //           {flights.length > 0 ? (
 // // // // // // // // //   //             flights.map((flight, index) => (
 // // // // // // // // //   //               <Grid item xs={12} sm={6} md={4} key={index}>
@@ -436,13 +436,13 @@
 // // // // // // // // //   //                     {/* <Button 
 // // // // // // // // //   //                       sx={{
 // // // // // // // // //   //                           backgroundColor: "purple",
-                            
+
 // // // // // // // // //   //                           '&:hover': {
 // // // // // // // // //   //                           backgroundColor: '#570987',
-      
+
 // // // // // // // // //   //                           },
 // // // // // // // // //   //                          }} 
-                           
+
 // // // // // // // // //   //                          variant="contained"
 // // // // // // // // //   //                     >
 // // // // // // // // //   //                       {selectedFlights.some((f) => f.id === flight.id) ? "Remove from Itinerary" : "Add to Itinerary"}
@@ -462,13 +462,13 @@
 // // // // // // // // //   //                   </CardContent>
 // // // // // // // // //   //                 </Card>
 // // // // // // // // //   //               </Grid>
-                
+
 // // // // // // // // //   //             ))
 // // // // // // // // //   //           ) : (
 // // // // // // // // //   //             <Typography>No flights found.</Typography>
 // // // // // // // // //   //           )}
 // // // // // // // // //   //           </Grid>
-            
+
 
 // // // // // // // // //   //           {returnFlight && returnFlights.length > 0 && (
 // // // // // // // // //   //             <>
@@ -505,9 +505,9 @@
 // // // // // // // // //   //               ))}
 // // // // // // // // //   //               </Grid>
 // // // // // // // // //   //             </>
-              
+
 // // // // // // // // //   //           )}
-            
+
 // // // // // // // // //   //         </Grid>
 
 // // // // // // // // //   //         <Button marginTop="50px" padding="20px" variant="outlined" onClick={() => setShowFlightSearch(false)}>
@@ -543,9 +543,9 @@
 // // // // // // // // //   //     <Box margin="20px">
 // // // // // // // // //   //       <h1 style={{marginLeft:"-40px", marginTop:"-10px"}}>Itinerary Form</h1>
 // // // // // // // // //   //       <h2>Step 1: Flights</h2>
-  
+
 // // // // // // // // //   //       <TextField label="Itinerary Name" value={itineraryName} onChange={(e) => setItineraryName(e.target.value)} fullWidth margin="normal" />
-  
+
 // // // // // // // // //   //       <TextField select label="Start Location" value={startLocation} onChange={(e) => setStartLocation(e.target.value)} fullWidth margin="normal">
 // // // // // // // // //   //         {airportOptions.map((option) => (
 // // // // // // // // //   //           <MenuItem key={option.code} value={option.code}>
@@ -553,7 +553,7 @@
 // // // // // // // // //   //           </MenuItem>
 // // // // // // // // //   //         ))}
 // // // // // // // // //   //       </TextField>
-  
+
 // // // // // // // // //   //       <TextField select label="End Location" value={endLocation} onChange={(e) => setEndLocation(e.target.value)} fullWidth margin="normal">
 // // // // // // // // //   //         {airportOptions.map((option) => (
 // // // // // // // // //   //           <MenuItem key={option.code} value={option.code}>
@@ -561,34 +561,34 @@
 // // // // // // // // //   //           </MenuItem>
 // // // // // // // // //   //         ))}
 // // // // // // // // //   //       </TextField>
-  
+
 // // // // // // // // //   //       <Button variant="outlined" onClick={() => setShowFlightSearch(true)} fullWidth>
 // // // // // // // // //   //         + Add a Flight
 // // // // // // // // //   //       </Button>
-  
+
 // // // // // // // // //   //       {showFlightSearch && (
 // // // // // // // // //   //         <>
 // // // // // // // // //   //           <TextField label="Departure Date" type="date" value={departureDate} onChange={(e) => setDepartureDate(e.target.value)} fullWidth margin="normal" InputLabelProps={{ shrink: true }} />
-  
+
 // // // // // // // // //   //           <FormControlLabel
 // // // // // // // // //   //             control={<Checkbox checked={returnFlight} onChange={(e) => setReturnFlight(e.target.checked)} />}
 // // // // // // // // //   //             label="Return Flight"
 // // // // // // // // //   //           />
-  
+
 // // // // // // // // //   //           {returnFlight && (
 // // // // // // // // //   //             <TextField label="Return Date" type="date" value={returnDate} onChange={(e) => setReturnDate(e.target.value)} fullWidth margin="normal" InputLabelProps={{ shrink: true }} />
 // // // // // // // // //   //           )}
-  
+
 // // // // // // // // //   //           <Button onClick={handleSearchFlights} variant="contained" color="primary">
 // // // // // // // // //   //             Search Flights
 // // // // // // // // //   //           </Button>
-  
+
 // // // // // // // // //   //           {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
-            
+
 // // // // // // // // //   //           <Grid container spacing={2} sx={{ marginTop: "1rem", marginBottom: "15px" }}>
 // // // // // // // // //   //             <h2>Departure Flights</h2>
 // // // // // // // // //   //             <Grid container spacing={2} sx={{ marginTop: "1rem", marginBottom: "15px" }}>
-              
+
 // // // // // // // // //   //             {flights.length > 0 ? (
 // // // // // // // // //   //               flights.map((flight, index) => (
 // // // // // // // // //   //                 <Grid item xs={12} sm={6} md={4} key={index}>
@@ -640,7 +640,7 @@
 // // // // // // // // //   //               <Typography>No flights found.</Typography>
 // // // // // // // // //   //             )}
 // // // // // // // // //   //             </Grid>
-  
+
 // // // // // // // // //   //             {returnFlight && returnFlights.length > 0 && (
 // // // // // // // // //   //               <>
 // // // // // // // // //   //                 <h2>Return Flights</h2>
@@ -695,13 +695,13 @@
 // // // // // // // // //   //               </>
 // // // // // // // // //   //             )}
 // // // // // // // // //   //           </Grid>
-  
+
 // // // // // // // // //   //           <Button marginTop="50px" padding="20px" variant="outlined" onClick={() => setShowFlightSearch(false)}>
 // // // // // // // // //   //             Done
 // // // // // // // // //   //           </Button>
 // // // // // // // // //   //         </>
 // // // // // // // // //   //       )}
-  
+
 // // // // // // // // //   //       <h2 style={{marginTop: "50px"}}>Selected Flights</h2>
 // // // // // // // // //   //       <Grid container spacing={2}>
 // // // // // // // // //   //         {selectedFlights.map((flight, index) => (
@@ -727,7 +727,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Box, Typography, Card, CardContent, TextField, MenuItem, Grid, Alert, Checkbox, FormControlLabel, Slider } from "@mui/material";
 import { FaPlaneDeparture, FaPlaneArrival, FaDollarSign, FaClock } from "react-icons/fa";
-import { IoAirplaneSharp } from 'react-icons/io5'; 
+import { IoAirplaneSharp } from 'react-icons/io5';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { db } from "../../firebase/firebase-config";
 import { collection, getFirestore, query as firestoreQuery, where, getDocs, setDoc, doc } from "firebase/firestore";
@@ -756,7 +756,7 @@ const getFlightOffers = async (origin, destination, departureDate, adults, maxOf
 
     const searchResponse = await fetch(searchUrl.toString(), { method: "GET", headers: { Authorization: `Bearer ${access_token}` } });
     const flightData = await searchResponse.json();
-    
+
     flightData.data.forEach((flight) => {
       flight.priceInZar = convertPriceToZar(parseFloat(flight.price.total), flight.price.currency)?.toFixed(2) || "N/A";
     });
@@ -879,8 +879,8 @@ function ItineraryForm() {
           ))}
         </TextField>
 
-         {/* Number of days for trip */}
-         <TextField
+        {/* Number of days for trip */}
+        <TextField
           label="Number of Days"
           type="number"
           value={tripDays}
@@ -925,21 +925,22 @@ function ItineraryForm() {
               {flights.length > 0 ? (
                 flights.map((flight, index) => (
                   <Grid item xs={12} sm={6} md={3} key={index}>
-                    <Card 
-                         variant={
-                          selectedFlights.some(
-                            (f) => f.name === flight.name,
-                          )
-                            ? "outlined"
-                            : "elevation"
-                        }
-                         sx={{ padding: "8px", borderColor: selectedFlights.some(
-                                        (f) => f.id === flight.id,
-                                      )
-                                        ? "primary.main"
-                                        : "grey.300", 
-                             }}
-                            onClick={() => handleFlightToggle(flight)} >
+                    <Card
+                      variant={
+                        selectedFlights.some(
+                          (f) => f.name === flight.name,
+                        )
+                          ? "outlined"
+                          : "elevation"
+                      }
+                      sx={{
+                        padding: "8px", borderColor: selectedFlights.some(
+                          (f) => f.id === flight.id,
+                        )
+                          ? "primary.main"
+                          : "grey.300",
+                      }}
+                      onClick={() => handleFlightToggle(flight)} >
                       <CardContent>
                         <Typography align="center" variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
                           <FaPlaneDeparture /> {flight.itineraries[0].segments[0].departure.iataCode} → {flight.itineraries[0].segments[0].arrival.iataCode}
@@ -947,8 +948,8 @@ function ItineraryForm() {
                         <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -2 }}>
                           <FaClock style={{ color: "#ff9800", marginRight: 4 }} />
                           Departure: {flight.itineraries[0].segments[0].departure.at.split("T")[1]}
-                       
-                          </Typography>
+
+                        </Typography>
                         <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                           <IoAirplaneSharp style={{ color: "#1976d2", marginRight: 4 }} />
                           Duration: {flight.itineraries[0].duration}
@@ -962,10 +963,22 @@ function ItineraryForm() {
                         </Typography>
                         <Button
                           variant="contained"
-                          onClick={() => handleFlightToggle(flight)}
-                          sx={{ backgroundColor: selectedFlights.some((f) => f.id === flight.id) ? '#7e57c2' : '#2196f3', color: 'white' }}
+                          size="small"
+                          sx={{
+                            marginTop: "10px",
+                            backgroundColor:
+                              selectedFlights.some(
+                                (f) => f.id === flight.id,
+                              )
+                                ? "#7e57c2"
+                                : "#2196f3",
+                          }}
                         >
-                          {selectedFlights.some((f) => f.id === flight.id) ? "Remove" : "Select"}
+                          {selectedFlights.some(
+                            (f) => f.id === flight.id,
+                          )
+                            ? "Remove"
+                            : "Select"}
                         </Button>
                       </CardContent>
                     </Card>
@@ -980,11 +993,25 @@ function ItineraryForm() {
                   <h2>Return Flights</h2>
                   {returnFlights.length > 0 ? (
                     returnFlights.map((flight, index) => (
-                      
-                     
+
+
                       <Grid item xs={12} sm={6} md={3} key={index}>
-                        <Card onClick={() => handleFlightToggle(flight)} sx={{ padding: "8px",  border: selectedFlights.some((f) => f.id === flight.id) ? 'primary.main' : 'grey.300' }}>
-                          <CardContent>
+                        <Card
+                          variant={
+                            selectedFlights.some(
+                              (f) => f.name === flight.name,
+                            )
+                              ? "outlined"
+                              : "elevation"
+                          }
+                          sx={{
+                            padding: "8px", borderColor: selectedFlights.some(
+                              (f) => f.id === flight.id,
+                            )
+                              ? "primary.main"
+                              : "grey.300",
+                          }}
+                          onClick={() => handleFlightToggle(flight)} ><CardContent>
                             <Typography align="center" variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
                               <FaPlaneArrival /> {flight.itineraries[0].segments[0].departure.iataCode} → {flight.itineraries[0].segments[0].arrival.iataCode}
                             </Typography>
@@ -1004,12 +1031,24 @@ function ItineraryForm() {
                               Airline: {getAirlineName(flight.itineraries[0].segments[0].carrierCode)}
                             </Typography>
                             <Button
-                          variant="contained"
-                          onClick={() => handleFlightToggle(flight)}
-                          sx={{ backgroundColor: selectedFlights.some((f) => f.id === flight.id) ? '#7e57c2' : '#2196f3', color: 'white' }}
-                        >
-                          {selectedFlights.some((f) => f.id === flight.id)  ? "Remove" : "Select"}
-                        </Button>
+                              variant="contained"
+                              size="small"
+                              sx={{
+                                marginTop: "10px",
+                                backgroundColor:
+                                  selectedFlights.some(
+                                    (f) => f.id === flight.id,
+                                  )
+                                    ? "#7e57c2"
+                                    : "#2196f3",
+                              }}
+                            >
+                              {selectedFlights.some(
+                                (f) => f.id === flight.id,
+                              )
+                                ? "Remove"
+                                : "Select"}
+                            </Button>
                           </CardContent>
                         </Card>
                       </Grid>
