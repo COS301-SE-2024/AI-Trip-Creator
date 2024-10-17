@@ -727,6 +727,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Box, Typography, Card, CardContent, TextField, MenuItem, Grid, Alert, Checkbox, FormControlLabel, Slider } from "@mui/material";
 import { FaPlaneDeparture, FaPlaneArrival, FaDollarSign, FaClock } from "react-icons/fa";
+import { FcClock } from "react-icons/fc";
 import { IoAirplaneSharp } from 'react-icons/io5';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { db } from "../../firebase/firebase-config";
@@ -942,29 +943,35 @@ function ItineraryForm() {
                       }}
                       onClick={() => handleFlightToggle(flight)} >
                       <CardContent>
-                        <Typography align="center" variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                      <Typography align= "center" variant="h6" sx={{ fontWeight: 'bold', mb: 1}}>
                           <FaPlaneDeparture /> {flight.itineraries[0].segments[0].departure.iataCode} → {flight.itineraries[0].segments[0].arrival.iataCode}
-                        </Typography>
-                        <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -2 }}>
-                          <FaClock style={{ color: "#ff9800", marginRight: 4 }} />
-                          Departure: {flight.itineraries[0].segments[0].departure.at.split("T")[1]}
+                     </Typography>
 
+                   <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -3, fontSize: '15.5px' }}>
+                         <FaClock style={{ color: "#ff9800", marginRight: 4 }} />
+                           Departure: {flight.itineraries[0].segments[0].departure.at.split("T")[1]}
+                       </Typography>
+                         <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -3, fontSize: '15.5px' }}>
+                           <FaPlaneArrival style={{ color: "#2196f3", marginRight: 4 }} />
+                        Arrival: {flight.itineraries[0].segments[0].arrival.at.split("T")[1]}
+                       </Typography>    
+                       <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -3 , fontSize: '15.5px'}}>
+                              <FcClock  style={{ color: "#1976d2", marginRight: 4 }} />
+                              Duration: {flight.itineraries[0].duration}
+                            </Typography>                    
+                         <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -3 , fontSize: '15.5px'}}>
+                           <IoAirplaneSharp style={{ color: "#4caf50", marginRight: 4 }} />
+                           Airline: {getAirlineName(flight.itineraries[0].segments[0].carrierCode)}
                         </Typography>
-                        <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                          <IoAirplaneSharp style={{ color: "#1976d2", marginRight: 4 }} />
-                          Duration: {flight.itineraries[0].duration}
-                        </Typography>
-                        <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                          <FaDollarSign style={{ color: "#4caf50", marginRight: 4 }} />
-                          Price: {flight.price.total} {flight.price.currency} ({flight.priceInZar ? `ZAR ${flight.priceInZar}` : "Conversion unavailable"})
-                        </Typography>
-                        <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center' }}>
-                          Airline: {getAirlineName(flight.itineraries[0].segments[0].carrierCode)}
+                        <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -1, fontSize: '15.5px'}}>
+                        <FaDollarSign style={{ color: "#f44336", marginRight: 4 }} />
+                           Price: {flight.priceInZar} ZAR
                         </Typography>
                         <Button
                           variant="contained"
                           size="small"
                           sx={{
+                            
                             marginTop: "10px",
                             backgroundColor:
                               selectedFlights.some(
@@ -1012,43 +1019,50 @@ function ItineraryForm() {
                               : "grey.300",
                           }}
                           onClick={() => handleFlightToggle(flight)} ><CardContent>
-                            <Typography align="center" variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                              <FaPlaneArrival /> {flight.itineraries[0].segments[0].departure.iataCode} → {flight.itineraries[0].segments[0].arrival.iataCode}
-                            </Typography>
-                            <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -2 }}>
-                              <FaClock style={{ color: "#ff9800", marginRight: 4 }} />
-                              Departure: {flight.itineraries[0].segments[0].departure.at.split("T")[1]}
-                            </Typography>
-                            <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                              <IoAirplaneSharp style={{ color: "#1976d2", marginRight: 4 }} />
+                            <Typography align= "center" variant="h6" sx={{ fontWeight: 'bold', mb: 1}}>
+                          <FaPlaneDeparture /> {flight.itineraries[0].segments[0].departure.iataCode} → {flight.itineraries[0].segments[0].arrival.iataCode}
+                     </Typography>
+
+                   <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -3, fontSize: '15.5px' }}>
+                         <FaClock style={{ color: "#ff9800", marginRight: 4 }} />
+                           Departure: {flight.itineraries[0].segments[0].departure.at.split("T")[1]}
+                       </Typography>
+                         <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -3, fontSize: '15.5px' }}>
+                           <FaPlaneArrival style={{ color: "#2196f3", marginRight: 4 }} />
+                        Arrival: {flight.itineraries[0].segments[0].arrival.at.split("T")[1]}
+                       </Typography>    
+                       <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -3 , fontSize: '15.5px'}}>
+                              <FcClock  style={{ color: "#1976d2", marginRight: 4 }} />
                               Duration: {flight.itineraries[0].duration}
-                            </Typography>
-                            <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                              <FaDollarSign style={{ color: "#4caf50", marginRight: 4 }} />
-                              Price: {flight.price.total} {flight.price.currency} ({flight.priceInZar ? `ZAR ${flight.priceInZar}` : "Conversion unavailable"})
-                            </Typography>
-                            <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center' }}>
-                              Airline: {getAirlineName(flight.itineraries[0].segments[0].carrierCode)}
-                            </Typography>
-                            <Button
-                              variant="contained"
-                              size="small"
-                              sx={{
-                                marginTop: "10px",
-                                backgroundColor:
-                                  selectedFlights.some(
-                                    (f) => f.id === flight.id,
-                                  )
-                                    ? "#7e57c2"
-                                    : "#2196f3",
-                              }}
-                            >
-                              {selectedFlights.some(
+                            </Typography>                    
+                         <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -3 , fontSize: '15.5px'}}>
+                           <IoAirplaneSharp style={{ color: "#4caf50", marginRight: 4 }} />
+                           Airline: {getAirlineName(flight.itineraries[0].segments[0].carrierCode)}
+                        </Typography>
+                        <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -1, fontSize: '15.5px'}}>
+                        <FaDollarSign style={{ color: "#f44336", marginRight: 4 }} />
+                           Price: {flight.priceInZar} ZAR
+                        </Typography>
+                        <Button
+                          variant="contained"
+                          size="small"
+                          sx={{
+                            
+                            marginTop: "10px",
+                            backgroundColor:
+                              selectedFlights.some(
                                 (f) => f.id === flight.id,
                               )
-                                ? "Remove"
-                                : "Select"}
-                            </Button>
+                                ? "#7e57c2"
+                                : "#2196f3",
+                          }}
+                        >
+                          {selectedFlights.some(
+                            (f) => f.id === flight.id,
+                          )
+                            ? "Remove"
+                            : "Select"}
+                        </Button>
                           </CardContent>
                         </Card>
                       </Grid>
@@ -1082,11 +1096,11 @@ function ItineraryForm() {
                         <FaClock style={{ color: "#ff9800", marginRight: 4 }} />
                         Departure: {flight.itineraries[0].segments[0].departure.at.split("T")[1]}
                       </Typography>
-                      <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                      <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -2 }}>
                         <IoAirplaneSharp style={{ color: "#1976d2", marginRight: 4 }} />
                         Duration: {flight.itineraries[0].duration}
                       </Typography>
-                      <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', mb: -2 }}>
                         <FaDollarSign style={{ color: "#4caf50", marginRight: 4 }} />
                         Price: {flight.price.total} {flight.price.currency} ({flight.priceInZar ? `ZAR ${flight.priceInZar}` : "Conversion unavailable"})
                       </Typography>
