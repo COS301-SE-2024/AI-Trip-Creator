@@ -39,6 +39,14 @@ import {
   doc,
 } from "firebase/firestore";
 
+import OpenAI from "openai";
+
+// Initialize OpenAI client
+const openai = new OpenAI({
+  apiKey: process.env.REACT_APP_OPEN_AI_KEY,
+  dangerouslyAllowBrowser: true,
+});
+
 // Amadeus API details and helper functions
 const client_id = "rwfsFIbmTtMXDAAjzXKCBcR6lZZirbin";
 const client_secret = "RGeFEPqnTMNFKNjd";
@@ -125,6 +133,8 @@ function ItineraryForm() {
   const [showActivities, setShowActivities] = useState({});
   const [showAccommodations, setShowAccommodations] = useState({});
   const [filterCriteria, setFilterCriteria] = useState({});
+  const [userInput, setUserInput] = useState("");
+  const [aiResponse, setAiResponse] = useState("");
   //fetch userid
   useEffect(() => {
     const auth = getAuth();
@@ -372,25 +382,60 @@ function ItineraryForm() {
   };
 
   const handleFinish = async () => {
-    // Collect all data and save to Firebase or perform desired actions
     try {
+      setLoading(true);
+
+      const itineraryPrompt = `
+        The user has selected the following details for their trip:
+        - Flights: ${selectedFlights
+          .map(
+            (f) =>
+              `${f.itineraries[0].segments[0].departure.iataCode} to ${f.itineraries[0].segments[0].arrival.iataCode}`,
+          )
+          .join(", ")}
+        - Accommodations: ${selectedAccommodations
+          .map((a) => a.name)
+          .join(", ")}
+        - Activities: ${selectedActivities.map((act) => act.name).join(", ")}
+        
+        Create a detailed itinerary based on the provided details. The itinerary should be structured day by day, including any relevant suggestions for travel, lodging, or activities.
+      `;
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4",
+        messages: [
+          { role: "system", content: "You are a helpful travel assistant." },
+          { role: "user", content: itineraryPrompt },
+        ],
+        max_tokens: 1000,
+      });
+
+      const aiGeneratedItinerary = response.choices[0].message.content;
+
       const itineraryData = {
         userId,
         itineraryName,
         flights: selectedFlights,
         accommodations: selectedAccommodations,
         activities: selectedActivities,
+        generatedItinerary: aiGeneratedItinerary,
         createdAt: new Date(),
       };
-      await setDoc(
+
+      /*await setDoc(
         doc(db, "itineraries", `${userId}_${Date.now()}`),
         itineraryData,
-      );
+      );*/
+      console.log(selectedFlights);
+      console.log(aiGeneratedItinerary);
+
       alert("Itinerary saved successfully!");
-      // Optionally, reset the form or redirect the user
+      setAiResponse(aiGeneratedItinerary);
+      setLoading(false);
     } catch (error) {
-      console.error("Error saving itinerary:", error);
-      // setErrorMessage("Failed to save itinerary. Please try again.");
+      console.error("Error generating itinerary:", error);
+      setErrorMessage("Failed to generate itinerary. Please try again.");
+      setLoading(false);
     }
   };
 
@@ -1345,9 +1390,7 @@ function ItineraryForm() {
               {selectedFlights.map((flight, index) => (
                 <Typography key={index}>
                   {flight.itineraries[0].segments[0].departure.iataCode} to{" "}
-                  {flight.itineraries[0].segments[0].arrival.iataCode} -{" "}
-                  {flight.price.total} {flight.price.currency} (
-                  {flight.priceInZar} ZAR)
+                  {flight.itineraries[0].segments[0].arrival.iataCode}
                 </Typography>
               ))}
             </Box>
@@ -1355,19 +1398,14 @@ function ItineraryForm() {
             <Box sx={{ marginTop: "10px" }}>
               <Typography variant="h6">Accommodations:</Typography>
               {selectedAccommodations.map((acc, index) => (
-                <Typography key={index}>
-                  {acc.name} - {acc.price} per night
-                </Typography>
+                <Typography key={index}>{acc.name}</Typography>
               ))}
             </Box>
 
             <Box sx={{ marginTop: "10px" }}>
               <Typography variant="h6">Activities:</Typography>
               {selectedActivities.map((act, index) => (
-                <Typography key={index}>
-                  {act.name} - {act.category} {"   "}
-                  {act.sub_categories[0]}
-                </Typography>
+                <Typography key={index}>{act.name}</Typography>
               ))}
             </Box>
 
@@ -1377,10 +1415,19 @@ function ItineraryForm() {
               </Alert>
             )}
 
+            {loading && <CircularProgress sx={{ marginTop: "20px" }} />}
+
+            {aiResponse && (
+              <Box sx={{ marginTop: "20px" }}>
+                <Typography variant="h6">Generated Itinerary:</Typography>
+                <Typography>{aiResponse}</Typography>
+              </Box>
+            )}
+
             <Box sx={{ marginTop: "20px" }}>
               <Button
                 variant="outlined"
-                onClick={handleBack}
+                onClick={() => setActiveStep(activeStep - 1)}
                 sx={{ marginRight: "10px" }}
               >
                 Back
@@ -1389,6 +1436,7 @@ function ItineraryForm() {
                 variant="contained"
                 color="success"
                 onClick={handleFinish}
+                disabled={loading}
               >
                 Finish
               </Button>
