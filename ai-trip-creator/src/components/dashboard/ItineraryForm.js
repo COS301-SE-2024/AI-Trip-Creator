@@ -724,7 +724,6 @@
 // // // // // // // // //   // );
 
 
-
 import React, { useState, useEffect } from "react";
 import { Button, Box, Typography, Card, CardContent, TextField, MenuItem, Grid, Alert, Checkbox, FormControlLabel, Slider } from "@mui/material";
 import { FaPlaneDeparture, FaPlaneArrival, FaDollarSign, FaClock } from "react-icons/fa";
@@ -824,9 +823,15 @@ function ItineraryForm() {
   };
 
   const handleFlightToggle = (flight) => {
-    setSelectedFlights((prevSelected) =>
-      prevSelected.some((f) => f.id === flight.id) ? prevSelected.filter((f) => f.id !== flight.id) : [...prevSelected, flight]
-    );
+    // setSelectedFlights((prevSelected) =>
+    //   prevSelected.some((f) => f.id === flight.id) ? prevSelected.filter((f) => f.id !== flight.id) : [...prevSelected, flight]
+    // );
+    setSelectedFlights((prevSelected) => {
+      const isSelected = prevSelected.some((f) => f.id === flight.id);
+      return isSelected
+        ? prevSelected.filter((f) => f.id !== flight.id) // Remove if already selected
+        : [...prevSelected, flight]; // Add if not selected
+    });
   };
 
   const handleDone = () => {
@@ -920,7 +925,21 @@ function ItineraryForm() {
               {flights.length > 0 ? (
                 flights.map((flight, index) => (
                   <Grid item xs={12} sm={6} md={3} key={index}>
-                    <Card onClick={() => handleFlightToggle(flight)} sx={{ padding: "8px", boxshadow: selectedFlights.some((f) => f.id === flight.id) ? 'primary.main' : 'grey.300' }}>
+                    <Card 
+                         variant={
+                          selectedFlights.some(
+                            (f) => f.name === flight.name,
+                          )
+                            ? "outlined"
+                            : "elevation"
+                        }
+                         sx={{ padding: "8px", borderColor: selectedFlights.some(
+                                        (f) => f.id === flight.id,
+                                      )
+                                        ? "primary.main"
+                                        : "grey.300", 
+                             }}
+                            onClick={() => handleFlightToggle(flight)} >
                       <CardContent>
                         <Typography align="center" variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
                           <FaPlaneDeparture /> {flight.itineraries[0].segments[0].departure.iataCode} → {flight.itineraries[0].segments[0].arrival.iataCode}
