@@ -139,6 +139,9 @@ function ItineraryForm() {
   const [addMoreFlights, setAddMoreFlights] = useState(false); //  To handle adding more flights
   const [tripDays, setTripDays] = useState(1);
   const [budgetRange, setBudgetRange] = useState([1000, 10000]);
+  const [Locations, setLocations] = useState([]);
+  const [Lengths, setLengths] = useState([]);
+
   //fetch userid
   useEffect(() => {
     const auth = getAuth();
@@ -202,7 +205,33 @@ function ItineraryForm() {
         : [...prevSelected, flight]; // Add if not selected
     });
   };
+
+  const addEndLocation = () => {
+    if (startLocation !== "" && !Locations.includes(startLocation)) {
+      setLocations((prevStartLocations) => [
+        ...prevStartLocations,
+        startLocation,
+      ]);
+    }
+    if (endLocation !== "" && !Locations.includes(endLocation)) {
+      setLocations((prevEndLocations) => [...prevEndLocations, endLocation]);
+    }
+
+    if (tripDays !== "" && !Lengths.includes(tripDays)) {
+      setLengths((prevEndLocations) => [...prevEndLocations, tripDays]);
+    }
+    //console.log("End Location:", endLocation);
+  };
+
+  // Use useEffect to log the updated locations whenever it changes
+  useEffect(() => {
+    console.log("Updated Locations:", Locations);
+  }, [Locations]);
+
   const handleDone = () => {
+    addEndLocation();
+    console.log(endLocation);
+    console.log(Locations);
     setShowFlightSearch(false);
     setAddMoreFlights(true); // Enable adding more flights
     setStartLocation("");
@@ -235,7 +264,7 @@ function ItineraryForm() {
 
       // Fetch accommodations for each end location
       await Promise.all(
-        endLocations.map(async (location) => {
+        Locations.map(async (location) => {
           const accommodationsRef = collection(db, "Accommodation");
           const q = firestoreQuery(
             accommodationsRef,
@@ -280,7 +309,7 @@ function ItineraryForm() {
 
       // Fetch activities for each end location
       await Promise.all(
-        endLocations.map(async (location) => {
+        Locations.map(async (location) => {
           const accommodationsRef = collection(db, "LikedActivities");
           const q = firestoreQuery(
             accommodationsRef,
@@ -374,7 +403,9 @@ function ItineraryForm() {
       const arrivalPlaces = selectedFlights.map(
         (flight) => flight.itineraries[0].segments[0].arrival.iataCode,
       );
-      setArrivalplaces(arrivalPlaces);
+      console.log("wool", Locations);
+      console.log("verine", arrivalPlaces);
+      setArrivalplaces(Locations);
       const fetchedAccommodations = await getAccommodations(arrivalPlaces);
       setAccommodations(fetchedAccommodations);
       const fetchedActivities = await getActivities(arrivalPlaces);
@@ -1011,14 +1042,14 @@ function ItineraryForm() {
                       </>
                     )}
                   </Grid>
-                  <Button
+                  {/*<Button
                     onClick={handleDone}
                     variant="contained"
                     color="primary"
                     sx={{ marginTop: "20px" }}
                   >
                     Done
-                  </Button>
+                  </Button>*/}
                 </>
               )}
 
@@ -1126,8 +1157,31 @@ function ItineraryForm() {
                 </Button>
               )}
             </Box>
-            <Box sx={{ marginTop: "20px" }}>
-              <Button variant="contained" color="primary" onClick={handleNext}>
+            <Box
+              sx={{
+                marginTop: "20px",
+                display: "flex",
+
+                gap: "100px",
+                alignItems: "center",
+              }}
+            >
+              <Button
+                onClick={handleDone}
+                variant="contained"
+                color="primary"
+                size="small"
+                sx={{ padding: "6px 12px", width: "150px", height: "50px" }} // Adjust width as needed
+              >
+                Add to Itinerary
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleNext}
+                size="small"
+                sx={{ padding: "6px 12px", width: "150px", height: "50px" }} // Adjust width as needed
+              >
                 Next
               </Button>
             </Box>
@@ -1297,9 +1351,7 @@ function ItineraryForm() {
 
         {activeStep === 2 && (
           <Box>
-            <Typography variant="h6" sx={{ marginTop: "20px" }}>
-              Step 3: Activities
-            </Typography>
+            <h2>Step 3: Activities</h2>
 
             {loading ? (
               <CircularProgress sx={{ marginTop: "20px" }} />
