@@ -1126,6 +1126,11 @@ function ItineraryForm() {
                 </Button>
               )}
             </Box>
+            <Box sx={{ marginTop: "20px" }}>
+              <Button variant="contained" color="primary" onClick={handleNext}>
+                Next
+              </Button>
+            </Box>
           </Box>
         )}
 
