@@ -431,28 +431,10 @@ function ItineraryForm() {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleFinish = async () => {
+  const generateItinerary = async () => {
     try {
       setLoading(true);
-
-      // Generate day-by-day data for the itinerary
-      const days = Locations.map((location, index) => {
-        const dayLength = Lengths[index] || 1;
-        const activities = selectedActivities.filter(
-          (activity) =>
-            activity.day >= index + 1 && activity.day < index + 1 + dayLength,
-        );
-
-        return {
-          dayNumber: index + 1,
-          location,
-          length: dayLength,
-          accommodation: selectedAccommodations[index]
-            ? [selectedAccommodations[index]]
-            : [],
-          activities,
-        };
-      });
+      setErrorMessage("");
 
       // Create a prompt for AI generation based on provided data
       const itineraryPrompt = `
@@ -478,15 +460,44 @@ function ItineraryForm() {
       });
 
       const aiGeneratedItinerary = response.choices[0].message.content;
-
-      // Save the itinerary data using createItinerary from Dashboard
-      // await createItinerary(itineraryName, Locations[0], 0, days.length, days);
-
       setAiResponse(aiGeneratedItinerary);
       setLoading(false);
     } catch (error) {
       console.error("Error generating itinerary:", error);
       setErrorMessage("Failed to generate itinerary. Please try again.");
+      setLoading(false);
+    }
+  };
+
+  const handleFinish = async () => {
+    try {
+      setLoading(true);
+
+      // Generate day-by-day data for the itinerary
+      const days = Locations.map((location, index) => {
+        const dayLength = Lengths[index] || 1;
+        const activities = selectedActivities.filter(
+          (activity) =>
+            activity.day >= index + 1 && activity.day < index + 1 + dayLength,
+        );
+
+        return {
+          dayNumber: index + 1,
+          location,
+          length: dayLength,
+          accommodation: selectedAccommodations[index]
+            ? [selectedAccommodations[index]]
+            : [],
+          activities,
+        };
+      });
+
+      //      await createItinerary(itineraryName, Locations[0], 0, days.length, days);
+      setLoading(false);
+      alert("Itinerary saved successfully!");
+    } catch (error) {
+      console.error("Error saving itinerary:", error);
+      setErrorMessage("Failed to save itinerary. Please try again.");
       setLoading(false);
     }
   };
@@ -1653,7 +1664,14 @@ function ItineraryForm() {
 
             {/* Loading Indicator */}
             {loading && <CircularProgress sx={{ marginTop: "20px" }} />}
-
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={generateItinerary}
+              disabled={loading}
+            >
+              Regenerate Itinerary
+            </Button>
             {/* Navigation Buttons */}
             <Box sx={{ marginTop: "20px", display: "flex", gap: "10px" }}>
               <Button
