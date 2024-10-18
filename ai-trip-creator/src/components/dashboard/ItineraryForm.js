@@ -1546,6 +1546,7 @@ function ItineraryForm() {
           <Box>
             <h2>Review and Submit</h2>
 
+            {/* Itinerary Name */}
             <Box
               p={2}
               border={1}
@@ -1553,54 +1554,111 @@ function ItineraryForm() {
               borderRadius="8px"
               sx={{ marginTop: "10px" }}
             >
-              <Typography variant="h6">Itinerary Name:</Typography>
+              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                Itinerary Name:
+              </Typography>
               <Typography>{itineraryName}</Typography>
             </Box>
 
-            <Box sx={{ marginTop: "10px" }}>
-              <Typography variant="h6">Flights:</Typography>
-              {selectedFlights.map((flight, index) => (
-                <Typography key={index}>
-                  {flight.itineraries[0].segments[0].departure.iataCode} to{" "}
-                  {flight.itineraries[0].segments[0].arrival.iataCode}
+            {/* Flights Section */}
+            {selectedFlights.length > 0 && (
+              <Box
+                p={2}
+                border={1}
+                borderColor="grey.300"
+                borderRadius="8px"
+                sx={{ marginTop: "10px" }}
+              >
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  Flights:
                 </Typography>
-              ))}
-            </Box>
+                {selectedFlights.map((flight, index) => (
+                  <Typography key={index}>
+                    {flight.itineraries[0].segments[0].departure.iataCode} to{" "}
+                    {flight.itineraries[0].segments[0].arrival.iataCode}
+                  </Typography>
+                ))}
+              </Box>
+            )}
 
-            <Box sx={{ marginTop: "10px" }}>
-              <Typography variant="h6">Accommodations:</Typography>
-              {selectedAccommodations.map((acc, index) => (
-                <Typography key={index}>{acc.name}</Typography>
-              ))}
-            </Box>
+            {/* Accommodations Section */}
+            {selectedAccommodations.length > 0 && (
+              <Box
+                p={2}
+                border={1}
+                borderColor="grey.300"
+                borderRadius="8px"
+                sx={{ marginTop: "10px" }}
+              >
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  Accommodations:
+                </Typography>
+                {selectedAccommodations.map((acc, index) => (
+                  <Typography key={index}>{acc.name}</Typography>
+                ))}
+              </Box>
+            )}
 
-            <Box sx={{ marginTop: "10px" }}>
-              <Typography variant="h6">Activities:</Typography>
-              {selectedActivities.map((act, index) => (
-                <Typography key={index}>{act.name}</Typography>
-              ))}
-            </Box>
+            {/* Activities Section */}
+            {selectedActivities.length > 0 && (
+              <Box
+                p={2}
+                border={1}
+                borderColor="grey.300"
+                borderRadius="8px"
+                sx={{ marginTop: "10px" }}
+              >
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  Activities:
+                </Typography>
+                {selectedActivities.map((act, index) => (
+                  <Typography key={index}>{act.name}</Typography>
+                ))}
+              </Box>
+            )}
 
+            {/* Generated Itinerary */}
+            {aiResponse && (
+              <Box sx={{ marginTop: "20px" }}>
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  Generated Itinerary:
+                </Typography>
+                {aiResponse
+                  .split("Day ")
+                  .slice(1)
+                  .map((dayText, index) => (
+                    <Box
+                      key={index}
+                      p={2}
+                      border={1}
+                      borderColor="grey.300"
+                      borderRadius="8px"
+                      sx={{ marginTop: "10px" }}
+                    >
+                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                        Day {index + 1}
+                      </Typography>
+                      <Typography>{dayText.trim()}</Typography>
+                    </Box>
+                  ))}
+              </Box>
+            )}
+
+            {/* Error Message */}
             {errorMessage && (
               <Alert severity="error" sx={{ marginTop: "10px" }}>
                 {errorMessage}
               </Alert>
             )}
 
+            {/* Loading Indicator */}
             {loading && <CircularProgress sx={{ marginTop: "20px" }} />}
 
-            {aiResponse && (
-              <Box sx={{ marginTop: "20px" }}>
-                <Typography variant="h6">Generated Itinerary:</Typography>
-                <Typography>{aiResponse}</Typography>
-              </Box>
-            )}
-
-            <Box sx={{ marginTop: "20px" }}>
+            {/* Navigation Buttons */}
+            <Box sx={{ marginTop: "20px", display: "flex", gap: "10px" }}>
               <Button
                 variant="outlined"
                 onClick={() => setActiveStep(activeStep - 1)}
-                sx={{ marginRight: "10px" }}
               >
                 Back
               </Button>
