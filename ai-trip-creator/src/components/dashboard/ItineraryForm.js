@@ -144,6 +144,8 @@ function ItineraryForm() {
   const [budgetRange, setBudgetRange] = useState([1000, 10000]);
   const [Locations, setLocations] = useState([]);
   const [Lengths, setLengths] = useState([]);
+  const [selectedDepartureFlights, setSelectedDepartureFlights] = useState([]);
+const [selectedReturnFlights, setSelectedReturnFlights] = useState([]);
 
   //fetch userid
   useEffect(() => {
@@ -197,16 +199,34 @@ function ItineraryForm() {
     }
   };
 
-  const handleFlightToggle = (flight) => {
-    // setSelectedFlights((prevSelected) =>
-    //   prevSelected.some((f) => f.id === flight.id) ? prevSelected.filter((f) => f.id !== flight.id) : [...prevSelected, flight]
-    // );
-    setSelectedFlights((prevSelected) => {
-      const isSelected = prevSelected.some((f) => f.id === flight.id);
-      return isSelected
-        ? prevSelected.filter((f) => f.id !== flight.id) // Remove if already selected
-        : [...prevSelected, flight]; // Add if not selected
-    });
+  // const handleFlightToggle = (flight) => {
+  //   // setSelectedFlights((prevSelected) =>
+  //   //   prevSelected.some((f) => f.id === flight.id) ? prevSelected.filter((f) => f.id !== flight.id) : [...prevSelected, flight]
+  //   // );
+  //   setSelectedFlights((prevSelected) => {
+  //     const isSelected = prevSelected.some((f) => f.id === flight.id);
+  //     return isSelected
+  //       ? prevSelected.filter((f) => f.id !== flight.id) // Remove if already selected
+  //       : [...prevSelected, flight]; // Add if not selected
+  //   });
+  // };
+
+  const handleFlightToggle = (flight, isReturn = false) => {
+    if (isReturn) {
+      setSelectedReturnFlights((prevSelected) => {
+        const isSelected = prevSelected.some((f) => f.id === flight.id);
+        return isSelected
+          ? prevSelected.filter((f) => f.id !== flight.id) // Remove if already selected
+          : [...prevSelected, flight]; // Add if not selected
+      });
+    } else {
+      setSelectedDepartureFlights((prevSelected) => {
+        const isSelected = prevSelected.some((f) => f.id === flight.id);
+        return isSelected
+          ? prevSelected.filter((f) => f.id !== flight.id) // Remove if already selected
+          : [...prevSelected, flight]; // Add if not selected
+      });
+    }
   };
 
   const addEndLocation = () => {
@@ -728,7 +748,7 @@ function ItineraryForm() {
                             <Grid item xs={12} sm={6} md={3} key={index}>
                               <Card
                                 variant={
-                                  selectedFlights.some(
+                                  selectedDepartureFlights.some(
                                     (f) => f.name === flight.name,
                                   )
                                     ? "outlined"
@@ -736,7 +756,7 @@ function ItineraryForm() {
                                 }
                                 sx={{
                                   padding: "8px",
-                                  borderColor: selectedFlights.some(
+                                  borderColor: selectedDepartureFlights.some(
                                     (f) => f.id === flight.id,
                                   )
                                     ? "primary.main"
@@ -897,7 +917,7 @@ function ItineraryForm() {
                               <Grid item xs={12} sm={6} md={3} key={index}>
                                 <Card
                                   variant={
-                                    selectedFlights.some(
+                                    selectedReturnFlights.some(
                                       (f) => f.name === flight.name,
                                     )
                                       ? "outlined"
@@ -905,13 +925,13 @@ function ItineraryForm() {
                                   }
                                   sx={{
                                     padding: "8px",
-                                    borderColor: selectedFlights.some(
+                                    borderColor: selectedReturnFlights.some(
                                       (f) => f.id === flight.id,
                                     )
                                       ? "primary.main"
                                       : "grey.300",
                                   }}
-                                  onClick={() => handleFlightToggle(flight)}
+                                  onClick={() => handleFlightToggle(flight,true)}
                                 >
                                   <CardContent>
                                     <Typography
