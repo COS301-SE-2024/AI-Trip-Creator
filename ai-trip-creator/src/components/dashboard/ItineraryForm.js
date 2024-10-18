@@ -42,6 +42,8 @@ import {
 } from "firebase/firestore";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import OpenAI from "openai";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { createItinerary, getItinerary, updateItinerary } from "./dashboard";
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -1199,10 +1201,9 @@ function ItineraryForm() {
                 color="primary"
                 onClick={handleNext}
                 size="small"
-                sx={{ padding: "6px 12px" }} // Adjust width as needed
-              >
-                Next
-              </Button>
+                sx={{ padding: "6px 12px" }}
+                endIcon={<ArrowForwardIcon />}
+              ></Button>
             </Box>
           </Box>
         )}
@@ -1378,12 +1379,16 @@ function ItineraryForm() {
                 variant="outlined"
                 onClick={handleBack}
                 sx={{ marginRight: "10px" }}
-              >
-                Back
-              </Button>
-              <Button variant="contained" color="primary" onClick={handleNext}>
-                Next
-              </Button>
+                startIcon={<ArrowBackIcon />}
+              ></Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleNext}
+                size="small"
+                sx={{ padding: "6px 12px" }}
+                endIcon={<ArrowForwardIcon />}
+              ></Button>
             </Box>
           </Box>
         )}
@@ -1564,12 +1569,16 @@ function ItineraryForm() {
                 variant="outlined"
                 onClick={handleBack}
                 sx={{ marginRight: "10px" }}
-              >
-                Back
-              </Button>
-              <Button variant="contained" color="primary" onClick={handleNext}>
-                Next
-              </Button>
+                startIcon={<ArrowBackIcon />}
+              ></Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleNext}
+                size="small"
+                sx={{ padding: "6px 12px" }}
+                endIcon={<ArrowForwardIcon />}
+              ></Button>
             </Box>
           </Box>
         )}
@@ -1724,9 +1733,8 @@ function ItineraryForm() {
               <Button
                 variant="outlined"
                 onClick={() => setActiveStep(activeStep - 1)}
-              >
-                Back
-              </Button>
+                startIcon={<ArrowBackIcon />}
+              ></Button>
               <Button
                 variant="contained"
                 color="success"
