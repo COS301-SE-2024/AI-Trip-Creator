@@ -392,6 +392,8 @@ const Dashboard = () => {
     // Add user's input to the responses state
     const newMessage = { type: "user", text: userInput };
     setResponses([...responses, newMessage]);
+    setUserInput("");
+    setLoading(true);
 
     try {
       // Create an array of messages from the current responses state
@@ -1022,7 +1024,7 @@ const Dashboard = () => {
         },
       ]);
     }
-
+    setLoading(false);
     setUserInput(""); // Clear the input
   };
 
