@@ -16,6 +16,8 @@ import {
   Step,
   StepLabel,
   CircularProgress,
+  Slider,
+  IconButton,
 } from "@mui/material";
 import {
   FaPlaneDeparture,
@@ -26,7 +28,7 @@ import {
   FaClock,
 } from "react-icons/fa";
 import { IoAirplaneSharp } from "react-icons/io5"; // For airline icon
-
+import { FcClock } from "react-icons/fc";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { db } from "../../firebase/firebase-config";
 import {
@@ -38,9 +40,11 @@ import {
   setDoc,
   doc,
 } from "firebase/firestore";
-
+import RefreshIcon from "@mui/icons-material/Refresh";
 import OpenAI from "openai";
-
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { createItinerary, getItinerary, updateItinerary } from "./dashboard";
 // Initialize OpenAI client
 const openai = new OpenAI({
   apiKey: process.env.REACT_APP_OPEN_AI_KEY,
@@ -135,6 +139,12 @@ function ItineraryForm() {
   const [filterCriteria, setFilterCriteria] = useState({});
   const [userInput, setUserInput] = useState("");
   const [aiResponse, setAiResponse] = useState("");
+  const [addMoreFlights, setAddMoreFlights] = useState(false); //  To handle adding more flights
+  const [tripDays, setTripDays] = useState(1);
+  const [budgetRange, setBudgetRange] = useState([1000, 10000]);
+  const [Locations, setLocations] = useState([]);
+  const [Lengths, setLengths] = useState([]);
+
   //fetch userid
   useEffect(() => {
     const auth = getAuth();
@@ -188,11 +198,52 @@ function ItineraryForm() {
   };
 
   const handleFlightToggle = (flight) => {
-    setSelectedFlights((prevSelected) =>
-      prevSelected.some((f) => f.id === flight.id)
-        ? prevSelected.filter((f) => f.id !== flight.id)
-        : [...prevSelected, flight],
-    );
+    // setSelectedFlights((prevSelected) =>
+    //   prevSelected.some((f) => f.id === flight.id) ? prevSelected.filter((f) => f.id !== flight.id) : [...prevSelected, flight]
+    // );
+    setSelectedFlights((prevSelected) => {
+      const isSelected = prevSelected.some((f) => f.id === flight.id);
+      return isSelected
+        ? prevSelected.filter((f) => f.id !== flight.id) // Remove if already selected
+        : [...prevSelected, flight]; // Add if not selected
+    });
+  };
+
+  const addEndLocation = () => {
+    if (startLocation !== "" && !Locations.includes(startLocation)) {
+      setLocations((prevStartLocations) => [
+        ...prevStartLocations,
+        startLocation,
+      ]);
+    }
+    if (endLocation !== "" && !Locations.includes(endLocation)) {
+      setLocations((prevEndLocations) => [...prevEndLocations, endLocation]);
+    }
+
+    if (tripDays !== "" && !Lengths.includes(tripDays)) {
+      setLengths((prevEndLocations) => [...prevEndLocations, tripDays]);
+    }
+    //console.log("End Location:", endLocation);
+  };
+
+  // Use useEffect to log the updated locations whenever it changes
+  useEffect(() => {
+    console.log("Updated Locations:", Locations);
+  }, [Locations]);
+
+  const handleDone = () => {
+    addEndLocation();
+    console.log(endLocation);
+    console.log(Locations);
+    setShowFlightSearch(false);
+    setAddMoreFlights(true); // Enable adding more flights
+    setStartLocation("");
+    setEndLocation("");
+    setDepartureDate("");
+    setReturnFlight(false);
+    setReturnDate("");
+    setFlights([]);
+    setReturnFlights([]);
   };
 
   const getAirlineName = (carrierCode) => {
@@ -216,7 +267,7 @@ function ItineraryForm() {
 
       // Fetch accommodations for each end location
       await Promise.all(
-        endLocations.map(async (location) => {
+        Locations.map(async (location) => {
           const accommodationsRef = collection(db, "Accommodation");
           const q = firestoreQuery(
             accommodationsRef,
@@ -261,7 +312,7 @@ function ItineraryForm() {
 
       // Fetch activities for each end location
       await Promise.all(
-        endLocations.map(async (location) => {
+        Locations.map(async (location) => {
           const accommodationsRef = collection(db, "LikedActivities");
           const q = firestoreQuery(
             accommodationsRef,
@@ -355,7 +406,9 @@ function ItineraryForm() {
       const arrivalPlaces = selectedFlights.map(
         (flight) => flight.itineraries[0].segments[0].arrival.iataCode,
       );
-      setArrivalplaces(arrivalPlaces);
+      console.log("wool", Locations);
+      console.log("verine", arrivalPlaces);
+      setArrivalplaces(Locations);
       const fetchedAccommodations = await getAccommodations(arrivalPlaces);
       setAccommodations(fetchedAccommodations);
       const fetchedActivities = await getActivities(arrivalPlaces);
@@ -381,49 +434,25 @@ function ItineraryForm() {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleFinish = async () => {
+  const generateItinerary = async () => {
     try {
       setLoading(true);
+      setErrorMessage("");
 
-      const days = selectedFlights.map((flight, index) => ({
-        dayNumber: index + 1,
-        flights: [
-          {
-            flightNumber: flight.number,
-            departure: flight.itineraries[0].segments[0].departure.at,
-            arrival: flight.itineraries[0].segments[0].arrival.at,
-            from: flight.itineraries[0].segments[0].departure.iataCode,
-            to: flight.itineraries[0].segments[0].arrival.iataCode,
-            carrier: flight.itineraries[0].segments[0].carrierCode,
-            aircraft: flight.itineraries[0].segments[0].aircraft.code,
-          },
-        ],
-        accommodation: selectedAccommodations[index]
-          ? [selectedAccommodations[index]]
-          : [],
-        activities: selectedActivities.filter(
-          (activity) => activity.day === index + 1,
-        ),
-      }));
-
-      // Create the prompt for AI generation
+      // Create a prompt for AI generation based on provided data
       const itineraryPrompt = `
-        The user has selected the following details for their trip:
+        The user has selected the following details:
         - Itinerary Name: ${itineraryName}
-        - Flights: ${selectedFlights
-          .map(
-            (f) =>
-              `${f.itineraries[0].segments[0].departure.iataCode} to ${f.itineraries[0].segments[0].arrival.iataCode}, flight number ${f.number}, departing at ${f.itineraries[0].segments[0].departure.at}`,
-          )
-          .join("; ")}
+        - Locations: ${Locations.join(", ")}
+        - Lengths: ${Lengths.join(", ")}
         - Accommodations: ${selectedAccommodations
           .map((a) => a.name)
           .join(", ")}
         - Activities: ${selectedActivities.map((act) => act.name).join(", ")}
-        
-        Based on these details, create a detailed day-by-day itinerary, making sure to include travel information for the flights, suggestions for lodging, and planned activities for each day.
+        Based on these details, create a detailed itinerary.
       `;
 
+      // Generate itinerary with OpenAI
       const response = await openai.chat.completions.create({
         model: "gpt-4",
         messages: [
@@ -434,30 +463,44 @@ function ItineraryForm() {
       });
 
       const aiGeneratedItinerary = response.choices[0].message.content;
-
-      const itineraryData = {
-        userId,
-        itineraryName,
-        flights: selectedFlights,
-        accommodations: selectedAccommodations,
-        activities: selectedActivities,
-        generatedItinerary: aiGeneratedItinerary,
-        createdAt: new Date(),
-      };
-
-      /*await setDoc(
-        doc(db, "itineraries", `${userId}_${Date.now()}`),
-        itineraryData,
-      );*/
-      console.log(selectedFlights);
-      console.log(aiGeneratedItinerary);
-
-      alert("Itinerary saved successfully!");
       setAiResponse(aiGeneratedItinerary);
       setLoading(false);
     } catch (error) {
       console.error("Error generating itinerary:", error);
       setErrorMessage("Failed to generate itinerary. Please try again.");
+      setLoading(false);
+    }
+  };
+
+  const handleFinish = async () => {
+    try {
+      setLoading(true);
+
+      // Generate day-by-day data for the itinerary
+      const days = Locations.map((location, index) => {
+        const dayLength = Lengths[index] || 1;
+        const activities = selectedActivities.filter(
+          (activity) =>
+            activity.day >= index + 1 && activity.day < index + 1 + dayLength,
+        );
+
+        return {
+          dayNumber: index + 1,
+          location,
+          length: dayLength,
+          accommodation: selectedAccommodations[index]
+            ? [selectedAccommodations[index]]
+            : [],
+          activities,
+        };
+      });
+
+      // await createItinerary(itineraryName, Locations[0], budgetRange, days.length, days);
+      setLoading(false);
+      alert("Itinerary saved successfully!");
+    } catch (error) {
+      console.error("Error saving itinerary:", error);
+      setErrorMessage("Failed to save itinerary. Please try again.");
       setLoading(false);
     }
   };
@@ -546,128 +589,493 @@ function ItineraryForm() {
 
         {/* Step Content */}
         {activeStep === 0 && (
-          <Box>
-            <h2>Step 1: Flights</h2>
-
-            {/* Itinerary, start, end locations, and search button */}
-            <TextField
-              label="Itinerary Name"
-              value={itineraryName}
-              onChange={(e) => setItineraryName(e.target.value)}
-              fullWidth
-              margin="normal"
-            />
-            <TextField
-              select
-              label="Start Location"
-              value={startLocation}
-              onChange={(e) => setStartLocation(e.target.value)}
-              fullWidth
-              margin="normal"
-            >
-              {airportOptions.map((option) => (
-                <MenuItem key={option.code} value={option.code}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
-              select
-              label="End Location"
-              value={endLocation}
-              onChange={(e) => setEndLocation(e.target.value)}
-              fullWidth
-              margin="normal"
-            >
-              {airportOptions.map((option) => (
-                <MenuItem key={option.code} value={option.code}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-            <Button
-              variant="outlined"
-              onClick={() => setShowFlightSearch(true)}
-              fullWidth
-            >
-              + Add a Flight
-            </Button>
-
-            {/* Flight search section */}
-            {showFlightSearch && (
-              <>
-                {/* Date inputs and checkboxes */}
+          <Box alignItems="center" alignContent="center">
+            <Box margin="20px">
+              <h2>Step 1: Flights</h2>
+              <Box
+                p={5}
+                border={1}
+                borderColor="grey.300"
+                borderRadius="8px"
+                margin="20px"
+              >
                 <TextField
-                  label="Departure Date"
-                  type="date"
-                  value={departureDate}
-                  onChange={(e) => setDepartureDate(e.target.value)}
+                  label="Itinerary Name"
+                  value={itineraryName}
+                  onChange={(e) => setItineraryName(e.target.value)}
                   fullWidth
                   margin="normal"
-                  InputLabelProps={{ shrink: true }}
                 />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={returnFlight}
-                      onChange={(e) => setReturnFlight(e.target.checked)}
-                    />
-                  }
-                  label="Return Flight"
-                />
-                {returnFlight && (
-                  <TextField
-                    label="Return Date"
-                    type="date"
-                    value={returnDate}
-                    onChange={(e) => setReturnDate(e.target.value)}
-                    fullWidth
-                    margin="normal"
-                    InputLabelProps={{ shrink: true }}
-                  />
-                )}
-                <Button
-                  onClick={handleSearchFlights}
-                  variant="contained"
-                  color="primary"
+                <TextField
+                  select
+                  label="Start Location"
+                  value={startLocation}
+                  onChange={(e) => setStartLocation(e.target.value)}
+                  fullWidth
+                  margin="normal"
                 >
-                  Search Flights
+                  {airportOptions.map((option) => (
+                    <MenuItem key={option.code} value={option.code}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
+                <TextField
+                  select
+                  label="End Location"
+                  value={endLocation}
+                  onChange={(e) => setEndLocation(e.target.value)}
+                  fullWidth
+                  margin="normal"
+                >
+                  {airportOptions.map((option) => (
+                    <MenuItem key={option.code} value={option.code}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
+
+                {/* Number of days for trip */}
+                <TextField
+                  label="Number of Days"
+                  type="number"
+                  value={tripDays}
+                  onChange={(e) => setTripDays(e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  InputProps={{ inputProps: { min: 1 } }}
+                />
+
+                {/* Budget Range */}
+                <Typography gutterBottom>Budget Range (ZAR)</Typography>
+                <Slider
+                  value={budgetRange}
+                  onChange={(e, newValue) => setBudgetRange(newValue)}
+                  valueLabelDisplay="auto"
+                  min={1000}
+                  max={10000}
+                  step={500}
+                  marks={[
+                    { value: 1000, label: "R1000" },
+                    { value: 5000, label: "R5000" },
+                    { value: 10000, label: "R10000" },
+                  ]}
+                />
+                <Button
+                  variant="outlined"
+                  onClick={() => setShowFlightSearch(true)}
+                  fullWidth
+                >
+                  + Add a Flight
                 </Button>
 
-                {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+                {showFlightSearch && (
+                  <>
+                    <TextField
+                      label="Departure Date"
+                      type="date"
+                      value={departureDate}
+                      onChange={(e) => setDepartureDate(e.target.value)}
+                      fullWidth
+                      margin="normal"
+                      InputLabelProps={{ shrink: true }}
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={returnFlight}
+                          onChange={(e) => setReturnFlight(e.target.checked)}
+                        />
+                      }
+                      label="Return Flight"
+                    />
+                    {returnFlight && (
+                      <TextField
+                        label="Return Date"
+                        type="date"
+                        value={returnDate}
+                        onChange={(e) => setReturnDate(e.target.value)}
+                        fullWidth
+                        margin="normal"
+                        InputLabelProps={{ shrink: true }}
+                      />
+                    )}
+                    <Button
+                      onClick={handleSearchFlights}
+                      variant="contained"
+                      color="primary"
+                    >
+                      Search Flights
+                    </Button>
 
-                {/* Flight cards */}
-                <Grid
-                  container
-                  spacing={2}
-                  sx={{ marginTop: "1rem", marginBottom: "15px" }}
-                >
-                  <h2>Departure Flights</h2>
-                  <Grid
-                    container
-                    spacing={2}
-                    sx={{ marginTop: "1rem", marginBottom: "15px" }}
+                    {errorMessage && (
+                      <Alert severity="error">{errorMessage}</Alert>
+                    )}
+
+                    <Grid
+                      container
+                      spacing={2}
+                      sx={{ marginTop: "1rem", marginBottom: "15px" }}
+                    >
+                      <h2>Departure Flights</h2>
+                      <Grid
+                        container
+                        spacing={2}
+                        sx={{ marginTop: "1rem", marginBottom: "15px" }}
+                      >
+                        {flights.length > 0 ? (
+                          flights.map((flight, index) => (
+                            <Grid item xs={12} sm={6} md={3} key={index}>
+                              <Card
+                                variant={
+                                  selectedFlights.some(
+                                    (f) => f.name === flight.name,
+                                  )
+                                    ? "outlined"
+                                    : "elevation"
+                                }
+                                sx={{
+                                  padding: "8px",
+                                  borderColor: selectedFlights.some(
+                                    (f) => f.id === flight.id,
+                                  )
+                                    ? "primary.main"
+                                    : "grey.300",
+                                }}
+                                onClick={() => handleFlightToggle(flight)}
+                              >
+                                <CardContent>
+                                  <Typography
+                                    align="center"
+                                    variant="h6"
+                                    sx={{ fontWeight: "bold", mb: 1 }}
+                                  >
+                                    <FaPlaneDeparture />{" "}
+                                    {
+                                      flight.itineraries[0].segments[0]
+                                        .departure.iataCode
+                                    }{" "}
+                                    →{" "}
+                                    {
+                                      flight.itineraries[0].segments[0].arrival
+                                        .iataCode
+                                    }
+                                  </Typography>
+
+                                  <Typography
+                                    variant="body2"
+                                    sx={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      mb: -3,
+                                      fontSize: "15.5px",
+                                    }}
+                                  >
+                                    <FaClock
+                                      style={{
+                                        color: "#ff9800",
+                                        marginRight: 4,
+                                      }}
+                                    />
+                                    Departure:{" "}
+                                    {
+                                      flight.itineraries[0].segments[0].departure.at.split(
+                                        "T",
+                                      )[1]
+                                    }
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    sx={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      mb: -3,
+                                      fontSize: "15.5px",
+                                    }}
+                                  >
+                                    <FaPlaneArrival
+                                      style={{
+                                        color: "#2196f3",
+                                        marginRight: 4,
+                                      }}
+                                    />
+                                    Arrival:{" "}
+                                    {
+                                      flight.itineraries[0].segments[0].arrival.at.split(
+                                        "T",
+                                      )[1]
+                                    }
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    sx={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      mb: -3,
+                                      fontSize: "15.5px",
+                                    }}
+                                  >
+                                    <FcClock
+                                      style={{
+                                        color: "#1976d2",
+                                        marginRight: 4,
+                                      }}
+                                    />
+                                    Duration: {flight.itineraries[0].duration}
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    sx={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      mb: -3,
+                                      fontSize: "15.5px",
+                                    }}
+                                  >
+                                    <IoAirplaneSharp
+                                      style={{
+                                        color: "#4caf50",
+                                        marginRight: 4,
+                                      }}
+                                    />
+                                    Airline:{" "}
+                                    {getAirlineName(
+                                      flight.itineraries[0].segments[0]
+                                        .carrierCode,
+                                    )}
+                                  </Typography>
+                                  <Typography
+                                    variant="body2"
+                                    sx={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      mb: -1,
+                                      fontSize: "15.5px",
+                                    }}
+                                  >
+                                    <FaDollarSign
+                                      style={{
+                                        color: "#f44336",
+                                        marginRight: 4,
+                                      }}
+                                    />
+                                    Price: {flight.priceInZar} ZAR
+                                  </Typography>
+                                  <Button
+                                    variant="contained"
+                                    size="small"
+                                    sx={{
+                                      marginTop: "10px",
+                                      backgroundColor: selectedFlights.some(
+                                        (f) => f.id === flight.id,
+                                      )
+                                        ? "#7e57c2"
+                                        : "#2196f3",
+                                    }}
+                                  >
+                                    {selectedFlights.some(
+                                      (f) => f.id === flight.id,
+                                    )
+                                      ? "Remove"
+                                      : "Select"}
+                                  </Button>
+                                </CardContent>
+                              </Card>
+                            </Grid>
+                          ))
+                        ) : (
+                          <Typography>No flights found.</Typography>
+                        )}
+                      </Grid>
+
+                      {/* Return flights section */}
+                      {returnFlight && returnFlights.length > 0 && (
+                        <>
+                          <h2>Return Flights</h2>
+                          <Grid container spacing={2}>
+                            {returnFlights.map((flight, index) => (
+                              <Grid item xs={12} sm={6} md={3} key={index}>
+                                <Card
+                                  variant={
+                                    selectedFlights.some(
+                                      (f) => f.name === flight.name,
+                                    )
+                                      ? "outlined"
+                                      : "elevation"
+                                  }
+                                  sx={{
+                                    padding: "8px",
+                                    borderColor: selectedFlights.some(
+                                      (f) => f.id === flight.id,
+                                    )
+                                      ? "primary.main"
+                                      : "grey.300",
+                                  }}
+                                  onClick={() => handleFlightToggle(flight)}
+                                >
+                                  <CardContent>
+                                    <Typography
+                                      align="center"
+                                      variant="h6"
+                                      sx={{ fontWeight: "bold", mb: 1 }}
+                                    >
+                                      <FaPlaneDeparture />{" "}
+                                      {
+                                        flight.itineraries[0].segments[0]
+                                          .departure.iataCode
+                                      }{" "}
+                                      →{" "}
+                                      {
+                                        flight.itineraries[0].segments[0]
+                                          .arrival.iataCode
+                                      }
+                                    </Typography>
+
+                                    <Typography
+                                      variant="body2"
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        mb: -3,
+                                        fontSize: "15.5px",
+                                      }}
+                                    >
+                                      <FaClock
+                                        style={{
+                                          color: "#ff9800",
+                                          marginRight: 4,
+                                        }}
+                                      />
+                                      Departure:{" "}
+                                      {
+                                        flight.itineraries[0].segments[0].departure.at.split(
+                                          "T",
+                                        )[1]
+                                      }
+                                    </Typography>
+                                    <Typography
+                                      variant="body2"
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        mb: -3,
+                                        fontSize: "15.5px",
+                                      }}
+                                    >
+                                      <FaPlaneArrival
+                                        style={{
+                                          color: "#2196f3",
+                                          marginRight: 4,
+                                        }}
+                                      />
+                                      Arrival:{" "}
+                                      {
+                                        flight.itineraries[0].segments[0].arrival.at.split(
+                                          "T",
+                                        )[1]
+                                      }
+                                    </Typography>
+                                    <Typography
+                                      variant="body2"
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        mb: -3,
+                                        fontSize: "15.5px",
+                                      }}
+                                    >
+                                      <FcClock
+                                        style={{
+                                          color: "#1976d2",
+                                          marginRight: 4,
+                                        }}
+                                      />
+                                      Duration: {flight.itineraries[0].duration}
+                                    </Typography>
+                                    <Typography
+                                      variant="body2"
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        mb: -3,
+                                        fontSize: "15.5px",
+                                      }}
+                                    >
+                                      <IoAirplaneSharp
+                                        style={{
+                                          color: "#4caf50",
+                                          marginRight: 4,
+                                        }}
+                                      />
+                                      Airline:{" "}
+                                      {getAirlineName(
+                                        flight.itineraries[0].segments[0]
+                                          .carrierCode,
+                                      )}
+                                    </Typography>
+                                    <Typography
+                                      variant="body2"
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        mb: -1,
+                                        fontSize: "15.5px",
+                                      }}
+                                    >
+                                      <FaDollarSign
+                                        style={{
+                                          color: "#f44336",
+                                          marginRight: 4,
+                                        }}
+                                      />
+                                      Price: {flight.priceInZar} ZAR
+                                    </Typography>
+                                    <Button
+                                      variant="contained"
+                                      size="small"
+                                      sx={{
+                                        marginTop: "10px",
+                                        backgroundColor: selectedFlights.some(
+                                          (f) => f.id === flight.id,
+                                        )
+                                          ? "#7e57c2"
+                                          : "#2196f3",
+                                      }}
+                                    >
+                                      {selectedFlights.some(
+                                        (f) => f.id === flight.id,
+                                      )
+                                        ? "Remove"
+                                        : "Select"}
+                                    </Button>
+                                  </CardContent>
+                                </Card>
+                              </Grid>
+                            ))}
+                          </Grid>
+                        </>
+                      )}
+                    </Grid>
+                    {/*<Button
+                    onClick={handleDone}
+                    variant="contained"
+                    color="primary"
+                    sx={{ marginTop: "20px" }}
                   >
-                    {flights.length > 0 ? (
-                      flights.map((flight, index) => (
+                    Done
+                  </Button>*/}
+                  </>
+                )}
+
+                {/* Display selected flights */}
+                <Box>
+                  <h2>Selected Flights</h2>
+                  {selectedFlights.length > 0 ? (
+                    <Grid container spacing={2}>
+                      {selectedFlights.map((flight, index) => (
                         <Grid item xs={12} sm={6} md={3} key={index}>
-                          <Card
-                            onClick={() => handleFlightToggle(flight)}
-                            sx={{
-                              // boxShadow: selectedFlights.some((f) => f.id === flight.id) ? '0px 0px 8px 2px #7e57c2' : '0px 0px 5px 1px #bbb',
-                              // border: selectedFlights.some((f) => f.id === flight.id) ? '1px solid #7e57c2' : '1px solid #ccc',
-                              boxShadow: "0px 0px 5px 1px #bbb",
-                              transition: "all 0.2s ease",
-                              padding: "8px", // Reducing padding
-                              fontSize: "0.9rem", // Smaller text size
-                            }}
-                            alignItems="center"
-                            alignContent="center"
-                          >
-                            <CardContent
-                              alignItems="center"
-                              alignContent="center"
-                            >
+                          <Card sx={{ padding: "8px" }}>
+                            <CardContent>
                               <Typography
                                 align="center"
                                 variant="h6"
@@ -684,14 +1092,12 @@ function ItineraryForm() {
                                     .iataCode
                                 }
                               </Typography>
-
                               <Typography
                                 variant="body2"
                                 sx={{
                                   display: "flex",
                                   alignItems: "center",
                                   mb: -2,
-                                  fontSize: "15.5px",
                                 }}
                               >
                                 <FaClock
@@ -710,18 +1116,12 @@ function ItineraryForm() {
                                   display: "flex",
                                   alignItems: "center",
                                   mb: -2,
-                                  fontSize: "15.5px",
                                 }}
                               >
-                                <FaPlaneArrival
-                                  style={{ color: "#2196f3", marginRight: 4 }}
+                                <IoAirplaneSharp
+                                  style={{ color: "#1976d2", marginRight: 4 }}
                                 />
-                                Arrival:{" "}
-                                {
-                                  flight.itineraries[0].segments[0].arrival.at.split(
-                                    "T",
-                                  )[1]
-                                }
+                                Duration: {flight.itineraries[0].duration}
                               </Typography>
                               <Typography
                                 variant="body2"
@@ -729,341 +1129,81 @@ function ItineraryForm() {
                                   display: "flex",
                                   alignItems: "center",
                                   mb: -2,
-                                  fontSize: "15.5px",
                                 }}
                               >
-                                <IoAirplaneSharp
+                                <FaDollarSign
                                   style={{ color: "#4caf50", marginRight: 4 }}
                                 />
+                                Price: {flight.price.total}{" "}
+                                {flight.price.currency} (
+                                {flight.priceInZar
+                                  ? `ZAR ${flight.priceInZar}`
+                                  : "Conversion unavailable"}
+                                )
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                sx={{ display: "flex", alignItems: "center" }}
+                              >
                                 Airline:{" "}
                                 {getAirlineName(
                                   flight.itineraries[0].segments[0].carrierCode,
                                 )}
                               </Typography>
-                              <Typography
-                                variant="body2"
-                                sx={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  mb: -2,
-                                  fontSize: "15.5px",
-                                }}
-                              >
-                                <FaDollarSign
-                                  style={{ color: "#f44336", marginRight: 4 }}
-                                />
-                                Price: {flight.priceInZar} ZAR
-                              </Typography>
-
-                              <Box
-                                sx={{
-                                  display: "flex",
-                                  justifyContent: "center",
-                                  alignItems: "center",
-                                  mb: -2,
-                                  fontSize: "15.5px",
-                                }}
-                              >
-                                <Button
-                                  sx={{
-                                    mt: 2,
-                                    align: "center",
-                                    backgroundColor: selectedFlights.some(
-                                      (f) => f.id === flight.id,
-                                    )
-                                      ? "#7e57c2"
-                                      : "#2196f3",
-                                    color: "white",
-                                    "&:hover": {
-                                      backgroundColor: selectedFlights.some(
-                                        (f) => f.id === flight.id,
-                                      )
-                                        ? "#5e35b1"
-                                        : "#1976d2",
-                                    },
-                                    transition: "background-color 0.2s ease",
-                                    fontSize: "0.8rem", // Smaller button text
-                                  }}
-                                  variant="contained"
-                                >
-                                  {selectedFlights.some(
-                                    (f) => f.id === flight.id,
-                                  )
-                                    ? "Remove from Itinerary"
-                                    : "Add to Itinerary"}
-                                </Button>
-                              </Box>
                             </CardContent>
                           </Card>
                         </Grid>
-                      ))
-                    ) : (
-                      <Typography>No flights found.</Typography>
-                    )}
-                  </Grid>
-
-                  {/* Return flights section */}
-                  {returnFlight && returnFlights.length > 0 && (
-                    <>
-                      <h2>Return Flights</h2>
-                      <Grid container spacing={2}>
-                        {returnFlights.map((flight, index) => (
-                          <Grid item xs={12} sm={6} md={3} key={index}>
-                            {/* <Card
-                            onClick={() => handleFlightToggle(flight)}
-                            sx={{
-                              boxShadow: selectedFlights.some((f) => f.id === flight.id) ? '0px 0px 8px 2px #7e57c2' : '0px 0px 5px 1px #bbb',
-                              border: selectedFlights.some((f) => f.id === flight.id) ? '1px solid #7e57c2' : '1px solid #ccc',
-                              transition: 'all 0.2s ease',
-                              padding: '8px',
-                              fontSize: '0.9rem',
-                            }}
-                          > */}
-                            <Card
-                              onClick={() => handleFlightToggle(flight)}
-                              sx={{
-                                // boxShadow: selectedFlights.some((f) => f.id === flight.id) ? '0px 0px 8px 2px #7e57c2' : '0px 0px 5px 1px #bbb',
-                                // border: selectedFlights.some((f) => f.id === flight.id) ? '1px solid #7e57c2' : '1px solid #ccc',
-                                boxShadow: "0px 0px 5px 1px #bbb",
-                                transition: "all 0.2s ease",
-                                padding: "8px", // Reducing padding
-                                fontSize: "0.9rem", // Smaller text size
-                              }}
-                              alignItems="center"
-                              alignContent="center"
-                            >
-                              <CardContent>
-                                <Typography
-                                  align="center"
-                                  variant="h6"
-                                  sx={{ fontWeight: "bold", mb: 1 }}
-                                >
-                                  <FaPlaneArrival />{" "}
-                                  {
-                                    flight.itineraries[0].segments[0].departure
-                                      .iataCode
-                                  }{" "}
-                                  →{" "}
-                                  {
-                                    flight.itineraries[0].segments[0].arrival
-                                      .iataCode
-                                  }
-                                </Typography>
-
-                                <Typography
-                                  variant="body2"
-                                  sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    mb: -2,
-                                    fontSize: "15.5px",
-                                  }}
-                                >
-                                  <FaClock
-                                    style={{ color: "#ff9800", marginRight: 4 }}
-                                  />
-                                  Departure:{" "}
-                                  {
-                                    flight.itineraries[0].segments[0].departure.at.split(
-                                      "T",
-                                    )[1]
-                                  }
-                                </Typography>
-                                <Typography
-                                  variant="body2"
-                                  sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    mb: -2,
-                                    fontSize: "15.5px",
-                                  }}
-                                >
-                                  <FaPlaneArrival
-                                    style={{ color: "#2196f3", marginRight: 4 }}
-                                  />
-                                  Arrival:{" "}
-                                  {
-                                    flight.itineraries[0].segments[0].arrival.at.split(
-                                      "T",
-                                    )[1]
-                                  }
-                                </Typography>
-                                <Typography
-                                  variant="body2"
-                                  sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    mb: -2,
-                                    fontSize: "15.5px",
-                                  }}
-                                >
-                                  <IoAirplaneSharp
-                                    style={{ color: "#4caf50", marginRight: 4 }}
-                                  />
-                                  Airline:{" "}
-                                  {getAirlineName(
-                                    flight.itineraries[0].segments[0]
-                                      .carrierCode,
-                                  )}
-                                </Typography>
-                                <Typography
-                                  variant="body2"
-                                  sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    mb: -2,
-                                    fontSize: "15.5px",
-                                  }}
-                                >
-                                  <FaDollarSign
-                                    style={{ color: "#f44336", marginRight: 4 }}
-                                  />
-                                  Price: {flight.priceInZar} ZAR
-                                </Typography>
-
-                                <Box
-                                  sx={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    mb: -2,
-                                    fontSize: "15.5px",
-                                  }}
-                                >
-                                  <Button
-                                    sx={{
-                                      mt: 2,
-                                      backgroundColor: selectedFlights.some(
-                                        (f) => f.id === flight.id,
-                                      )
-                                        ? "#7e57c2"
-                                        : "#2196f3",
-                                      color: "white",
-                                      "&:hover": {
-                                        backgroundColor: selectedFlights.some(
-                                          (f) => f.id === flight.id,
-                                        )
-                                          ? "#5e35b1"
-                                          : "#1976d2",
-                                      },
-                                      transition: "background-color 0.2s ease",
-                                      fontSize: "0.8rem",
-                                    }}
-                                    variant="contained"
-                                  >
-                                    {selectedFlights.some(
-                                      (f) => f.id === flight.id,
-                                    )
-                                      ? "Remove from Itinerary"
-                                      : "Add to Itinerary"}
-                                  </Button>
-                                </Box>
-                              </CardContent>
-                            </Card>
-                          </Grid>
-                        ))}
-                      </Grid>
-                    </>
+                      ))}
+                    </Grid>
+                  ) : (
+                    <Typography>No flights selected yet.</Typography>
                   )}
-                </Grid>
-              </>
-            )}
+                </Box>
 
-            <h2 style={{ marginTop: "50px" }}>Selected Flights</h2>
-            <Grid container spacing={2}>
-              {selectedFlights.map((flight, index) => (
-                <Grid item xs={12} sm={6} md={4} key={index}>
-                  <Card>
-                    <CardContent>
-                      <Typography
-                        align="center"
-                        variant="h6"
-                        sx={{ fontWeight: "bold", mb: 1 }}
-                      >
-                        <FaPlaneDeparture />{" "}
-                        {flight.itineraries[0].segments[0].departure.iataCode} →{" "}
-                        {flight.itineraries[0].segments[0].arrival.iataCode}
-                      </Typography>
-                      {/* <Typography variant="body1">
-                        Price: {flight.priceInZar} ZAR
-                      </Typography> */}
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          mb: -3,
-                          fontSize: "15.5px",
-                        }}
-                      >
-                        <FaClock style={{ color: "#ff9800", marginRight: 4 }} />
-                        Departure:{" "}
-                        {
-                          flight.itineraries[0].segments[0].departure.at.split(
-                            "T",
-                          )[1]
-                        }
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          mb: -3,
-                          fontSize: "15.5px",
-                        }}
-                      >
-                        <FaPlaneArrival
-                          style={{ color: "#2196f3", marginRight: 4 }}
-                        />
-                        Arrival:{" "}
-                        {
-                          flight.itineraries[0].segments[0].arrival.at.split(
-                            "T",
-                          )[1]
-                        }
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          mb: -3,
-                          fontSize: "15.5px",
-                        }}
-                      >
-                        <IoAirplaneSharp
-                          style={{ color: "#4caf50", marginRight: 4 }}
-                        />
-                        Airline:{" "}
-                        {getAirlineName(
-                          flight.itineraries[0].segments[0].carrierCode,
-                        )}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          mb: -3,
-                          fontSize: "15.5px",
-                        }}
-                      >
-                        <FaDollarSign
-                          style={{ color: "#f44336", marginRight: 4 }}
-                        />
-                        Price: {flight.priceInZar} ZAR
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-
-            <Box sx={{ marginTop: "20px" }}>
-              <Button variant="contained" color="primary" onClick={handleNext}>
-                Next
-              </Button>
+                {addMoreFlights && (
+                  <Button
+                    onClick={() => setShowFlightSearch(true)}
+                    variant="outlined"
+                    color="primary"
+                    sx={{ marginTop: "20px" }}
+                  >
+                    + Add More Flights
+                  </Button>
+                )}
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    marginTop: "20px",
+                  }}
+                >
+                  <Button
+                    onClick={handleDone}
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                    sx={{ padding: "6px 12px", width: "150px", height: "50px" }} // Adjust width as needed
+                  >
+                    Add to Itinerary
+                  </Button>
+                </Box>
+              </Box>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                marginTop: "20px",
+              }}
+            >
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleNext}
+                size="small"
+                sx={{ padding: "6px 12px" }}
+                endIcon={<ArrowForwardIcon />}
+              ></Button>
             </Box>
           </Box>
         )}
@@ -1075,10 +1215,23 @@ function ItineraryForm() {
             {loading ? (
               <CircularProgress sx={{ marginTop: "20px" }} />
             ) : (
-              <Box sx={{ marginTop: "20px" }}>
+              <Box
+                p={2}
+                border={1}
+                borderColor="grey.300"
+                borderRadius="8px"
+                sx={{ marginTop: "20px" }}
+              >
                 {Object.entries(accommodations).map(
                   ([location, locationAccommodations]) => (
-                    <Box key={location} sx={{ marginBottom: "30px" }}>
+                    <Box
+                      p={2}
+                      border={1}
+                      borderColor="grey.300"
+                      borderRadius="8px"
+                      key={location}
+                      sx={{ marginBottom: "30px" }}
+                    >
                       <h2>
                         Accommodations in {getAirportName(location)}
                         <Button
@@ -1214,34 +1367,56 @@ function ItineraryForm() {
               </Alert>
             )}
 
-            <Box sx={{ marginTop: "20px" }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginTop: "20px",
+              }}
+            >
               <Button
                 variant="outlined"
                 onClick={handleBack}
                 sx={{ marginRight: "10px" }}
-              >
-                Back
-              </Button>
-              <Button variant="contained" color="primary" onClick={handleNext}>
-                Next
-              </Button>
+                startIcon={<ArrowBackIcon />}
+              ></Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleNext}
+                size="small"
+                sx={{ padding: "6px 12px" }}
+                endIcon={<ArrowForwardIcon />}
+              ></Button>
             </Box>
           </Box>
         )}
 
         {activeStep === 2 && (
           <Box>
-            <Typography variant="h6" sx={{ marginTop: "20px" }}>
-              Step 3: Activities
-            </Typography>
+            <h2>Step 3: Activities</h2>
 
             {loading ? (
               <CircularProgress sx={{ marginTop: "20px" }} />
             ) : (
-              <Box sx={{ marginTop: "20px" }}>
+              <Box
+                p={2}
+                border={1}
+                borderColor="grey.300"
+                borderRadius="8px"
+                sx={{ marginTop: "20px" }}
+              >
                 {Object.entries(activities).map(
                   ([location, locationActivities]) => (
-                    <Box key={location} sx={{ marginBottom: "30px" }}>
+                    <Box
+                      p={2}
+                      border={1}
+                      borderColor="grey.300"
+                      borderRadius="8px"
+                      key={location}
+                      sx={{ marginBottom: "30px" }}
+                    >
                       <h2>
                         Activities in {getAirportName(location)}
                         <Button
@@ -1382,79 +1557,184 @@ function ItineraryForm() {
               </Alert>
             )}
 
-            <Box sx={{ marginTop: "20px" }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginTop: "20px",
+              }}
+            >
               <Button
                 variant="outlined"
                 onClick={handleBack}
                 sx={{ marginRight: "10px" }}
-              >
-                Back
-              </Button>
-              <Button variant="contained" color="primary" onClick={handleNext}>
-                Next
-              </Button>
+                startIcon={<ArrowBackIcon />}
+              ></Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleNext}
+                size="small"
+                sx={{ padding: "6px 12px" }}
+                endIcon={<ArrowForwardIcon />}
+              ></Button>
             </Box>
           </Box>
         )}
 
         {activeStep === 3 && (
           <Box>
-            <Typography variant="h6" sx={{ marginTop: "20px" }}>
-              Review and Submit
-            </Typography>
+            <h2>Review and Submit</h2>
 
-            <Box sx={{ marginTop: "10px" }}>
-              <Typography variant="h6">Itinerary Name:</Typography>
-              <Typography>{itineraryName}</Typography>
+            {/* Itinerary Name */}
+            <Box
+              p={2}
+              border={1}
+              borderColor="grey.300"
+              borderRadius="8px"
+              sx={{ marginTop: "10px" }}
+            >
+              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                "{itineraryName} " Itinerary
+              </Typography>
             </Box>
 
-            <Box sx={{ marginTop: "10px" }}>
-              <Typography variant="h6">Flights:</Typography>
-              {selectedFlights.map((flight, index) => (
-                <Typography key={index}>
-                  {flight.itineraries[0].segments[0].departure.iataCode} to{" "}
-                  {flight.itineraries[0].segments[0].arrival.iataCode}
+            {/* Flights Section */}
+            {selectedFlights.length > 0 && (
+              <Box
+                p={2}
+                border={1}
+                borderColor="grey.300"
+                borderRadius="8px"
+                sx={{ marginTop: "10px" }}
+              >
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  Flights:
                 </Typography>
-              ))}
-            </Box>
+                {selectedFlights.map((flight, index) => (
+                  <Typography key={index}>
+                    {flight.itineraries[0].segments[0].departure.iataCode} to{" "}
+                    {flight.itineraries[0].segments[0].arrival.iataCode}
+                  </Typography>
+                ))}
+              </Box>
+            )}
 
-            <Box sx={{ marginTop: "10px" }}>
-              <Typography variant="h6">Accommodations:</Typography>
-              {selectedAccommodations.map((acc, index) => (
-                <Typography key={index}>{acc.name}</Typography>
-              ))}
-            </Box>
+            {/* Accommodations Section */}
+            {selectedAccommodations.length > 0 && (
+              <Box
+                p={2}
+                border={1}
+                borderColor="grey.300"
+                borderRadius="8px"
+                sx={{ marginTop: "10px" }}
+              >
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  Accommodations
+                </Typography>
+                {selectedAccommodations.map((acc, index) => (
+                  <Typography key={index}>{acc.name}</Typography>
+                ))}
+              </Box>
+            )}
 
-            <Box sx={{ marginTop: "10px" }}>
-              <Typography variant="h6">Activities:</Typography>
-              {selectedActivities.map((act, index) => (
-                <Typography key={index}>{act.name}</Typography>
-              ))}
-            </Box>
+            {/* Activities Section */}
+            {selectedActivities.length > 0 && (
+              <Box
+                p={2}
+                border={1}
+                borderColor="grey.300"
+                borderRadius="8px"
+                sx={{ marginTop: "10px" }}
+              >
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  Activities
+                </Typography>
+                {selectedActivities.map((act, index) => (
+                  <Typography key={index}>{act.name}</Typography>
+                ))}
+              </Box>
+            )}
 
+            {/* Generated Itinerary */}
+            {aiResponse && (
+              <Box sx={{ marginTop: "20px" }}>
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  Itinerary Generated
+                </Typography>
+                {aiResponse
+                  .split("Day ")
+                  .slice(1)
+                  .map((dayText, index) => (
+                    <Box
+                      key={index}
+                      p={2}
+                      border={1}
+                      borderColor="grey.300"
+                      borderRadius="8px"
+                      sx={{ marginTop: "10px" }}
+                    >
+                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                        Day {index + 1}
+                      </Typography>
+                      <Typography>{dayText.trim()}</Typography>
+                    </Box>
+                  ))}
+
+                {/* Regenerate Icon Button */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    marginTop: "20px",
+                  }}
+                >
+                  <IconButton
+                    onClick={generateItinerary}
+                    color="primary"
+                    disabled={loading}
+                    sx={{
+                      width: 56,
+                      height: 56,
+                      borderRadius: "50%",
+                      backgroundColor: "primary.main",
+                      color: "white",
+                      "&:hover": {
+                        backgroundColor: "primary.dark",
+                      },
+                    }}
+                  >
+                    <RefreshIcon />
+                  </IconButton>
+                </Box>
+              </Box>
+            )}
+
+            {/* Error Message */}
             {errorMessage && (
               <Alert severity="error" sx={{ marginTop: "10px" }}>
                 {errorMessage}
               </Alert>
             )}
 
+            {/* Loading Indicator */}
             {loading && <CircularProgress sx={{ marginTop: "20px" }} />}
 
-            {aiResponse && (
-              <Box sx={{ marginTop: "20px" }}>
-                <Typography variant="h6">Generated Itinerary:</Typography>
-                <Typography>{aiResponse}</Typography>
-              </Box>
-            )}
-
-            <Box sx={{ marginTop: "20px" }}>
+            {/* Navigation Buttons (Back and Finish) */}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginTop: "20px",
+              }}
+            >
               <Button
                 variant="outlined"
                 onClick={() => setActiveStep(activeStep - 1)}
-                sx={{ marginRight: "10px" }}
-              >
-                Back
-              </Button>
+                startIcon={<ArrowBackIcon />}
+              ></Button>
               <Button
                 variant="contained"
                 color="success"
