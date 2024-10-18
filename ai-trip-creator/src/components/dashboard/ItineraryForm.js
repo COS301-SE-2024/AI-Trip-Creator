@@ -1360,7 +1360,14 @@ function ItineraryForm() {
               </Alert>
             )}
 
-            <Box sx={{ marginTop: "20px" }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginTop: "20px",
+              }}
+            >
               <Button
                 variant="outlined"
                 onClick={handleBack}
