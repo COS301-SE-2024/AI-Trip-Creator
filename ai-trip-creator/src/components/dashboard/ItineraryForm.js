@@ -413,12 +413,31 @@ function ItineraryForm() {
   //   //console.log("End Location:", endLocation);
   // };
 
-  const addEndLocation = () => {
-    // Check and add startLocation if it's not already in Locations
-    if (startLocation !== "" && !Locations.includes(startLocation)) {
-      setLocations((prevLocations) => [...prevLocations, startLocation]);
-    }
+  // const addEndLocation = () => {
+  //   // Check and add startLocation if it's not already in Locations
+  //   /*if (startLocation !== "" && !Locations.includes(startLocation)) {
+  //     setLocations((prevLocations) => [...prevLocations, startLocation]);
+  //   }*/
     
+  //   if (startLocation !== "" && !Locations.includes(startLocation)) {
+  //     setLocations((prevStartLocations) => [
+  //       ...prevStartLocations,
+  //       startLocation,
+  //     ]);
+  //   }
+
+  //   // Check and add endLocation if it's not already in Locations
+  //   if (endLocation !== "" && !Locations.includes(endLocation)) {
+  //     setLocations((prevLocations) => [...prevLocations, endLocation]);
+  //   }
+  
+  //   // Check and add tripDays if it's not already in Lengths
+  //   if (tripDays !== "" && !Lengths.includes(tripDays)) {
+  //     setLengths((prevLengths) => [...prevLengths, tripDays]);
+  //   }
+  // };
+
+  const addEndLocation = () => {
     // Check and add endLocation if it's not already in Locations
     if (endLocation !== "" && !Locations.includes(endLocation)) {
       setLocations((prevLocations) => [...prevLocations, endLocation]);
@@ -429,6 +448,7 @@ function ItineraryForm() {
       setLengths((prevLengths) => [...prevLengths, tripDays]);
     }
   };
+  
   
 
   // Use useEffect to log the updated locations whenever it changes
