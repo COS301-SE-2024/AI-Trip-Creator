@@ -1567,9 +1567,8 @@ function ItineraryForm() {
               sx={{ marginTop: "10px" }}
             >
               <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                Itinerary Name:
+                "{itineraryName} " Itinerary
               </Typography>
-              <Typography>{itineraryName}</Typography>
             </Box>
 
             {/* Flights Section */}
@@ -1603,7 +1602,7 @@ function ItineraryForm() {
                 sx={{ marginTop: "10px" }}
               >
                 <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                  Accommodations:
+                  Accommodations
                 </Typography>
                 {selectedAccommodations.map((acc, index) => (
                   <Typography key={index}>{acc.name}</Typography>
@@ -1621,7 +1620,7 @@ function ItineraryForm() {
                 sx={{ marginTop: "10px" }}
               >
                 <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                  Activities:
+                  Activities
                 </Typography>
                 {selectedActivities.map((act, index) => (
                   <Typography key={index}>{act.name}</Typography>
@@ -1633,7 +1632,7 @@ function ItineraryForm() {
             {aiResponse && (
               <Box sx={{ marginTop: "20px" }}>
                 <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                  Generated Itinerary:
+                  Itinerary Generated
                 </Typography>
                 {aiResponse
                   .split("Day ")
@@ -1653,6 +1652,33 @@ function ItineraryForm() {
                       <Typography>{dayText.trim()}</Typography>
                     </Box>
                   ))}
+
+                {/* Regenerate Icon Button */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    marginTop: "20px",
+                  }}
+                >
+                  <IconButton
+                    onClick={generateItinerary}
+                    color="primary"
+                    disabled={loading}
+                    sx={{
+                      width: 56,
+                      height: 56,
+                      borderRadius: "50%",
+                      backgroundColor: "primary.main",
+                      color: "white",
+                      "&:hover": {
+                        backgroundColor: "primary.dark",
+                      },
+                    }}
+                  >
+                    <RefreshIcon />
+                  </IconButton>
+                </Box>
               </Box>
             )}
 
@@ -1665,25 +1691,16 @@ function ItineraryForm() {
 
             {/* Loading Indicator */}
             {loading && <CircularProgress sx={{ marginTop: "20px" }} />}
-            <IconButton
-              onClick={generateItinerary}
-              color="primary"
-              disabled={loading}
+
+            {/* Navigation Buttons (Back and Finish) */}
+            <Box
               sx={{
-                width: 56,
-                height: 56,
-                borderRadius: "50%",
-                backgroundColor: "primary.main",
-                color: "white",
-                "&:hover": {
-                  backgroundColor: "primary.dark",
-                },
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginTop: "20px",
               }}
             >
-              <RefreshIcon />
-            </IconButton>
-            {/* Navigation Buttons */}
-            <Box sx={{ marginTop: "20px", display: "flex", gap: "10px" }}>
               <Button
                 variant="outlined"
                 onClick={() => setActiveStep(activeStep - 1)}
