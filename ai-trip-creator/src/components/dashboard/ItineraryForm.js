@@ -268,6 +268,8 @@ function ItineraryForm() {
     setReturnDate("");
     setFlights([]);
     setReturnFlights([]);
+  //   setSelectedDepartureFlights([]);
+  // setSelectedReturnFlights([]);
   };
 
   const getAirlineName = (carrierCode) => {
