@@ -149,7 +149,7 @@ function ItineraryForm() {
   const [startLocationError, setStartLocationError] = useState(false);
   const [endLocationError, setEndLocationError] = useState(false);
   const [departureDateError, setDepartureDateError] = useState(false);
-  
+
   //fetch userid
   useEffect(() => {
     const auth = getAuth();
@@ -170,7 +170,44 @@ function ItineraryForm() {
     { label: "Lanseria (HLA)", code: "HLA" },
   ];
 
+  const validateFlightSearch = () => {
+    let isValid = true;
+
+    if (!startLocation) {
+      setStartLocationError(true);
+      isValid = false;
+    } else {
+      setStartLocationError(false);
+    }
+
+    if (!endLocation) {
+      setEndLocationError(true);
+      isValid = false;
+    } else {
+      setEndLocationError(false);
+    }
+
+    if (!departureDate) {
+      setDepartureDateError(true);
+      isValid = false;
+    } else {
+      setDepartureDateError(false);
+    }
+
+    if (startLocation === endLocation) {
+      setErrorMessage("Origin and destination cannot be the same.");
+      isValid = false;
+    } else {
+      setErrorMessage("");
+    }
+
+    return isValid;
+  };
+
   const handleSearchFlights = async () => {
+    if (!validateFlightSearch()) {
+      return;
+    }
     if (startLocation && endLocation && departureDate) {
       if (startLocation === endLocation) {
         setErrorMessage("Origin and destination cannot be the same.");
@@ -642,6 +679,8 @@ function ItineraryForm() {
                   onChange={(e) => setStartLocation(e.target.value)}
                   fullWidth
                   margin="normal"
+                  error={startLocationError}
+        helperText={startLocationError ? "Please choose a start location." : ""}
                 >
                   {airportOptions.map((option) => (
                     <MenuItem key={option.code} value={option.code}>
@@ -656,6 +695,8 @@ function ItineraryForm() {
                   onChange={(e) => setEndLocation(e.target.value)}
                   fullWidth
                   margin="normal"
+                  error={endLocationError}
+        helperText={endLocationError ? "Please choose an end location." : ""}
                 >
                   {airportOptions.map((option) => (
                     <MenuItem key={option.code} value={option.code}>
@@ -707,6 +748,8 @@ function ItineraryForm() {
                       onChange={(e) => setDepartureDate(e.target.value)}
                       fullWidth
                       margin="normal"
+                      error={departureDateError}
+        helperText={departureDateError ? "Please choose a departure date." : ""}
                       InputLabelProps={{ shrink: true }}
                     />
                     <FormControlLabel
