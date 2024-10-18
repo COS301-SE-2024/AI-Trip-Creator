@@ -146,7 +146,10 @@ function ItineraryForm() {
   const [Lengths, setLengths] = useState([]);
   const [selectedDepartureFlights, setSelectedDepartureFlights] = useState([]);
   const [selectedReturnFlights, setSelectedReturnFlights] = useState([]);
-
+  const [startLocationError, setStartLocationError] = useState(false);
+  const [endLocationError, setEndLocationError] = useState(false);
+  const [departureDateError, setDepartureDateError] = useState(false);
+  
   //fetch userid
   useEffect(() => {
     const auth = getAuth();
