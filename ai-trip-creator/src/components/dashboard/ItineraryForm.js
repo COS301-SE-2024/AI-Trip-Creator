@@ -17,6 +17,7 @@ import {
   StepLabel,
   CircularProgress,
   Slider,
+  IconButton,
 } from "@mui/material";
 import {
   FaPlaneDeparture,
@@ -39,7 +40,7 @@ import {
   setDoc,
   doc,
 } from "firebase/firestore";
-
+import RefreshIcon from "@mui/icons-material/Refresh";
 import OpenAI from "openai";
 import { createItinerary, getItinerary, updateItinerary } from "./dashboard";
 // Initialize OpenAI client
@@ -1664,14 +1665,23 @@ function ItineraryForm() {
 
             {/* Loading Indicator */}
             {loading && <CircularProgress sx={{ marginTop: "20px" }} />}
-            <Button
-              variant="contained"
-              color="primary"
+            <IconButton
               onClick={generateItinerary}
+              color="primary"
               disabled={loading}
+              sx={{
+                width: 56,
+                height: 56,
+                borderRadius: "50%",
+                backgroundColor: "primary.main",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "primary.dark",
+                },
+              }}
             >
-              Regenerate Itinerary
-            </Button>
+              <RefreshIcon />
+            </IconButton>
             {/* Navigation Buttons */}
             <Box sx={{ marginTop: "20px", display: "flex", gap: "10px" }}>
               <Button
