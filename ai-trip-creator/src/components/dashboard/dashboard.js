@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { Card, CardContent, Typography, Button, Box } from "@mui/material";
 import Sidebar from "./sidebar";
@@ -6,13 +6,26 @@ import OpenAI from "openai";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { db, auth } from "../../firebase/firebase-config";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, doc, setDoc, query, where, getDocs, updateDoc } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+//import { type } from "express/lib/response";
+
+//prompt:1.) The dates are 20-30 december . 2.) I have no budget constraints 3.) Im travelling solo . 4.) i prefer burgers and beer 5.) No children will be present 6.) I prefer 5 star luxury hotels 7.) I like water activities like swimming or going to the aquarium. i also like rugby. 8.) no not really, maybe add a flight the morning of im arriving. the deprature time is 9:00 and estimated arrival 10:30. also the last day im flying back. but my flights is from 13:00-14:30
 
 // Initialize the OpenAI client
 const openai = new OpenAI({
   apiKey: process.env.REACT_APP_OPEN_AI_KEY,
   dangerouslyAllowBrowser: true,
 });
+
+//functions for chatbot
+
+
+const currentUser = auth.currentUser;
+
+
+
+
 
 const questionsPrompt = `
 Which destination(s) are you visiting?
@@ -24,15 +37,319 @@ Will children be present?
 What hotels do you prefer?
 What type of activities do you like to do?
 Would you like to attend festivals?
-Would you like to add transport details? and if so, please give me the details so i can add it to your itinerary.
+Would you like to add transport details? And if so, please give me the details so I can add them to your itinerary.
+How many days would you like your itinerary to be packed with activities? If so, how many days of the total?
 `;
 
-const exampleItinerary = ` Here is your itinerary:    ## Historical Comfort Trip from Durban to GqeberhaThis itinerary prioritizes comfort and historical exploration during your trip from Durban to Gqeberha. It includes a mix of historical sites, cultural experiences, and relaxing activities, ensuring a well-rounded and enjoyable journey.**Day 1: Durban to Pietermaritzburg*** Morning: Depart from Durban and enjoy a comfortable drive to Pietermaritzburg.* Afternoon: Check into a comfortable hotel in Pietermaritzburg.* Evening: Explore Pietermaritzburg’s rich history by visiting the **Pietermaritzburg City Hall** and the **Old Jail**, both significant historical landmarks. Indulge in a delicious dinner at a local restaurant.**Day 2: Pietermaritzburg to Howick*** Morning: Visit the **KwaZulu-Natal Museum**, learning about the region's fascinating history and culture.* Afternoon: Drive to Howick, enjoying scenic views along the way. Check into a charming guesthouse.* Evening: Enjoy a relaxing evening at the guesthouse or explore the local area.**Day 3: Howick and the Midlands Meander*** Morning:  Visit the **Howick Falls**, a breathtaking natural wonder, and explore the nearby **Midlands Meander**.* Afternoon: Indulge in a leisurely lunch at a quaint restaurant in the Midlands, sampling the region's culinary delights.* Evening: Return to Howick and relax at your guesthouse, enjoying the tranquil atmosphere.**Day 4: Howick to Gqeberha*** Morning: Depart from Howick and enjoy a scenic drive towards Gqeberha.* Afternoon:  Stop at the **Fort Nottingham**, a historical fort built in the early 1800s, to learn about its role in the region's past.* Evening: Arrive in Gqeberha and check into a comfortable hotel. Enjoy a relaxing evening and dinner.**Day 5: Gqeberha - Historical Exploration*** Morning: Visit the **Donkin Reserve**, a historic site with a lighthouse, monument, and panoramic views of the city.* Afternoon: Explore the **Albany Museum**, a treasure trove of historical artifacts and exhibits.* Evening: Experience the city's vibrant culture with a dinner at a restaurant offering local cuisine.**Day 6: Gqeberha - Coastal Delights*** Morning: Visit the **St. George's Park**, a beautiful park with historic buildings and a tranquil atmosphere.* Afternoon: Relax on the beautiful beaches of **Humewood**, soaking up the sun and enjoying the coastal scenery.* Evening: Savor a seafood dinner at a restaurant overlooking the ocean, enjoying the fresh flavors and the beautiful sunset.**Day 7: Departure*** Morning: Enjoy a leisurely breakfast before departing from Gqeberha.**Note:** This itinerary can be adjusted based on your specific interests and desired pace of travel. You can add or remove activities, change the duration of each stop, or explore additional historical sites in the region. **Comfort:** This itinerary emphasizes comfort by choosing comfortable accommodation options, incorporating relaxing activities, and focusing on delicious food experiences.**Historical Focus:** The itinerary includes a variety of historical sites and museums, offering insights into the rich history and cultural heritage of the region.This itinerary provides a framework for your historical and comfortable journey from Durban to Gqeberha, allowing you to customize the experience based on your personal preferences. Enjoy your trip!`;
-const exampleItinerary2 = ` Here is your itinerary:   ## Gqeberha Shopping Getaway: A Comfort-Focused Itinerary This itinerary focuses on shopping and comfort, prioritizing a relaxing and enjoyable trip to Gqeberha from Johannesburg for a solo traveler. **Day 1:*** **Morning:** Fly from Johannesburg to Gqeberha (Port Elizabeth).* **Afternoon:** Check into a comfortable hotel in the city center or a nearby suburb. * **Evening:** Relax and explore your surroundings. **Day 2:*** **Morning:** Head to the **Baywest Mall**, one of the largest shopping malls in the Eastern Cape.  Browse a wide variety of shops, including international brands and local boutiques.* **Lunch:** Enjoy a delicious meal at one of the many restaurants in the mall.* **Afternoon:** Continue exploring the mall or head to the **Boardwalk Casino & Entertainment World** for some fun.* **Evening:**  Treat yourself to a relaxing dinner at a local restaurant with a beautiful view or try **Alvarez and Sons** for a taste of authentic street food. **Day 3:*** **Morning:**  Visit the **Walmer Park Shopping Centre** for a more local shopping experience. Explore the diverse range of shops, including arts and crafts vendors. * **Lunch:**  Opt for a healthy and delicious meal at **Snyder and Sons**, a health food restaurant.* **Afternoon:**  Relax and enjoy a cup of tea and some pastries at **Martin, Brown and Cooley**, a charming tea house.* **Evening:** Enjoy a casual dinner at a nearby restaurant or explore the vibrant nightlife of Gqeberha.**Day 4:*** **Morning:**  Spend some time at the **Gqeberha Museum** to learn about the city's history and culture.* **Lunch:**  Have lunch at a local café or grab something to eat at the museum's restaurant.* **Afternoon:**  Shop at **The Bridge Shopping Centre** for more unique items and local crafts.* **Evening:** Enjoy a delicious final meal in Gqeberha and reflect on your trip.**Day 5:*** **Morning:** Fly back to Johannesburg from Gqeberha, carrying your newfound treasures and memories.**Note:** This itinerary is flexible and can be customized based on your preferences and interests. You can also add in other activities like visiting the **Nelson Mandela Bay Stadium** or exploring the beautiful **Addo Elephant National Park**. **Comfort Focus:**This itinerary prioritizes comfort by offering ample time for shopping, relaxing, and indulging in delicious food. You can easily adjust the pace of the trip and the amount of time spent in each location to ensure a comfortable and enjoyable experience. **Tips:*** Book your flights and accommodation in advance, especially if you're traveling during peak season.* Pack light and bring comfortable shoes, as you'll be doing a lot of walking.* Bring a reusable water bottle to stay hydrated throughout your trip.* Consider purchasing a local SIM card for easy communication.* Don't be afraid to ask for directions or recommendations from locals.**Enjoy your comfortable shopping getaway in Gqeberha!**`;
-const Dashboard = () => {
+
+  const Dashboard = () => {
   const [userInput, setUserInput] = useState("");
   const [responses, setResponses] = useState([]);
   const [showCards, setShowCards] = useState(true);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user); // Set user state on auth state change
+    });
+
+    return () => unsubscribe(); // Clean up subscription on unmount
+  }, []);
+
+  async function createItinerary(itineraryName, destination, budget, numDays, listDays) {
+    console.log("Creating itinerary...");
+    const user = auth.currentUser;
+  
+    if (!user) {
+      console.error('User is not authenticated.');
+      return;
+    }
+  
+    const userId = user.uid;
+  
+    try {
+      // Reference to the "ItineraryCollection"
+      const itinerariesRef = collection(db, "ItineraryCollection");
+  
+      // Create a new itinerary document
+      const newItineraryRef = await addDoc(itinerariesRef, {
+        user_id: userId,
+        itineraryName: itineraryName,
+        destination: destination,
+        budget: budget,
+        numDays: numDays,
+        createdAt: new Date().toISOString().split("T")[0],
+      });
+  
+      console.log(`Itinerary '${itineraryName}' created successfully with ID: ${newItineraryRef.id}.`);
+  
+      // Insert each day of the itinerary into the sub-collection using day.dayNumber as the document ID
+      await Promise.all(listDays.map(async (day) => {
+        // Use day.dayNumber as the document ID
+        const dayDocId = `day${day.dayNumber}`;
+  
+        // Structure day data, ensuring the structure exists with defaults
+        const dayData = {
+          dayNumber: day.dayNumber,
+          flights: day.flights.map(flight => ({
+            arrivalTime: flight.arrivalTime || "",
+            departureTime: flight.departureTime || "",
+            cost: flight.cost || 0,
+            class: flight.class || "",
+            carrierCode: flight.carrierCode || "",
+            sourceLocation: flight.sourceLocation || "",
+            destinationLocation: flight.destinationLocation || "",
+          })) || [],
+          accommodation: day.accommodation.map(acc => ({
+            hotel: acc.hotel || "",
+            checkin: acc.checkin || "",
+            checkout: acc.checkout || "",
+          })) || [],
+          activities: day.activities.map(activity => ({
+            name: activity.name || "",
+            time: activity.time || "",
+            description: activity.description || "",
+          })) || [],
+        };
+  
+        console.log(`Inserting day ${day.dayNumber}:`, dayData);
+  
+        // Get reference to the 'days' sub-collection
+        const daysRef = collection(newItineraryRef, 'days');
+  
+        // Use setDoc to insert the document with day.dayNumber as the ID
+        await setDoc(doc(daysRef, dayDocId), dayData);
+      }));
+  
+      console.log(`All days added successfully to itinerary '${itineraryName}'.`);
+    } catch (error) {
+      console.error('Error creating itinerary:', error);
+    }
+  }
+  
+  
+  
+  async function getItinerary(itinerary_name) {
+    try {
+        const user_id = user.uid;
+        
+        // Reference to the ItineraryCollection
+        const itinerariesRef = collection(db, 'ItineraryCollection');
+        
+        // Query to find the itinerary by user_id and itinerary_name
+        const q = query(
+            itinerariesRef,
+            where('user_id', '==', user_id),
+            where('itineraryName', '==', itinerary_name)
+        );
+
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+            console.log(`No itinerary found for user: ${user_id} with name: ${itinerary_name}`);
+            return null;
+        }
+  
+        // Assuming there is only one document that matches the query
+        const itineraryDoc = querySnapshot.docs[0];
+        const itineraryData = itineraryDoc.data();
+
+        // Fetch the 'days' subcollection using collection method
+        const daysRef = collection(itineraryDoc.ref, 'days');
+        const daysSnapshot = await getDocs(daysRef);
+        const days = [];
+  
+        daysSnapshot.forEach(dayDoc => {
+            days.push(dayDoc.data());
+        });
+  
+        itineraryData.days = days;
+  
+        //console.log('Itinerary retrieved successfully:', itineraryData);
+        return itineraryData;
+    } catch (error) {
+        console.error('Error retrieving itinerary:', error);
+    }
+}
+  
+
+
+//import { collection, query, where, getDocs, doc, updateDoc, setDoc } from 'firebase/firestore';
+
+async function updateItinerary(originalItineraryName, updatedItinerary) {
+  try {
+    const user_id = user?.uid;  // Ensure `user.uid` is defined
+
+    if (!user_id) {
+      console.error("User ID is not defined.");
+      return;  // Exit if no user is logged in
+    }
+
+    // Validate that the updatedItinerary contains valid data
+    // if (!updatedItinerary || 
+    //     !updatedItinerary.itineraryName || 
+    //     !updatedItinerary.destination || 
+    //     !updatedItinerary.budget || 
+    //     !updatedItinerary.numDays || 
+    //     !updatedItinerary.listDays) {  // Changed 'days' to 'listDays'
+    //   console.error("Invalid itinerary data provided.");
+    //   return;  // Exit if the itinerary data is incomplete
+    // }
+
+    // Reference to the ItineraryCollection
+    const itinerariesRef = collection(db, 'ItineraryCollection');
+
+    // Query to find the itinerary by user_id and original itinerary name
+    const q = query(
+      itinerariesRef,
+      where('user_id', '==', user_id),
+      where('itineraryName', '==', originalItineraryName)
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      console.log(`No itinerary found for user: ${user_id} with name: ${originalItineraryName}`);
+      return null;  // No itinerary to update
+    }
+
+    const itineraryDoc = querySnapshot.docs[0];  // Assuming the first document matches the user_id and itineraryName
+    const itineraryDocId = itineraryDoc.id;  // Get the document ID
+
+    // Validate that the correct itinerary document is being updated by checking the user_id and itineraryName
+    if (itineraryDoc.data().user_id !== user_id || itineraryDoc.data().itineraryName !== originalItineraryName) {
+      console.error("The document's user_id or itineraryName does not match the expected values.");
+      return;
+    }
+
+    // Reference to the specific itinerary document
+    const itineraryRef = doc(db, 'ItineraryCollection', itineraryDocId);
+
+    // Update the main itinerary data (fields in the main document)
+    const itineraryData = {
+      user_id: updatedItinerary.user_id || user_id,  // Fallback to current user's ID
+      itineraryName: updatedItinerary.itineraryName,
+      destination: updatedItinerary.destination,
+      budget: updatedItinerary.budget,
+      numDays: updatedItinerary.numDays
+    };
+
+    // Update the main itinerary document
+    await updateDoc(itineraryRef, itineraryData);
+
+    // Now, handle the days subcollection for this specific itinerary
+    await Promise.all(updatedItinerary.listDays.map(async (day) => {
+      // Ensure structure exists, even if empty arrays or objects
+      const dayData = {
+        dayNumber: day.dayNumber,
+        flights: day.flights.map(flight => ({
+          arrivalTime: flight.arrivalTime || "", // Default values if missing
+          departureTime: flight.departureTime || "",
+          cost: flight.cost || 0,
+          class: flight.class || "",
+          carrierCode: flight.carrierCode || "",
+          sourceLocation: flight.sourceLocation || "",
+          destinationLocation: flight.destinationLocation || "",
+        })) || [], // Default to empty array if no flights exist
+
+        accommodation: day.accommodation.map(acc => ({
+          hotel: acc.hotel || "", // Default values if missing
+          checkin: acc.checkin || "",
+          checkout: acc.checkout || "",
+        })) || [], // Default to empty array if no accommodation
+
+        activities: day.activities.map(activity => ({
+          name: activity.name || "Unknown Activity", // Default values if missing
+          time: activity.time || "Unknown Time",
+          description: activity.description || `Activity: ${activity.name} scheduled at ${activity.time}.`,
+        })) || [], // Default to empty array if no activities
+      };
+
+      // Update or create the day subcollection document under this specific itinerary
+      const dayRef = doc(itineraryRef, 'days', `day${day.dayNumber}`);
+      await setDoc(dayRef, dayData);  // This will create or update the day document
+    }));
+
+    console.log(`Itinerary '${originalItineraryName}' updated successfully for user ${user_id}.`);
+  } catch (error) {
+    console.error('Error updating itinerary:', error);
+  }
+}
+
+
+
+  //used an example for the chatbot so he knows the strcuture we want the itineraries to be in
+  const updated_itinerary = {
+    itineraryName: 'Summer Vacation 2',
+    destination: 'Durban',
+    budget: 2000,
+    numDays: 3,
+    days: [
+      {
+        dayNumber: 1,
+        flights: [
+          {
+            flightNumber: 'XYZ123',
+            departure: '10:00 AM',
+            arrival: '12:00 PM'
+          }
+        ],
+        accommodation: [
+          {
+            name: 'Hotel XYZ',
+            checkin: '2:00 PM'
+          }
+        ],
+        activities: [
+          {
+            name: 'City Tour',
+            time: '4:00 PM',
+            description: 'Join the guided city tour at 3:00 PM.'
+          }
+        ]
+      },
+      {
+        dayNumber: 2,
+        flights: [],
+        accommodation: [
+          {
+            name: 'Hotel ABC',
+            checkout: '11:00 AM'
+          }
+        ],
+        activities: [
+          {
+            name: 'Beach Visit',
+            time: '10:00 AM',
+            description: 'Relax at the beach starting at 10:00 AM.'
+          }
+        ]
+      },
+      {
+        dayNumber: 3,
+        flights: [],
+        accommodation: [
+          {
+            name: 'Hotel HIJ',
+            checkin: '1:00 PM'
+          }
+        ],
+        activities: [
+          {
+            name: 'Mountain Hike',
+            time: '10:00 AM',
+            description: 'Embark on a mountain hike at 10:00 AM.'
+          }
+        ]
+      }
+    ]
+  };
+  
+
+
+
+
 
   const handleInputChange = (e) => {
     setUserInput(e.target.value);
@@ -43,116 +360,391 @@ const Dashboard = () => {
 
   const handleSubmit = async () => {
     if (userInput.trim() === "") return;
-
+  
     // Add user's input to the responses state
     const newMessage = { type: "user", text: userInput };
     setResponses([...responses, newMessage]);
-
+  
     try {
-      // Get the current user from Firebase Auth
-      //const auth = getAuth();
-      const currentUser = auth.currentUser;
-
-      // Check if the user is authenticated
-      if (!currentUser) {
-        console.error("No authenticated user.");
-        return;
-      }
-
-      const userId = currentUser.uid; // Get the user's UID
-
       // Create an array of messages from the current responses state
       const messages = [
         {
           role: "system",
           content:
-            "You are a helpful trip advisor AI that only answers questions and gives itineraries about Johannesburg, Durban, Pretoria, Cape Town and Gqeberha. Remember the user's preferences, and avoid asking repetitive questions. When giving itineraries, make sure to personalize based on the given preferences ask these questions : " +
-            questionsPrompt +
-            "When you have created and itinerary,  your response should like this:  Here is your itinerary:  {insert itinerary}.  That  phrase 'Here is your itinerary' should be there exactly as is:  To help here is an example itinerary which you must base the format off of " +
-            exampleItinerary +
-            ". Here is a second example itinerary: " +
-            exampleItinerary2,
+            "You are a helpful trip advisor AI that only answers questions and gives itineraries about Johannesburg, Durban, Pretoria, Cape Town and Gqeberha... " +
+            "When asked to create or update an itinerary, ask the following questions: " + questionsPrompt,
         },
-        ...responses.map((response) => ({
-          role: response.type === "user" ? "user" : "assistant",
-          content: response.text,
-        })),
+        ...responses
+          .filter((response) => response.text)
+          .map((response) => ({
+            role: response.type === "user" ? "user" : "assistant",
+            content: response.text,
+          })),
         { role: "user", content: userInput },
       ];
-
+  
       // Interact with OpenAI GPT-4 model
       const response = await openai.chat.completions.create({
         model: "gpt-4",
         messages: messages,
-        max_tokens: 1000,
+        max_tokens: 5000,
+        functions: [
+          {
+            name: "getItinerary",
+            description: "Retrieve an existing itinerary from the database.",
+            parameters: {
+              type: "object",
+              properties: {
+                itineraryName: { type: "string", description: "The name of the itinerary to retrieve" }
+              },
+              required: ["itineraryName"],
+            },
+          },
+          {
+            name: "createItinerary",
+            description: "Create a new itinerary in the database...",
+            parameters: {
+              type: "object",
+              properties: {
+                itineraryName: { type: "string", description: "The name of the itinerary" },
+                destination: { type: "string", description: "The destination of the trip" },
+                budget: { type: "number", description: "The budget for the trip" },
+                numDays: { type: "number", description: "The number of days for the trip" },
+                listDays: {
+                  type: "array",
+                  description: "The list of days in the itinerary",
+                  items: {
+                    type: "object",
+                    properties: {
+                      dayNumber: { type: "number", description: "The day number" },
+                      flights: {
+                        type: "array",
+                        description: "List of flights for this day",
+                        items: {
+                          type: "object",
+                          properties: {
+                            arrivalTime: { type: "string", description: "Arrival time" },
+                            departureTime: { type: "string", description: "Departure time" },
+                            cost: { type: "number", description: "Cost of the flight" },
+                            class: { type: "string", description: "Class of the flight (e.g., economy, business)" },
+                            carrierCode: { type: "string", description: "Carrier code (airline code)" },
+                            sourceLocation: { type: "string", description: "Source location (departure airport)" },
+                            destinationLocation: { type: "string", description: "Destination location (arrival airport)" },
+                          },
+                          required: ["arrivalTime", "departureTime", "cost", "class", "carrierCode", "sourceLocation", "destinationLocation"],
+                        },
+                      },
+                      accommodation: {
+                        type: "array",
+                        description: "List of accommodations for this day",
+                        items: {
+                          type: "object",
+                          properties: {
+                            hotel: { type: "string", description: "Hotel name" },
+                            checkin: { type: "string", description: "Check-in time" },
+                            checkout: { type: "string", description: "Check-out time" },
+                          },
+                          required: ["hotel", "checkin", "checkout"],
+                        },
+                      },
+                      activities: {
+                        type: "array",
+                        description: "List of activities for this day",
+                        items: {
+                          type: "object",
+                          properties: {
+                            name: { type: "string", description: "Activity name" },
+                            time: { type: "string", description: "Estimated activity time" },
+                            description: { type: "string", description: "Activity description" },
+                          },
+                          required: ["name", "time", "description"],
+                        },
+                      },
+                    },
+                    required: ["dayNumber", "flights", "accommodation", "activities"], // Ensure these are required
+                  },
+                  minItems: 1, // Ensure at least one day is provided
+                },
+              },
+              required: ["itineraryName", "destination", "budget", "numDays", "listDays"],
+            },
+          },
+          {
+            name: "updateItinerary",
+            description: "Update an existing itinerary in the database...",
+            parameters: {
+              type: "object",
+              properties: {
+                originalItineraryName: { type: "string", description: "The original name of the itinerary to be updated" },
+                updatedItinerary: {
+                  type: "object",
+                  description: "The updated itinerary details including name, destination, budget, numDays, and listDays",
+                  properties: {
+                    itineraryName: { type: "string", description: "The new name of the itinerary" },
+                    destination: { type: "string", description: "The updated destination of the trip" },
+                    budget: { type: "number", description: "The updated budget for the trip" },
+                    numDays: { type: "number", description: "The updated number of days for the trip" },
+                    listDays: {
+                      type: "array",
+                      description: "The updated list of days in the itinerary",
+                      items: {
+                        type: "object",
+                        properties: {
+                          dayNumber: { type: "number", description: "The day number" },
+                          flights: {
+                            type: "array",
+                            description: "Updated list of flights for this day",
+                            items: {
+                              type: "object",
+                              properties: {
+                                arrivalTime: { type: "string", description: "Arrival time" },
+                                departureTime: { type: "string", description: "Departure time" },
+                                cost: { type: "number", description: "Cost of the flight" },
+                                class: { type: "string", description: "Class of the flight (e.g., economy, business)" },
+                                carrierCode: { type: "string", description: "Carrier code (airline code)" },
+                                sourceLocation: { type: "string", description: "Source location (departure airport)" },
+                                destinationLocation: { type: "string", description: "Destination location (arrival airport)" },
+                              },
+                              required: ["arrivalTime", "departureTime", "cost", "class", "carrierCode", "sourceLocation", "destinationLocation"],
+                            },
+                          },
+                          accommodation: {
+                            type: "array",
+                            description: "Updated list of accommodations for this day",
+                            items: {
+                              type: "object",
+                              properties: {
+                                hotel: { type: "string", description: "Hotel name" },
+                                checkin: { type: "string", description: "Check-in time" },
+                                checkout: { type: "string", description: "Check-out time" },
+                              },
+                              required: ["hotel", "checkin", "checkout"],
+                            },
+                          },
+                          activities: {
+                            type: "array",
+                            description: "Updated list of activities for this day",
+                            items: {
+                              type: "object",
+                              properties: {
+                                name: { type: "string", description: "Activity name" },
+                                time: { type: "string", description: "Estimated activity time" },
+                                description: { type: "string", description: "Activity description" },
+                              },
+                              required: ["name", "time", "description"],
+                            },
+                          },
+                        },
+                        required: ["dayNumber", "flights", "accommodation", "activities"], // Ensure these are required
+                      },
+                      minItems: 1, // Ensure at least one day is provided
+                    },
+                  },
+                  required: ["itineraryName", "destination", "budget", "numDays", "listDays"],
+                },
+              },
+              required: ["originalItineraryName", "updatedItinerary"],
+            },
+          },
+        ],
+        function_call: "auto",
       });
+  
+      // Check if the createItinerary function was called
+      if (response.choices[0]?.finish_reason === "function_call") {
+        const functionName = response.choices[0].message.function_call.name;
+  
+        // Execute the function locally
+        if (functionName === "createItinerary") {
+          const functionArguments = JSON.parse(response.choices[0].message.function_call.arguments);
+          createItinerary(
+            functionArguments.itineraryName,
+            functionArguments.destination,
+            functionArguments.budget,
+            functionArguments.numDays,
+            functionArguments.listDays
+          );
+  
+          // Markdown output for createItinerary
+          const itineraryText = `
+    # **Itinerary: ${functionArguments.itineraryName}**
+    
+    **Destination**: ${functionArguments.destination}  
+    **Budget**: $${functionArguments.budget}  
+    **Total Days**: ${functionArguments.numDays} days
+    
+    ## Detailed Itinerary:
+    
+    ${functionArguments.listDays.map(day => `
+    ### **Day ${day.dayNumber}**
+    
+    **Flights**:  
+    ${day.flights.length > 0 ? day.flights.map(flight => `
+    - **Flight**: ${flight.carrierCode}  
+      - Departure: ${flight.departureTime} from ${flight.sourceLocation}  
+      - Arrival: ${flight.arrivalTime} at ${flight.destinationLocation}  
+      - Class: ${flight.class}  
+      - Cost: $${flight.cost}
+    `).join("\n") : "- No flights planned.\n"}
+    
+    **Accommodation**:  
+    ${day.accommodation.length > 0 ? day.accommodation.map(acc => `
+    - **Hotel**: ${acc.hotel}  
+      - Check-in: ${acc.checkin}  
+      - Check-out: ${acc.checkout}
+    `).join("\n") : "- No accommodation planned.\n"}
+    
+    **Activities**:  
+    ${day.activities.length > 0 ? day.activities.map(activity => `
+    - **Activity**: ${activity.name}  
+      - Time: ${activity.time}  
+      - Description: ${activity.description}
+    `).join("\n") : "- No activities planned.\n"}
+    `).join("\n")}
+    `;
+  
+          setResponses((prevResponses) => [
+            ...prevResponses,
+            { type: "bot", text: itineraryText }, // Display itinerary as markdown
+          ]);
+        }
+  
+        // Check if the updateItinerary function was called
+        if (functionName === "updateItinerary") {
+          const functionArguments = JSON.parse(response.choices[0].message.function_call.arguments);
+          
+          // Extract the original itinerary name and updated itinerary object
+          const originalItineraryName = functionArguments.originalItineraryName;
+          const updatedItinerary = functionArguments.updatedItinerary;
+          
+          console.log("Original Itinerary Name:", originalItineraryName);
+          console.log("Updated Itinerary:", JSON.stringify(updatedItinerary));
+          // Call your updateItinerary function here with the extracted arguments
+          updateItinerary(
+            originalItineraryName,
+            updatedItinerary
+          );
+          
+          // Markdown output for updateItinerary
+          const updateItineraryText = `
+          # **Updated Itinerary: ${updatedItinerary.itineraryName}**
+          
+          **Destination**: ${updatedItinerary.destination}  
+          **Budget**: $${updatedItinerary.budget}  
+          **Total Days**: ${updatedItinerary.numDays} days
+          
+          ## Updated Itinerary Details:
+          
+          ${updatedItinerary.listDays.map(day => `
+          ### **Day ${day.dayNumber}**
+          
+          **Flights**:  
+          ${day.flights.length > 0 ? day.flights.map(flight => `
+          - **Flight**: ${flight.carrierCode}  
+            - Departure: ${flight.departureTime} from ${flight.sourceLocation}  
+            - Arrival: ${flight.arrivalTime} at ${flight.destinationLocation}  
+            - Class: ${flight.class}  
+            - Cost: $${flight.cost}
+          `).join("\n") : "- No flights planned.\n"}
+          
+          **Accommodation**:  
+          ${day.accommodation.length > 0 ? day.accommodation.map(acc => `
+          - **Hotel**: ${acc.hotel}  
+            - Check-in: ${acc.checkin}  
+            - Check-out: ${acc.checkout}
+          `).join("\n") : "- No accommodation planned.\n"}
+          
+          **Activities**:  
+          ${day.activities.length > 0 ? day.activities.map(activity => `
+          - **Activity**: ${activity.name}  
+            - Time: ${activity.time}  
+            - Description: ${activity.description}
+          `).join("\n") : "- No activities planned.\n"}
+          `).join("\n")}
+          `;
+  
+          setResponses((prevResponses) => [
+            ...prevResponses,
+            { type: "bot", text: updateItineraryText }, // Display updated itinerary as markdown
+          ]);
+        }
 
-      const botMessage = response.choices[0].message.content;
+        if(functionName === "getItinerary") {
+          const functionArguments = JSON.parse(response.choices[0].message.function_call.arguments);
+          const itineraryName = functionArguments.itineraryName;
+          const itineraryData = await getItinerary(itineraryName);
 
-      // Check if the response contains the phrase "Here is your itinerary"
-      if (botMessage.includes("Here is your itinerary")) {
-        // Remove the trigger phrase and the colon (":") that follows it
-        const itineraryText = botMessage
-          .replace("Here is your itinerary:", "")
-          .trim();
-        // const db = getFirestore();
-
-        // if (window.location.hostname === "localhost") {
-        //   connectFirestoreEmulator(db, 'localhost', 3000);
-        // }
-        // **Calculate Trip Duration** by counting occurrences of "Day"
-        const dayCount = (itineraryText.match(/Day/g) || []).length;
-
-        // **Extract Location** from the allowed cities
-        const locations = [
-          "Johannesburg",
-          "Durban",
-          "Pretoria",
-          "Cape Town",
-          "Gqeberha",
-        ];
-        const foundLocation =
-          locations.find((location) => itineraryText.includes(location)) ||
-          "Unknown";
-
-        // Store the itinerary, userId, duration, and location in Firestore
-        await addDoc(collection(db, "Itinerary"), {
-          uid: userId, // Add the user's UID
-          itineraryText: itineraryText, // Store the cleaned itinerary
-          duration: dayCount, // Store the duration (based on "Day" occurrences)
-          destination: foundLocation, // Store the location (found in the text)
-          createdAt: new Date().toISOString().split("T")[0], // Timestamp of creation
-          flights: [],
-          accomodations: [],
-          altimage:
-            "https://www.sa-venues.com/things-to-do/gauteng/gallery/9/1.jpg",
-          image:
-            "https://www.sa-venues.com/things-to-do/gauteng/gallery/9/1.jpg", // Timestamp of creation
-        });
-        console.log("Itinerary saved to Firestore with location and duration.");
+          if (itineraryData) {
+            // Markdown output for getItinerary
+            const itineraryText = `
+            # **Itinerary: ${itineraryData.itineraryName}**
+            
+            **Destination**: ${itineraryData.destination}  
+            **Budget**: $${itineraryData.budget}  
+            **Total Days**: ${itineraryData.numDays} days
+            
+            ## Detailed Itinerary:
+            
+            ${itineraryData.days.map(day => `
+            ### **Day ${day.dayNumber}**
+            
+            **Flights**:  
+            ${day.flights.length > 0 ? day.flights.map(flight => `
+            - **Flight**: ${flight.carrierCode}  
+              - Departure: ${flight.departureTime} from ${flight.sourceLocation}  
+              - Arrival: ${flight.arrivalTime} at ${flight.destinationLocation}  
+              - Class: ${flight.class}  
+              - Cost: $${flight.cost}
+            `).join("\n") : "- No flights planned.\n"}
+            
+            **Accommodation**:  
+            ${day.accommodation.length > 0 ? day.accommodation.map(acc => `
+            - **Hotel**: ${acc.hotel}  
+              - Check-in: ${acc.checkin}  
+              - Check-out: ${acc.checkout}
+            `).join("\n") : "- No accommodation planned.\n"}
+            
+            **Activities**:  
+            ${day.activities.length > 0 ? day.activities.map(activity => `
+            - **Activity**: ${activity.name}  
+              - Time: ${activity.time}  
+              - Description: ${activity.description}
+            `).join("\n") : "- No activities planned.\n"}
+            `).join("\n")}
+            `;
+    
+            setResponses((prevResponses) => [
+              ...prevResponses,
+              { type: "bot", text: itineraryText }, // Display itinerary as markdown
+            ]);
+          } else {
+            setResponses((prevResponses) => [
+              ...prevResponses,
+              { type: "bot", text: `Sorry, I couldn't find an itinerary with the name '${itineraryName}'.` },
+            ]);
+          }
+        }
+        
+      } else {
+        const botMessage = response.choices[0].message.content;
+        setResponses((prevResponses) => [
+          ...prevResponses,
+          { type: "bot", text: botMessage },
+        ]);
       }
-
-      // Add the AI response to the responses state
-      setResponses((prevResponses) => [
-        ...prevResponses,
-        { type: "bot", text: botMessage },
-      ]);
+  
     } catch (error) {
-      console.error(
-        "Error communicating with the OpenAI API or Firestore:",
-        error,
-      );
+      console.error("Error communicating with the OpenAI API:", error);
       setResponses((prevResponses) => [
         ...prevResponses,
-        {
-          type: "bot",
-          text: "Sorry, there was an error processing your request.",
-        },
+        { type: "bot", text: "Sorry, there was an error processing your request." },
       ]);
     }
-
-    setUserInput("");
+  
+    setUserInput(""); // Clear the input
   };
+  
+  
 
   return (
     <div style={{ display: "flex", height: "100vh", flexDirection: "column" }}>
@@ -333,5 +925,5 @@ const Dashboard = () => {
     </div>
   );
 };
-
+//prompt : 1.) The dates are 20-30 december . 2.) I have no budget constraints 3.) Im travelling solo . 4.) i prefer burgers and beer 5.) No children will be present 6.) I prefer 5 star luxury hotels, most of them have checkout time of 10:00 and check in timme of 14:00 7.) I like water activities like swimming or going to the aquarium. i also like rugby. 8.) no not really, maybe add a flight the morning of im arriving. the deprature time is 9:00 and estimated arrival 10:30. also the last day im flying back. but my flights is from 13:00-14:30. The first one is from pretoria to cape town and the second flight is from cape town to pretoria, both are with Flysafair, the cost is 2500. the cost of both is economy . 10.) I want my days packed yes, i want about 6 days filled with activities
 export default Dashboard;
