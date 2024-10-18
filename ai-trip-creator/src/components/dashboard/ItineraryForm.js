@@ -41,7 +41,7 @@ import {
 } from "firebase/firestore";
 
 import OpenAI from "openai";
-
+import { createItinerary, getItinerary, updateItinerary } from "./dashboard";
 // Initialize OpenAI client
 const openai = new OpenAI({
   apiKey: process.env.REACT_APP_OPEN_AI_KEY,
@@ -435,45 +435,39 @@ function ItineraryForm() {
     try {
       setLoading(true);
 
-      const days = selectedFlights.map((flight, index) => ({
-        dayNumber: index + 1,
-        flights: [
-          {
-            flightNumber: flight.number,
-            departure: flight.itineraries[0].segments[0].departure.at,
-            arrival: flight.itineraries[0].segments[0].arrival.at,
-            from: flight.itineraries[0].segments[0].departure.iataCode,
-            to: flight.itineraries[0].segments[0].arrival.iataCode,
-            carrier: flight.itineraries[0].segments[0].carrierCode,
-            aircraft: flight.itineraries[0].segments[0].aircraft.code,
-          },
-        ],
-        accommodation: selectedAccommodations[index]
-          ? [selectedAccommodations[index]]
-          : [],
-        activities: selectedActivities.filter(
-          (activity) => activity.day === index + 1,
-        ),
-      }));
+      // Generate day-by-day data for the itinerary
+      const days = Locations.map((location, index) => {
+        const dayLength = Lengths[index] || 1;
+        const activities = selectedActivities.filter(
+          (activity) =>
+            activity.day >= index + 1 && activity.day < index + 1 + dayLength,
+        );
 
-      // Create the prompt for AI generation
+        return {
+          dayNumber: index + 1,
+          location,
+          length: dayLength,
+          accommodation: selectedAccommodations[index]
+            ? [selectedAccommodations[index]]
+            : [],
+          activities,
+        };
+      });
+
+      // Create a prompt for AI generation based on provided data
       const itineraryPrompt = `
-        The user has selected the following details for their trip:
+        The user has selected the following details:
         - Itinerary Name: ${itineraryName}
-        - Flights: ${selectedFlights
-          .map(
-            (f) =>
-              `${f.itineraries[0].segments[0].departure.iataCode} to ${f.itineraries[0].segments[0].arrival.iataCode}, flight number ${f.number}, departing at ${f.itineraries[0].segments[0].departure.at}`,
-          )
-          .join("; ")}
+        - Locations: ${Locations.join(", ")}
+        - Lengths: ${Lengths.join(", ")}
         - Accommodations: ${selectedAccommodations
           .map((a) => a.name)
           .join(", ")}
         - Activities: ${selectedActivities.map((act) => act.name).join(", ")}
-        
-        Based on these details, create a detailed day-by-day itinerary, making sure to include travel information for the flights, suggestions for lodging, and planned activities for each day.
+        Based on these details, create a detailed itinerary.
       `;
 
+      // Generate itinerary with OpenAI
       const response = await openai.chat.completions.create({
         model: "gpt-4",
         messages: [
@@ -485,24 +479,9 @@ function ItineraryForm() {
 
       const aiGeneratedItinerary = response.choices[0].message.content;
 
-      const itineraryData = {
-        userId,
-        itineraryName,
-        flights: selectedFlights,
-        accommodations: selectedAccommodations,
-        activities: selectedActivities,
-        generatedItinerary: aiGeneratedItinerary,
-        createdAt: new Date(),
-      };
+      // Save the itinerary data using createItinerary from Dashboard
+      // await createItinerary(itineraryName, Locations[0], 0, days.length, days);
 
-      /*await setDoc(
-        doc(db, "itineraries", `${userId}_${Date.now()}`),
-        itineraryData,
-      );*/
-      console.log(selectedFlights);
-      console.log(aiGeneratedItinerary);
-
-      alert("Itinerary saved successfully!");
       setAiResponse(aiGeneratedItinerary);
       setLoading(false);
     } catch (error) {
@@ -1517,9 +1496,7 @@ function ItineraryForm() {
 
         {activeStep === 3 && (
           <Box>
-            <Typography variant="h6" sx={{ marginTop: "20px" }}>
-              Review and Submit
-            </Typography>
+            <h2>Review and Submit</h2>
 
             <Box sx={{ marginTop: "10px" }}>
               <Typography variant="h6">Itinerary Name:</Typography>
