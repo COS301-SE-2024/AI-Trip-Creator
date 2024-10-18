@@ -145,7 +145,7 @@ function ItineraryForm() {
   const [Locations, setLocations] = useState([]);
   const [Lengths, setLengths] = useState([]);
   const [selectedDepartureFlights, setSelectedDepartureFlights] = useState([]);
-const [selectedReturnFlights, setSelectedReturnFlights] = useState([]);
+  const [selectedReturnFlights, setSelectedReturnFlights] = useState([]);
 
   //fetch userid
   useEffect(() => {
@@ -252,6 +252,10 @@ const [selectedReturnFlights, setSelectedReturnFlights] = useState([]);
   }, [Locations]);
 
   const handleDone = () => {
+
+    const allSelectedFlights = [...selectedDepartureFlights, ...selectedReturnFlights];
+    console.log("Adding flights to itinerary:", allSelectedFlights);
+
     addEndLocation();
     console.log(endLocation);
     console.log(Locations);
@@ -931,7 +935,7 @@ const [selectedReturnFlights, setSelectedReturnFlights] = useState([]);
                                       ? "primary.main"
                                       : "grey.300",
                                   }}
-                                  onClick={() => handleFlightToggle(flight,true)}
+                                  onClick={() => handleFlightToggle(flight, true)}
                                 >
                                   <CardContent>
                                     <Typography
@@ -1088,97 +1092,129 @@ const [selectedReturnFlights, setSelectedReturnFlights] = useState([]);
                 )}
 
                 {/* Display selected flights */}
-                <Box>
-                  <h2>Selected Flights</h2>
-                  {selectedFlights.length > 0 ? (
-                    <Grid container spacing={2}>
-                      {selectedFlights.map((flight, index) => (
-                        <Grid item xs={12} sm={6} md={3} key={index}>
-                          <Card sx={{ padding: "8px" }}>
-                            <CardContent>
-                              <Typography
-                                align="center"
-                                variant="h6"
-                                sx={{ fontWeight: "bold", mb: 1 }}
-                              >
-                                <FaPlaneDeparture />{" "}
-                                {
-                                  flight.itineraries[0].segments[0].departure
-                                    .iataCode
-                                }{" "}
-                                →{" "}
-                                {
-                                  flight.itineraries[0].segments[0].arrival
-                                    .iataCode
-                                }
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                sx={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  mb: -2,
-                                }}
-                              >
-                                <FaClock
-                                  style={{ color: "#ff9800", marginRight: 4 }}
-                                />
-                                Departure:{" "}
-                                {
-                                  flight.itineraries[0].segments[0].departure.at.split(
-                                    "T",
-                                  )[1]
-                                }
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                sx={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  mb: -2,
-                                }}
-                              >
-                                <IoAirplaneSharp
-                                  style={{ color: "#1976d2", marginRight: 4 }}
-                                />
-                                Duration: {flight.itineraries[0].duration}
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                sx={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  mb: -2,
-                                }}
-                              >
-                                <FaDollarSign
-                                  style={{ color: "#4caf50", marginRight: 4 }}
-                                />
-                                Price: {flight.price.total}{" "}
-                                {flight.price.currency} (
-                                {flight.priceInZar
-                                  ? `ZAR ${flight.priceInZar}`
-                                  : "Conversion unavailable"}
-                                )
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                sx={{ display: "flex", alignItems: "center" }}
-                              >
-                                Airline:{" "}
-                                {getAirlineName(
-                                  flight.itineraries[0].segments[0].carrierCode,
-                                )}
-                              </Typography>
-                            </CardContent>
-                          </Card>
-                        </Grid>
-                      ))}
-                    </Grid>
-                  ) : (
-                    <Typography>No flights selected yet.</Typography>
-                  )}
-                </Box>
+<Box>
+  <h2>Selected Flights</h2>
+  
+  {/* Combine both selected departure and return flights */}
+  {selectedDepartureFlights.length > 0 || selectedReturnFlights.length > 0 ? (
+    <Grid container spacing={2}>
+      {[...selectedDepartureFlights, ...selectedReturnFlights].map((flight, index) => (
+        <Grid item xs={12} sm={6} md={3} key={index}>
+          <Card sx={{ padding: "8px" }}>
+            <CardContent>
+              <Typography
+                align="center"
+                variant="h6"
+                sx={{ fontWeight: "bold", mb: 1 }}
+              >
+                <FaPlaneDeparture />{" "}
+                {flight.itineraries[0].segments[0].departure.iataCode} →{" "}
+                {flight.itineraries[0].segments[0].arrival.iataCode}
+              </Typography>
+
+              <Typography
+                variant="body2"
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  mb: -3,
+                  fontSize: "15.5px",
+                }}
+              >
+                <FaClock
+                  style={{
+                    color: "#ff9800",
+                    marginRight: 4,
+                  }}
+                />
+                Departure:{" "}
+                {flight.itineraries[0].segments[0].departure.at.split("T")[1]}
+              </Typography>
+
+              <Typography
+                variant="body2"
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  mb: -3,
+                  fontSize: "15.5px",
+                }}
+              >
+                <FaPlaneArrival
+                  style={{
+                    color: "#2196f3",
+                    marginRight: 4,
+                  }}
+                />
+                Arrival:{" "}
+                {flight.itineraries[0].segments[0].arrival.at.split("T")[1]}
+              </Typography>
+
+              <Typography
+                variant="body2"
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  mb: -3,
+                  fontSize: "15.5px",
+                }}
+              >
+                <FcClock
+                  style={{
+                    color: "#1976d2",
+                    marginRight: 4,
+                  }}
+                />
+                Duration: {flight.itineraries[0].duration}
+              </Typography>
+
+              <Typography
+                variant="body2"
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  mb: -3,
+                  fontSize: "15.5px",
+                }}
+              >
+                <IoAirplaneSharp
+                  style={{
+                    color: "#4caf50",
+                    marginRight: 4,
+                  }}
+                />
+                Airline:{" "}
+                {getAirlineName(flight.itineraries[0].segments[0].carrierCode)}
+              </Typography>
+
+              <Typography
+                variant="body2"
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  mb: -1,
+                  fontSize: "15.5px",
+                }}
+              >
+                <FaDollarSign
+                  style={{
+                    color: "#f44336",
+                    marginRight: 4,
+                  }}
+                />
+                Price: {flight.priceInZar} ZAR
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      ))}
+    </Grid>
+  ) : (
+    <Typography>No flights selected yet.</Typography>
+  )}
+</Box>
+
+
 
                 {addMoreFlights && (
                   <Button
