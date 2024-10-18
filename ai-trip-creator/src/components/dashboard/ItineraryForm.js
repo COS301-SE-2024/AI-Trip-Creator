@@ -144,6 +144,14 @@ function ItineraryForm() {
   const [budgetRange, setBudgetRange] = useState([1000, 10000]);
   const [Locations, setLocations] = useState([]);
   const [Lengths, setLengths] = useState([]);
+  const [selectedDepartureFlights, setSelectedDepartureFlights] = useState([]);
+  const [selectedReturnFlights, setSelectedReturnFlights] = useState([]);
+  const [startLocationError, setStartLocationError] = useState(false);
+  const [endLocationError, setEndLocationError] = useState(false);
+  const [departureDateError, setDepartureDateError] = useState(false);
+
+  const [allSelectedFlights, setAllSelectedFlights] = useState([]); // New state to track all flights
+
 
   //fetch userid
   useEffect(() => {
@@ -165,7 +173,44 @@ function ItineraryForm() {
     { label: "Lanseria (HLA)", code: "HLA" },
   ];
 
+  const validateFlightSearch = () => {
+    let isValid = true;
+
+    if (!startLocation) {
+      setStartLocationError(true);
+      isValid = false;
+    } else {
+      setStartLocationError(false);
+    }
+
+    if (!endLocation) {
+      setEndLocationError(true);
+      isValid = false;
+    } else {
+      setEndLocationError(false);
+    }
+
+    if (!departureDate) {
+      setDepartureDateError(true);
+      isValid = false;
+    } else {
+      setDepartureDateError(false);
+    }
+
+    if (startLocation === endLocation) {
+      setErrorMessage("Origin and destination cannot be the same.");
+      isValid = false;
+    } else {
+      setErrorMessage("");
+    }
+
+    return isValid;
+  };
+
   const handleSearchFlights = async () => {
+    if (!validateFlightSearch()) {
+      return;
+    }
     if (startLocation && endLocation && departureDate) {
       if (startLocation === endLocation) {
         setErrorMessage("Origin and destination cannot be the same.");
@@ -197,41 +242,236 @@ function ItineraryForm() {
     }
   };
 
-  const handleFlightToggle = (flight) => {
-    // setSelectedFlights((prevSelected) =>
-    //   prevSelected.some((f) => f.id === flight.id) ? prevSelected.filter((f) => f.id !== flight.id) : [...prevSelected, flight]
-    // );
-    setSelectedFlights((prevSelected) => {
-      const isSelected = prevSelected.some((f) => f.id === flight.id);
-      return isSelected
-        ? prevSelected.filter((f) => f.id !== flight.id) // Remove if already selected
-        : [...prevSelected, flight]; // Add if not selected
-    });
+  // const handleFlightToggle = (flight) => {
+  //   // setSelectedFlights((prevSelected) =>
+  //   //   prevSelected.some((f) => f.id === flight.id) ? prevSelected.filter((f) => f.id !== flight.id) : [...prevSelected, flight]
+  //   // );
+  //   setSelectedFlights((prevSelected) => {
+  //     const isSelected = prevSelected.some((f) => f.id === flight.id);
+  //     return isSelected
+  //       ? prevSelected.filter((f) => f.id !== flight.id) // Remove if already selected
+  //       : [...prevSelected, flight]; // Add if not selected
+  //   });
+  // };
+
+  // const handleFlightToggle = (flight, isReturn = false) => {
+  //   if (isReturn) {
+  //     setSelectedReturnFlights((prevSelected) => {
+  //       const isSelected = prevSelected.some((f) => f.id === flight.id);
+  //       return isSelected
+  //         ? prevSelected.filter((f) => f.id !== flight.id) // Remove if already selected
+  //         : [...prevSelected, flight]; // Add if not selected
+  //     });
+  //   } else {
+  //     setSelectedDepartureFlights((prevSelected) => {
+  //       const isSelected = prevSelected.some((f) => f.id === flight.id);
+  //       return isSelected
+  //         ? prevSelected.filter((f) => f.id !== flight.id) // Remove if already selected
+  //         : [...prevSelected, flight]; // Add if not selected
+  //     });
+  //   }
+  // };
+
+  // const handleFlightToggle = (flight, isReturn = false) => {
+  //   if (isReturn) {
+  //     // Toggle return flights
+  //     setSelectedReturnFlights((prevSelected) => {
+  //       const isSelected = prevSelected.some((f) => f.id === flight.id);
+  //       const updatedFlights = isSelected
+  //         ? prevSelected.filter((f) => f.id !== flight.id)
+  //         : [...prevSelected, flight];
+  
+  //       // Update all selected flights
+  //       setAllSelectedFlights((prevSelectedFlights) => {
+  //         return isSelected
+  //           ? prevSelectedFlights.filter((f) => f.id !== flight.id)
+  //           : [...prevSelectedFlights, flight];
+  //       });
+  
+  //       return updatedFlights;
+  //     });
+  //   } else {
+  //     // Toggle departure flights
+  //     setSelectedDepartureFlights((prevSelected) => {
+  //       const isSelected = prevSelected.some((f) => f.id === flight.id);
+  //       const updatedFlights = isSelected
+  //         ? prevSelected.filter((f) => f.id !== flight.id)
+  //         : [...prevSelected, flight];
+  
+  //       // Update all selected flights
+  //       setAllSelectedFlights((prevSelectedFlights) => {
+  //         return isSelected
+  //           ? prevSelectedFlights.filter((f) => f.id !== flight.id)
+  //           : [...prevSelectedFlights, flight];
+  //       });
+  
+  //       return updatedFlights;
+  //     });
+  //   }
+  // };
+  
+  // const handleFlightToggle = (flight, isReturn = false) => {
+  //   if (isReturn) {
+  //     // Toggle return flights
+  //     setSelectedReturnFlights((prevSelected) => {
+  //       const isSelected = prevSelected.some((f) => f.id === flight.id);
+  //       const updatedFlights = isSelected
+  //         ? prevSelected.filter((f) => f.id !== flight.id)
+  //         : [...prevSelected, flight];
+  
+  //       // Update all selected flights, avoiding duplicates
+  //       setAllSelectedFlights((prevSelectedFlights) => {
+  //         const flightExists = prevSelectedFlights.some((f) => f.id === flight.id);
+  //         return flightExists
+  //           ? prevSelectedFlights
+  //           : [...prevSelectedFlights, flight];
+  //       });
+  
+  //       return updatedFlights;
+  //     });
+  //   } else {
+  //     // Toggle departure flights
+  //     setSelectedDepartureFlights((prevSelected) => {
+  //       const isSelected = prevSelected.some((f) => f.id === flight.id);
+  //       const updatedFlights = isSelected
+  //         ? prevSelected.filter((f) => f.id !== flight.id)
+  //         : [...prevSelected, flight];
+  
+  //       // Update all selected flights, avoiding duplicates
+  //       setAllSelectedFlights((prevSelectedFlights) => {
+  //         const flightExists = prevSelectedFlights.some((f) => f.id === flight.id);
+  //         return flightExists
+  //           ? prevSelectedFlights
+  //           : [...prevSelectedFlights, flight];
+  //       });
+  
+  //       return updatedFlights;
+  //     });
+  //   }
+  // };
+
+  const handleFlightToggle = (flight, isReturn = false) => {
+    if (isReturn) {
+      // Handle return flight toggle
+      setSelectedReturnFlights((prevSelected) => {
+        const isSelected = prevSelected.some((f) => f.id === flight.id);
+        const updatedFlights = isSelected
+          ? prevSelected.filter((f) => f.id !== flight.id)  // Remove if already selected
+          : [...prevSelected, flight];                      // Add if not selected
+  
+        // Update allSelectedFlights: add or remove the return flight accordingly
+        setAllSelectedFlights((prevSelectedFlights) => {
+          if (isSelected) {
+            return prevSelectedFlights.filter((f) => f.id !== flight.id);  // Remove if already selected
+          } else {
+            return [...prevSelectedFlights, flight];  // Add if not selected
+          }
+        });
+  
+        return updatedFlights;
+      });
+    } else {
+      // Handle departure flight toggle
+      setSelectedDepartureFlights((prevSelected) => {
+        const isSelected = prevSelected.some((f) => f.id === flight.id);
+        const updatedFlights = isSelected
+          ? prevSelected.filter((f) => f.id !== flight.id)  // Remove if already selected
+          : [...prevSelected, flight];                      // Add if not selected
+  
+        // Update allSelectedFlights: add or remove the departure flight accordingly
+        setAllSelectedFlights((prevSelectedFlights) => {
+          if (isSelected) {
+            return prevSelectedFlights.filter((f) => f.id !== flight.id);  // Remove if already selected
+          } else {
+            return [...prevSelectedFlights, flight];  // Add if not selected
+          }
+        });
+  
+        return updatedFlights;
+      });
+    }
   };
+  
+  
+
+  // const addEndLocation = () => {
+  //   if (startLocation !== "" && !Locations.includes(startLocation)) {
+  //     setLocations((prevStartLocations) => [
+  //       ...prevStartLocations,
+  //       startLocation,
+  //     ]);
+  //   }
+  //   if (endLocation !== "" && !Locations.includes(endLocation)) {
+  //     setLocations((prevEndLocations) => [...prevEndLocations, endLocation]);
+  //   }
+
+  //   if (tripDays !== "" && !Lengths.includes(tripDays)) {
+  //     setLengths((prevEndLocations) => [...prevEndLocations, tripDays]);
+  //   }
+  //   //console.log("End Location:", endLocation);
+  // };
 
   const addEndLocation = () => {
+    // Check and add startLocation if it's not already in Locations
     if (startLocation !== "" && !Locations.includes(startLocation)) {
-      setLocations((prevStartLocations) => [
-        ...prevStartLocations,
-        startLocation,
-      ]);
+      setLocations((prevLocations) => [...prevLocations, startLocation]);
     }
+    
+    // Check and add endLocation if it's not already in Locations
     if (endLocation !== "" && !Locations.includes(endLocation)) {
-      setLocations((prevEndLocations) => [...prevEndLocations, endLocation]);
+      setLocations((prevLocations) => [...prevLocations, endLocation]);
     }
-
+  
+    // Check and add tripDays if it's not already in Lengths
     if (tripDays !== "" && !Lengths.includes(tripDays)) {
-      setLengths((prevEndLocations) => [...prevEndLocations, tripDays]);
+      setLengths((prevLengths) => [...prevLengths, tripDays]);
     }
-    //console.log("End Location:", endLocation);
   };
+  
 
   // Use useEffect to log the updated locations whenever it changes
   useEffect(() => {
     console.log("Updated Locations:", Locations);
   }, [Locations]);
 
+  // const handleDone = () => {
+
+  //   // const allSelectedFlights = [...selectedDepartureFlights, ...selectedReturnFlights];
+  //   // console.log("Adding flights to itinerary:", allSelectedFlights);
+  //   const allSelected = [...selectedDepartureFlights, ...selectedReturnFlights];
+
+  //   // Update all selected flights with the current selection
+  //   setAllSelectedFlights((prevSelected) => [...prevSelected, ...allSelected]);
+  
+  //   // Clear the selected flights for the next search
+  //   setSelectedDepartureFlights([]);
+  //   setSelectedReturnFlights([]);
+  //   addEndLocation();
+  //   console.log(endLocation);
+  //   console.log(Locations);
+  //   setShowFlightSearch(false);
+  //   setAddMoreFlights(true); // Enable adding more flights
+  //   setStartLocation("");
+  //   setEndLocation("");
+  //   setDepartureDate("");
+  //   setReturnFlight(false);
+  //   setReturnDate("");
+  //   setFlights([]);
+  //   setReturnFlights([]);
+  //   setShowFlightSearch(false); // Hide the flight search section
+  // //   setSelectedDepartureFlights([]);
+  // // setSelectedReturnFlights([]);
+  // };
+
   const handleDone = () => {
+    // const allSelectedFlights = [...selectedDepartureFlights, ...selectedReturnFlights];
+    // console.log("Adding flights to itinerary:", allSelectedFlights);
+  
+    // NO NEED TO ADD FLIGHTS AGAIN HERE, they are already added in handleFlightToggle.
+  
+    // Clear the selected flights for the next search
+    setSelectedDepartureFlights([]);
+    setSelectedReturnFlights([]);
     addEndLocation();
     console.log(endLocation);
     console.log(Locations);
@@ -244,7 +484,9 @@ function ItineraryForm() {
     setReturnDate("");
     setFlights([]);
     setReturnFlights([]);
+    setShowFlightSearch(false); // Hide the flight search section
   };
+  
 
   const getAirlineName = (carrierCode) => {
     const airlineMap = {
@@ -613,6 +855,8 @@ function ItineraryForm() {
                   onChange={(e) => setStartLocation(e.target.value)}
                   fullWidth
                   margin="normal"
+                  error={startLocationError}
+        helperText={startLocationError ? "Please choose a start location." : ""}
                 >
                   {airportOptions.map((option) => (
                     <MenuItem key={option.code} value={option.code}>
@@ -627,6 +871,8 @@ function ItineraryForm() {
                   onChange={(e) => setEndLocation(e.target.value)}
                   fullWidth
                   margin="normal"
+                  error={endLocationError}
+        helperText={endLocationError ? "Please choose an end location." : ""}
                 >
                   {airportOptions.map((option) => (
                     <MenuItem key={option.code} value={option.code}>
@@ -678,6 +924,8 @@ function ItineraryForm() {
                       onChange={(e) => setDepartureDate(e.target.value)}
                       fullWidth
                       margin="normal"
+                      error={departureDateError}
+        helperText={departureDateError ? "Please choose a departure date." : ""}
                       InputLabelProps={{ shrink: true }}
                     />
                     <FormControlLabel
@@ -728,7 +976,7 @@ function ItineraryForm() {
                             <Grid item xs={12} sm={6} md={3} key={index}>
                               <Card
                                 variant={
-                                  selectedFlights.some(
+                                  selectedDepartureFlights.some(
                                     (f) => f.name === flight.name,
                                   )
                                     ? "outlined"
@@ -736,7 +984,7 @@ function ItineraryForm() {
                                 }
                                 sx={{
                                   padding: "8px",
-                                  borderColor: selectedFlights.some(
+                                  borderColor: selectedDepartureFlights.some(
                                     (f) => f.id === flight.id,
                                   )
                                     ? "primary.main"
@@ -897,7 +1145,7 @@ function ItineraryForm() {
                               <Grid item xs={12} sm={6} md={3} key={index}>
                                 <Card
                                   variant={
-                                    selectedFlights.some(
+                                    selectedReturnFlights.some(
                                       (f) => f.name === flight.name,
                                     )
                                       ? "outlined"
@@ -905,13 +1153,13 @@ function ItineraryForm() {
                                   }
                                   sx={{
                                     padding: "8px",
-                                    borderColor: selectedFlights.some(
+                                    borderColor: selectedReturnFlights.some(
                                       (f) => f.id === flight.id,
                                     )
                                       ? "primary.main"
                                       : "grey.300",
                                   }}
-                                  onClick={() => handleFlightToggle(flight)}
+                                  onClick={() => handleFlightToggle(flight, true)}
                                 >
                                   <CardContent>
                                     <Typography
@@ -1068,97 +1316,129 @@ function ItineraryForm() {
                 )}
 
                 {/* Display selected flights */}
-                <Box>
-                  <h2>Selected Flights</h2>
-                  {selectedFlights.length > 0 ? (
-                    <Grid container spacing={2}>
-                      {selectedFlights.map((flight, index) => (
-                        <Grid item xs={12} sm={6} md={3} key={index}>
-                          <Card sx={{ padding: "8px" }}>
-                            <CardContent>
-                              <Typography
-                                align="center"
-                                variant="h6"
-                                sx={{ fontWeight: "bold", mb: 1 }}
-                              >
-                                <FaPlaneDeparture />{" "}
-                                {
-                                  flight.itineraries[0].segments[0].departure
-                                    .iataCode
-                                }{" "}
-                                →{" "}
-                                {
-                                  flight.itineraries[0].segments[0].arrival
-                                    .iataCode
-                                }
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                sx={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  mb: -2,
-                                }}
-                              >
-                                <FaClock
-                                  style={{ color: "#ff9800", marginRight: 4 }}
-                                />
-                                Departure:{" "}
-                                {
-                                  flight.itineraries[0].segments[0].departure.at.split(
-                                    "T",
-                                  )[1]
-                                }
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                sx={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  mb: -2,
-                                }}
-                              >
-                                <IoAirplaneSharp
-                                  style={{ color: "#1976d2", marginRight: 4 }}
-                                />
-                                Duration: {flight.itineraries[0].duration}
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                sx={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  mb: -2,
-                                }}
-                              >
-                                <FaDollarSign
-                                  style={{ color: "#4caf50", marginRight: 4 }}
-                                />
-                                Price: {flight.price.total}{" "}
-                                {flight.price.currency} (
-                                {flight.priceInZar
-                                  ? `ZAR ${flight.priceInZar}`
-                                  : "Conversion unavailable"}
-                                )
-                              </Typography>
-                              <Typography
-                                variant="body2"
-                                sx={{ display: "flex", alignItems: "center" }}
-                              >
-                                Airline:{" "}
-                                {getAirlineName(
-                                  flight.itineraries[0].segments[0].carrierCode,
-                                )}
-                              </Typography>
-                            </CardContent>
-                          </Card>
-                        </Grid>
-                      ))}
-                    </Grid>
-                  ) : (
-                    <Typography>No flights selected yet.</Typography>
-                  )}
-                </Box>
+<Box>
+  <h2>Selected Flights</h2>
+  
+  {/* Combine both selected departure and return flights */}
+  {allSelectedFlights.length > 0 ? (
+    <Grid container spacing={2}>
+      {allSelectedFlights.map((flight, index) => (
+        <Grid item xs={12} sm={6} md={3} key={index}>
+          <Card sx={{ padding: "8px" }}>
+            <CardContent>
+              <Typography
+                align="center"
+                variant="h6"
+                sx={{ fontWeight: "bold", mb: 1 }}
+              >
+                <FaPlaneDeparture />{" "}
+                {flight.itineraries[0].segments[0].departure.iataCode} →{" "}
+                {flight.itineraries[0].segments[0].arrival.iataCode}
+              </Typography>
+
+              <Typography
+                variant="body2"
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  mb: -3,
+                  fontSize: "15.5px",
+                }}
+              >
+                <FaClock
+                  style={{
+                    color: "#ff9800",
+                    marginRight: 4,
+                  }}
+                />
+                Departure:{" "}
+                {flight.itineraries[0].segments[0].departure.at.split("T")[1]}
+              </Typography>
+
+              <Typography
+                variant="body2"
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  mb: -3,
+                  fontSize: "15.5px",
+                }}
+              >
+                <FaPlaneArrival
+                  style={{
+                    color: "#2196f3",
+                    marginRight: 4,
+                  }}
+                />
+                Arrival:{" "}
+                {flight.itineraries[0].segments[0].arrival.at.split("T")[1]}
+              </Typography>
+
+              <Typography
+                variant="body2"
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  mb: -3,
+                  fontSize: "15.5px",
+                }}
+              >
+                <FcClock
+                  style={{
+                    color: "#1976d2",
+                    marginRight: 4,
+                  }}
+                />
+                Duration: {flight.itineraries[0].duration}
+              </Typography>
+
+              <Typography
+                variant="body2"
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  mb: -3,
+                  fontSize: "15.5px",
+                }}
+              >
+                <IoAirplaneSharp
+                  style={{
+                    color: "#4caf50",
+                    marginRight: 4,
+                  }}
+                />
+                Airline:{" "}
+                {getAirlineName(flight.itineraries[0].segments[0].carrierCode)}
+              </Typography>
+
+              <Typography
+                variant="body2"
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  mb: -1,
+                  fontSize: "15.5px",
+                }}
+              >
+                <FaDollarSign
+                  style={{
+                    color: "#f44336",
+                    marginRight: 4,
+                  }}
+                />
+                Price: {flight.priceInZar} ZAR
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      ))}
+    </Grid>
+  ) : (
+    <Typography>No flights selected yet.</Typography>
+  )}
+</Box>
+
+
 
                 {addMoreFlights && (
                   <Button
