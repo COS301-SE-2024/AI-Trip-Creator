@@ -39,6 +39,7 @@ import {
   getDocs,
   setDoc,
   doc,
+  addDoc,
 } from "firebase/firestore";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import OpenAI from "openai";
@@ -152,11 +153,12 @@ function ItineraryForm() {
 
   const [allSelectedFlights, setAllSelectedFlights] = useState([]); // New state to track all flights
 
-
+  const [user, setUser] = useState(null);
   //fetch userid
   useEffect(() => {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
+      setUser(user);
       if (user) {
         setUserId(user.uid);
       }
@@ -555,7 +557,7 @@ function ItineraryForm() {
       // Fetch activities for each end location
       await Promise.all(
         Locations.map(async (location) => {
-          const accommodationsRef = collection(db, "LikedActivities");
+          const accommodationsRef = collection(db, "Activities");
           const q = firestoreQuery(
             accommodationsRef,
             where(
@@ -676,6 +678,42 @@ function ItineraryForm() {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
+  async function createItinerary(itineraryName, destination, budget, numDays, listDays) {
+    const user_id = user.uid;
+    
+    try {
+      const itinerariesRef = collection(db, "ItineraryCollection");
+      const newItineraryRef = await addDoc(itinerariesRef, {
+        user_id: user_id,
+        itineraryName: itineraryName,
+        destination: destination,
+        budget: budget,
+        numDays: numDays,
+        createdAt: new Date().toISOString().split("T")[0], 
+      });
+  
+      const daysRef = collection(newItineraryRef, 'days');
+      await Promise.all(listDays.map(async (day) => {
+        const dayData = {
+          dayNumber: day.dayNumber,
+          flights: day.flights || [],
+          accommodation: day.accommodation || [],
+          activities: day.activities.map(activity => ({
+            name: activity.name,
+            time: activity.time,
+            description: activity.description || `Activity: ${activity.name} scheduled at ${activity.time}.`
+          })) || []
+        };
+        const dayDocRef = doc(daysRef, `day${day.dayNumber}`);
+        await setDoc(dayDocRef, dayData);
+      }));
+  
+    } catch (error) {
+      console.error('Error creating itinerary:', error);
+    }
+  }
+  
+
   const generateItinerary = async () => {
     try {
       setLoading(true);
@@ -714,30 +752,60 @@ function ItineraryForm() {
     }
   };
 
+  // const handleFinish = async () => {
+  //   try {
+  //     setLoading(true);
+
+  //     // Generate day-by-day data for the itinerary
+  //     const days = Locations.map((location, index) => {
+  //       const dayLength = Lengths[index] || 1;
+  //       const activities = selectedActivities.filter(
+  //         (activity) =>
+  //           activity.day >= index + 1 && activity.day < index + 1 + dayLength,
+  //       );
+
+  //       return {
+  //         dayNumber: index + 1,
+  //         location,
+  //         length: dayLength,
+  //         accommodation: selectedAccommodations[index]
+  //           ? [selectedAccommodations[index]]
+  //           : [],
+  //         activities,
+  //       };
+  //     });
+
+  //     // await createItinerary(itineraryName, Locations[0], budgetRange, days.length, days);
+  //     setLoading(false);
+  //     alert("Itinerary saved successfully!");
+  //     console.log("Itinerary saved successfully!");
+  //   } catch (error) {
+  //     console.error("Error saving itinerary:", error);
+  //     setErrorMessage("Failed to save itinerary. Please try again.");
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleFinish = async () => {
     try {
       setLoading(true);
-
+  
       // Generate day-by-day data for the itinerary
       const days = Locations.map((location, index) => {
         const dayLength = Lengths[index] || 1;
-        const activities = selectedActivities.filter(
-          (activity) =>
-            activity.day >= index + 1 && activity.day < index + 1 + dayLength,
-        );
-
+  
+        // Structure each day's data
         return {
           dayNumber: index + 1,
-          location,
-          length: dayLength,
-          accommodation: selectedAccommodations[index]
-            ? [selectedAccommodations[index]]
-            : [],
-          activities,
+          flights: allSelectedFlights.filter(flight => flight.itineraries[0].segments[0].arrival.iataCode === location) || [],
+          accommodation: selectedAccommodations[index] ? [selectedAccommodations[index]] : [],
+          activities: selectedActivities.filter(activity => activity.day >= index + 1 && activity.day < index + 1 + dayLength) || []
         };
       });
-
-      // await createItinerary(itineraryName, Locations[0], budgetRange, days.length, days);
+  
+      // Call the createItinerary function from dashboard.js to save the itinerary
+      await createItinerary(itineraryName, Locations[0], budgetRange, days.length, days);
+  
       setLoading(false);
       alert("Itinerary saved successfully!");
       console.log("Itinerary saved successfully!");
@@ -747,6 +815,7 @@ function ItineraryForm() {
       setLoading(false);
     }
   };
+  
 
   //filtering for accommodations
   // Toggle the visibility of accommodations for a specific location
