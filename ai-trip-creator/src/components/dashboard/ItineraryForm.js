@@ -740,6 +740,7 @@ function ItineraryForm() {
       // await createItinerary(itineraryName, Locations[0], budgetRange, days.length, days);
       setLoading(false);
       alert("Itinerary saved successfully!");
+      console.log("Itinerary saved successfully!");
     } catch (error) {
       console.error("Error saving itinerary:", error);
       setErrorMessage("Failed to save itinerary. Please try again.");
@@ -1862,173 +1863,308 @@ function ItineraryForm() {
             </Box>
           </Box>
         )}
+{activeStep === 3 && (
+  <Box>
+    <h2>Review and Submit</h2>
 
-        {activeStep === 3 && (
-          <Box>
-            <h2>Review and Submit</h2>
+    {/* Itinerary Name Section */}
+    <Card sx={{ padding: 2, marginBottom: 2, borderColor: "grey.300", boxShadow: 3 }}>
+      <CardContent>
+        <Typography variant="h5" sx={{ fontWeight: "bold", textAlign: "center" }}>
+          "{itineraryName}" Itinerary
+        </Typography>
+      </CardContent>
+    </Card>
 
-            {/* Itinerary Name */}
-            <Box
-              p={2}
-              border={1}
-              borderColor="grey.300"
-              borderRadius="8px"
-              sx={{ marginTop: "10px" }}
-            >
-              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                "{itineraryName} " Itinerary
+    {/* Flights Section */}
+    {allSelectedFlights.length > 0 && (
+      <Card sx={{ padding: 2, marginBottom: 2, borderColor: "grey.300", boxShadow: 3 }}>
+        <CardContent>
+          <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: 2 }}>
+            <FaPlaneDeparture /> Flights
+          </Typography>
+          {allSelectedFlights.map((flight, index) => (
+            <Box key={index} sx={{ borderBottom: "1px solid grey", paddingBottom: 2, marginBottom: 2 }}>
+              <Typography variant="body1">
+                <FaPlaneDeparture /> {flight.itineraries[0].segments[0].departure.iataCode} →{" "}
+                {flight.itineraries[0].segments[0].arrival.iataCode}
+              </Typography>
+              <Typography variant="body2">
+                <FaClock /> Duration: {flight.itineraries[0].duration}
+              </Typography>
+              <Typography variant="body2">
+                <FaDollarSign /> Price: {flight.priceInZar} ZAR
               </Typography>
             </Box>
+          ))}
+        </CardContent>
+      </Card>
+    )}
 
-            {/* Flights Section */}
-            {selectedFlights.length > 0 && (
-              <Box
-                p={2}
-                border={1}
-                borderColor="grey.300"
-                borderRadius="8px"
-                sx={{ marginTop: "10px" }}
-              >
-                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                  Flights:
-                </Typography>
-                {selectedFlights.map((flight, index) => (
-                  <Typography key={index}>
-                    {flight.itineraries[0].segments[0].departure.iataCode} to{" "}
-                    {flight.itineraries[0].segments[0].arrival.iataCode}
-                  </Typography>
-                ))}
-              </Box>
-            )}
-
-            {/* Accommodations Section */}
-            {selectedAccommodations.length > 0 && (
-              <Box
-                p={2}
-                border={1}
-                borderColor="grey.300"
-                borderRadius="8px"
-                sx={{ marginTop: "10px" }}
-              >
-                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                  Accommodations
-                </Typography>
-                {selectedAccommodations.map((acc, index) => (
-                  <Typography key={index}>{acc.name}</Typography>
-                ))}
-              </Box>
-            )}
-
-            {/* Activities Section */}
-            {selectedActivities.length > 0 && (
-              <Box
-                p={2}
-                border={1}
-                borderColor="grey.300"
-                borderRadius="8px"
-                sx={{ marginTop: "10px" }}
-              >
-                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                  Activities
-                </Typography>
-                {selectedActivities.map((act, index) => (
-                  <Typography key={index}>{act.name}</Typography>
-                ))}
-              </Box>
-            )}
-
-            {/* Generated Itinerary */}
-            {aiResponse && (
-              <Box sx={{ marginTop: "20px" }}>
-                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                  Itinerary Generated
-                </Typography>
-                {aiResponse
-                  .split("Day ")
-                  .slice(1)
-                  .map((dayText, index) => (
-                    <Box
-                      key={index}
-                      p={2}
-                      border={1}
-                      borderColor="grey.300"
-                      borderRadius="8px"
-                      sx={{ marginTop: "10px" }}
-                    >
-                      <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                        Day {index + 1}
-                      </Typography>
-                      <Typography>{dayText.trim()}</Typography>
-                    </Box>
-                  ))}
-
-                {/* Regenerate Icon Button */}
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    marginTop: "20px",
-                  }}
-                >
-                  <IconButton
-                    onClick={generateItinerary}
-                    color="primary"
-                    disabled={loading}
-                    sx={{
-                      width: 56,
-                      height: 56,
-                      borderRadius: "50%",
-                      backgroundColor: "primary.main",
-                      color: "white",
-                      "&:hover": {
-                        backgroundColor: "primary.dark",
-                      },
-                    }}
-                  >
-                    <RefreshIcon />
-                  </IconButton>
-                </Box>
-              </Box>
-            )}
-
-            {/* Error Message */}
-            {errorMessage && (
-              <Alert severity="error" sx={{ marginTop: "10px" }}>
-                {errorMessage}
-              </Alert>
-            )}
-
-            {/* Loading Indicator */}
-            {loading && <CircularProgress sx={{ marginTop: "20px" }} />}
-
-            {/* Navigation Buttons (Back and Finish) */}
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginTop: "20px",
-              }}
-            >
-              <Button
-                variant="outlined"
-                onClick={() => setActiveStep(activeStep - 1)}
-                startIcon={<ArrowBackIcon />}
-              ></Button>
-              <Button
-                variant="contained"
-                color="success"
-                onClick={handleFinish}
-                disabled={loading}
-              >
-                Finish
-              </Button>
+    {/* Accommodations Section */}
+    {selectedAccommodations.length > 0 && (
+      <Card sx={{ padding: 2, marginBottom: 2, borderColor: "grey.300", boxShadow: 3 }}>
+        <CardContent>
+          <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: 2 }}>
+            <FaHotel /> Accommodations
+          </Typography>
+          {selectedAccommodations.map((acc, index) => (
+            <Box key={index} sx={{ borderBottom: "1px solid grey", paddingBottom: 2, marginBottom: 2 }}>
+              <Typography variant="body1">{acc.name}</Typography>
+              <Typography variant="body2">Price: {acc.price} per night</Typography>
+              <Typography variant="body2">Rating: {acc.rating} ⭐</Typography>
             </Box>
-          </Box>
-        )}
+          ))}
+        </CardContent>
+      </Card>
+    )}
+
+    {/* Activities Section */}
+    {selectedActivities.length > 0 && (
+      <Card sx={{ padding: 2, marginBottom: 2, borderColor: "grey.300", boxShadow: 3 }}>
+        <CardContent>
+          <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: 2 }}>
+            <FaTasks /> Activities
+          </Typography>
+          {selectedActivities.map((act, index) => (
+            <Box key={index} sx={{ borderBottom: "1px solid grey", paddingBottom: 2, marginBottom: 2 }}>
+              <Typography variant="body1">{act.name}</Typography>
+              <Typography variant="body2">Category: {act.category}</Typography>
+            </Box>
+          ))}
+        </CardContent>
+      </Card>
+    )}
+
+    {/* Generated Itinerary Section */}
+    {aiResponse && (
+      <Card sx={{ padding: 2, marginBottom: 2, borderColor: "grey.300", boxShadow: 3 }}>
+        <CardContent>
+          <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: 2 }}>
+            Generated Itinerary
+          </Typography>
+          {aiResponse.split("Day ").slice(1).map((dayText, index) => (
+            <Box key={index} sx={{ borderBottom: "1px solid grey", paddingBottom: 2, marginBottom: 2 }}>
+              <Typography variant="h6">Day {index + 1}</Typography>
+              <Typography variant="body2">{dayText.trim()}</Typography>
+            </Box>
+          ))}
+        </CardContent>
+      </Card>
+    )}
+
+    {/* Error Message */}
+    {errorMessage && (
+      <Alert severity="error" sx={{ marginTop: "10px" }}>
+        {errorMessage}
+      </Alert>
+    )}
+
+    {/* Loading Indicator */}
+    {loading && <CircularProgress sx={{ marginTop: "20px" }} />}
+
+    {/* Navigation Buttons (Back and Finish) */}
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginTop: "20px",
+      }}
+    >
+      <Button
+        variant="outlined"
+        onClick={() => setActiveStep(activeStep - 1)}
+        startIcon={<ArrowBackIcon />}
+      >
+        Back
+      </Button>
+      <Button
+        variant="contained"
+        color="success"
+        onClick={handleFinish}
+        disabled={loading}
+      >
+        Finish
+      </Button>
+    </Box>
+  </Box>
+)}
       </Box>
     </Box>
   );
+        
 }
 
 export default ItineraryForm;
+
+
+// {activeStep === 3 && (
+//   <Box>
+//     <h2>Review and Submit</h2>
+
+//     {/* Itinerary Name */}
+//     <Box
+//       p={2}
+//       border={1}
+//       borderColor="grey.300"
+//       borderRadius="8px"
+//       sx={{ marginTop: "10px" }}
+//     >
+//       <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+//         "{itineraryName} " Itinerary
+//       </Typography>
+//     </Box>
+
+//     {/* Flights Section */}
+//     {selectedFlights.length > 0 && (
+//       <Box
+//         p={2}
+//         border={1}
+//         borderColor="grey.300"
+//         borderRadius="8px"
+//         sx={{ marginTop: "10px" }}
+//       >
+//         <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+//           Flights:
+//         </Typography>
+//         {selectedFlights.map((flight, index) => (
+//           <Typography key={index}>
+//             {flight.itineraries[0].segments[0].departure.iataCode} to{" "}
+//             {flight.itineraries[0].segments[0].arrival.iataCode}
+//           </Typography>
+//         ))}
+//       </Box>
+//     )}
+
+//     {/* Accommodations Section */}
+//     {selectedAccommodations.length > 0 && (
+//       <Box
+//         p={2}
+//         border={1}
+//         borderColor="grey.300"
+//         borderRadius="8px"
+//         sx={{ marginTop: "10px" }}
+//       >
+//         <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+//           Accommodations
+//         </Typography>
+//         {selectedAccommodations.map((acc, index) => (
+//           <Typography key={index}>{acc.name}</Typography>
+//         ))}
+//       </Box>
+//     )}
+
+//     {/* Activities Section */}
+//     {selectedActivities.length > 0 && (
+//       <Box
+//         p={2}
+//         border={1}
+//         borderColor="grey.300"
+//         borderRadius="8px"
+//         sx={{ marginTop: "10px" }}
+//       >
+//         <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+//           Activities
+//         </Typography>
+//         {selectedActivities.map((act, index) => (
+//           <Typography key={index}>{act.name}</Typography>
+//         ))}
+//       </Box>
+//     )}
+
+//     {/* Generated Itinerary */}
+//     {aiResponse && (
+//       <Box sx={{ marginTop: "20px" }}>
+//         <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+//           Itinerary Generated
+//         </Typography>
+//         {aiResponse
+//           .split("Day ")
+//           .slice(1)
+//           .map((dayText, index) => (
+//             <Box
+//               key={index}
+//               p={2}
+//               border={1}
+//               borderColor="grey.300"
+//               borderRadius="8px"
+//               sx={{ marginTop: "10px" }}
+//             >
+//               <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+//                 Day {index + 1}
+//               </Typography>
+//               <Typography>{dayText.trim()}</Typography>
+//             </Box>
+//           ))}
+
+//         {/* Regenerate Icon Button */}
+//         <Box
+//           sx={{
+//             display: "flex",
+//             justifyContent: "flex-end",
+//             marginTop: "20px",
+//           }}
+//         >
+//           <IconButton
+//             onClick={generateItinerary}
+//             color="primary"
+//             disabled={loading}
+//             sx={{
+//               width: 56,
+//               height: 56,
+//               borderRadius: "50%",
+//               backgroundColor: "primary.main",
+//               color: "white",
+//               "&:hover": {
+//                 backgroundColor: "primary.dark",
+//               },
+//             }}
+//           >
+//             <RefreshIcon />
+//           </IconButton>
+//         </Box>
+//       </Box>
+//     )}
+
+//     {/* Error Message */}
+//     {errorMessage && (
+//       <Alert severity="error" sx={{ marginTop: "10px" }}>
+//         {errorMessage}
+//       </Alert>
+//     )}
+
+//     {/* Loading Indicator */}
+//     {loading && <CircularProgress sx={{ marginTop: "20px" }} />}
+
+//     {/* Navigation Buttons (Back and Finish) */}
+//     <Box
+//       sx={{
+//         display: "flex",
+//         justifyContent: "space-between",
+//         alignItems: "center",
+//         marginTop: "20px",
+//       }}
+//     >
+//       <Button
+//         variant="outlined"
+//         onClick={() => setActiveStep(activeStep - 1)}
+//         startIcon={<ArrowBackIcon />}
+//       ></Button>
+//       <Button
+//         variant="contained"
+//         color="success"
+//         onClick={handleFinish}
+//         disabled={loading}
+//       >
+//         Finish
+//       </Button>
+//     </Box>
+//   </Box>
+// )}
+// </Box>
+// </Box>
+// );
+// }
+
+// export default ItineraryForm;
