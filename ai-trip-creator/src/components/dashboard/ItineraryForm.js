@@ -1168,32 +1168,38 @@ function ItineraryForm() {
                     + Add More Flights
                   </Button>
                 )}
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    marginTop: "20px",
+                  }}
+                >
+                  <Button
+                    onClick={handleDone}
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                    sx={{ padding: "6px 12px", width: "150px", height: "50px" }} // Adjust width as needed
+                  >
+                    Add to Itinerary
+                  </Button>
+                </Box>
               </Box>
             </Box>
             <Box
               sx={{
-                marginTop: "20px",
                 display: "flex",
-
-                gap: "100px",
-                alignItems: "center",
+                justifyContent: "flex-end",
+                marginTop: "20px",
               }}
             >
-              <Button
-                onClick={handleDone}
-                variant="contained"
-                color="primary"
-                size="small"
-                sx={{ padding: "6px 12px", width: "150px", height: "50px" }} // Adjust width as needed
-              >
-                Add to Itinerary
-              </Button>
               <Button
                 variant="contained"
                 color="primary"
                 onClick={handleNext}
                 size="small"
-                sx={{ padding: "6px 12px", width: "150px", height: "50px" }} // Adjust width as needed
+                sx={{ padding: "6px 12px" }} // Adjust width as needed
               >
                 Next
               </Button>
