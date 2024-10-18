@@ -150,6 +150,9 @@ function ItineraryForm() {
   const [endLocationError, setEndLocationError] = useState(false);
   const [departureDateError, setDepartureDateError] = useState(false);
 
+  const [allSelectedFlights, setAllSelectedFlights] = useState([]); // New state to track all flights
+
+
   //fetch userid
   useEffect(() => {
     const auth = getAuth();
@@ -251,23 +254,145 @@ function ItineraryForm() {
   //   });
   // };
 
+  // const handleFlightToggle = (flight, isReturn = false) => {
+  //   if (isReturn) {
+  //     setSelectedReturnFlights((prevSelected) => {
+  //       const isSelected = prevSelected.some((f) => f.id === flight.id);
+  //       return isSelected
+  //         ? prevSelected.filter((f) => f.id !== flight.id) // Remove if already selected
+  //         : [...prevSelected, flight]; // Add if not selected
+  //     });
+  //   } else {
+  //     setSelectedDepartureFlights((prevSelected) => {
+  //       const isSelected = prevSelected.some((f) => f.id === flight.id);
+  //       return isSelected
+  //         ? prevSelected.filter((f) => f.id !== flight.id) // Remove if already selected
+  //         : [...prevSelected, flight]; // Add if not selected
+  //     });
+  //   }
+  // };
+
+  // const handleFlightToggle = (flight, isReturn = false) => {
+  //   if (isReturn) {
+  //     // Toggle return flights
+  //     setSelectedReturnFlights((prevSelected) => {
+  //       const isSelected = prevSelected.some((f) => f.id === flight.id);
+  //       const updatedFlights = isSelected
+  //         ? prevSelected.filter((f) => f.id !== flight.id)
+  //         : [...prevSelected, flight];
+  
+  //       // Update all selected flights
+  //       setAllSelectedFlights((prevSelectedFlights) => {
+  //         return isSelected
+  //           ? prevSelectedFlights.filter((f) => f.id !== flight.id)
+  //           : [...prevSelectedFlights, flight];
+  //       });
+  
+  //       return updatedFlights;
+  //     });
+  //   } else {
+  //     // Toggle departure flights
+  //     setSelectedDepartureFlights((prevSelected) => {
+  //       const isSelected = prevSelected.some((f) => f.id === flight.id);
+  //       const updatedFlights = isSelected
+  //         ? prevSelected.filter((f) => f.id !== flight.id)
+  //         : [...prevSelected, flight];
+  
+  //       // Update all selected flights
+  //       setAllSelectedFlights((prevSelectedFlights) => {
+  //         return isSelected
+  //           ? prevSelectedFlights.filter((f) => f.id !== flight.id)
+  //           : [...prevSelectedFlights, flight];
+  //       });
+  
+  //       return updatedFlights;
+  //     });
+  //   }
+  // };
+  
+  // const handleFlightToggle = (flight, isReturn = false) => {
+  //   if (isReturn) {
+  //     // Toggle return flights
+  //     setSelectedReturnFlights((prevSelected) => {
+  //       const isSelected = prevSelected.some((f) => f.id === flight.id);
+  //       const updatedFlights = isSelected
+  //         ? prevSelected.filter((f) => f.id !== flight.id)
+  //         : [...prevSelected, flight];
+  
+  //       // Update all selected flights, avoiding duplicates
+  //       setAllSelectedFlights((prevSelectedFlights) => {
+  //         const flightExists = prevSelectedFlights.some((f) => f.id === flight.id);
+  //         return flightExists
+  //           ? prevSelectedFlights
+  //           : [...prevSelectedFlights, flight];
+  //       });
+  
+  //       return updatedFlights;
+  //     });
+  //   } else {
+  //     // Toggle departure flights
+  //     setSelectedDepartureFlights((prevSelected) => {
+  //       const isSelected = prevSelected.some((f) => f.id === flight.id);
+  //       const updatedFlights = isSelected
+  //         ? prevSelected.filter((f) => f.id !== flight.id)
+  //         : [...prevSelected, flight];
+  
+  //       // Update all selected flights, avoiding duplicates
+  //       setAllSelectedFlights((prevSelectedFlights) => {
+  //         const flightExists = prevSelectedFlights.some((f) => f.id === flight.id);
+  //         return flightExists
+  //           ? prevSelectedFlights
+  //           : [...prevSelectedFlights, flight];
+  //       });
+  
+  //       return updatedFlights;
+  //     });
+  //   }
+  // };
+
   const handleFlightToggle = (flight, isReturn = false) => {
     if (isReturn) {
+      // Handle return flight toggle
       setSelectedReturnFlights((prevSelected) => {
         const isSelected = prevSelected.some((f) => f.id === flight.id);
-        return isSelected
-          ? prevSelected.filter((f) => f.id !== flight.id) // Remove if already selected
-          : [...prevSelected, flight]; // Add if not selected
+        const updatedFlights = isSelected
+          ? prevSelected.filter((f) => f.id !== flight.id)  // Remove if already selected
+          : [...prevSelected, flight];                      // Add if not selected
+  
+        // Update allSelectedFlights: add or remove the return flight accordingly
+        setAllSelectedFlights((prevSelectedFlights) => {
+          if (isSelected) {
+            return prevSelectedFlights.filter((f) => f.id !== flight.id);  // Remove if already selected
+          } else {
+            return [...prevSelectedFlights, flight];  // Add if not selected
+          }
+        });
+  
+        return updatedFlights;
       });
     } else {
+      // Handle departure flight toggle
       setSelectedDepartureFlights((prevSelected) => {
         const isSelected = prevSelected.some((f) => f.id === flight.id);
-        return isSelected
-          ? prevSelected.filter((f) => f.id !== flight.id) // Remove if already selected
-          : [...prevSelected, flight]; // Add if not selected
+        const updatedFlights = isSelected
+          ? prevSelected.filter((f) => f.id !== flight.id)  // Remove if already selected
+          : [...prevSelected, flight];                      // Add if not selected
+  
+        // Update allSelectedFlights: add or remove the departure flight accordingly
+        setAllSelectedFlights((prevSelectedFlights) => {
+          if (isSelected) {
+            return prevSelectedFlights.filter((f) => f.id !== flight.id);  // Remove if already selected
+          } else {
+            return [...prevSelectedFlights, flight];  // Add if not selected
+          }
+        });
+  
+        return updatedFlights;
       });
     }
   };
+  
+  
 
   const addEndLocation = () => {
     if (startLocation !== "" && !Locations.includes(startLocation)) {
@@ -291,11 +416,44 @@ function ItineraryForm() {
     console.log("Updated Locations:", Locations);
   }, [Locations]);
 
+  // const handleDone = () => {
+
+  //   // const allSelectedFlights = [...selectedDepartureFlights, ...selectedReturnFlights];
+  //   // console.log("Adding flights to itinerary:", allSelectedFlights);
+  //   const allSelected = [...selectedDepartureFlights, ...selectedReturnFlights];
+
+  //   // Update all selected flights with the current selection
+  //   setAllSelectedFlights((prevSelected) => [...prevSelected, ...allSelected]);
+  
+  //   // Clear the selected flights for the next search
+  //   setSelectedDepartureFlights([]);
+  //   setSelectedReturnFlights([]);
+  //   addEndLocation();
+  //   console.log(endLocation);
+  //   console.log(Locations);
+  //   setShowFlightSearch(false);
+  //   setAddMoreFlights(true); // Enable adding more flights
+  //   setStartLocation("");
+  //   setEndLocation("");
+  //   setDepartureDate("");
+  //   setReturnFlight(false);
+  //   setReturnDate("");
+  //   setFlights([]);
+  //   setReturnFlights([]);
+  //   setShowFlightSearch(false); // Hide the flight search section
+  // //   setSelectedDepartureFlights([]);
+  // // setSelectedReturnFlights([]);
+  // };
+
   const handleDone = () => {
-
-    const allSelectedFlights = [...selectedDepartureFlights, ...selectedReturnFlights];
-    console.log("Adding flights to itinerary:", allSelectedFlights);
-
+    // const allSelectedFlights = [...selectedDepartureFlights, ...selectedReturnFlights];
+    // console.log("Adding flights to itinerary:", allSelectedFlights);
+  
+    // NO NEED TO ADD FLIGHTS AGAIN HERE, they are already added in handleFlightToggle.
+  
+    // Clear the selected flights for the next search
+    setSelectedDepartureFlights([]);
+    setSelectedReturnFlights([]);
     addEndLocation();
     console.log(endLocation);
     console.log(Locations);
@@ -308,9 +466,9 @@ function ItineraryForm() {
     setReturnDate("");
     setFlights([]);
     setReturnFlights([]);
-  //   setSelectedDepartureFlights([]);
-  // setSelectedReturnFlights([]);
+    setShowFlightSearch(false); // Hide the flight search section
   };
+  
 
   const getAirlineName = (carrierCode) => {
     const airlineMap = {
@@ -1144,9 +1302,9 @@ function ItineraryForm() {
   <h2>Selected Flights</h2>
   
   {/* Combine both selected departure and return flights */}
-  {selectedDepartureFlights.length > 0 || selectedReturnFlights.length > 0 ? (
+  {allSelectedFlights.length > 0 ? (
     <Grid container spacing={2}>
-      {[...selectedDepartureFlights, ...selectedReturnFlights].map((flight, index) => (
+      {allSelectedFlights.map((flight, index) => (
         <Grid item xs={12} sm={6} md={3} key={index}>
           <Card sx={{ padding: "8px" }}>
             <CardContent>
