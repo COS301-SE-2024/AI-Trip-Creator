@@ -557,7 +557,7 @@ function ItineraryForm() {
       // Fetch activities for each end location
       await Promise.all(
         Locations.map(async (location) => {
-          const accommodationsRef = collection(db, "LikedActivities");
+          const accommodationsRef = collection(db, "Activities");
           const q = firestoreQuery(
             accommodationsRef,
             where(
