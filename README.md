@@ -11,16 +11,6 @@
 - [Documentation](#documentation)
 - [Team Members](#team-members)
 - [Repository Information](#repository-information)
-- [Git Flow](#git-flow)
-
-
----
-## Table of Contents
-- [Project Overview](#project-overview)
-- [Demo Links](#demo-links)
-- [Documentation](#documentation)
-- [Team Members](#team-members)
-- [Repository Information](#repository-information)
     - [Git Flow](#git-flow)
     - [Branch Naming Conventions](#naming-conventions)
 
