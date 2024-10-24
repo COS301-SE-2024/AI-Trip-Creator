@@ -1,5 +1,3 @@
----
-
 # AI Trip Creator  
 **The Rolling Capstones**
 
