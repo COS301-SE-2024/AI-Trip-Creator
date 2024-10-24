@@ -1,5 +1,3 @@
-Here's a more polished and professional version of your README:
-
 ---
 
 # AI Trip Creator  
