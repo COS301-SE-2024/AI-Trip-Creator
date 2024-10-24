@@ -1,6 +1,11 @@
 # AI Trip Creator  
 **The Rolling Capstones**
 
+![Build Status](https://img.shields.io/github/workflow/status/COS301-SE-2024/AI-Trip-Creator/CI)
+![Coverage](https://img.shields.io/coveralls/github/COS301-SE-2024/AI-Trip-Creator)
+![License](https://img.shields.io/github/license/COS301-SE-2024/AI-Trip-Creator)
+
+
 [![Coverage Status](https://coveralls.io/repos/github/COS301-SE-2024/AI-Trip-Creator/badge.svg?branch=main)](https://coveralls.io/github/COS301-SE-2024/AI-Trip-Creator?branch=main)  [![System Status](https://img.shields.io/pingpong/status/sp_0f00d195b8a2427c89a76dac4273cc99)](.pingpong.host/) ![Dependencies](https://img.shields.io/badge/dependencies-Up--to--date-brightgreen) [![GitHub issues](https://img.shields.io/github/issues/COS301-SE-2024/AI-Trip-Creator.svg)](https://github.com/COS301-SE-2024/AI-Trip-Creator/issues)
 
 ---
