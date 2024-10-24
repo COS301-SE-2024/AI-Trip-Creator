@@ -3,7 +3,7 @@
 
 
 [![System Status](https://img.shields.io/pingpong/status/sp_0f00d195b8a2427c89a76dac4273cc99)](.pingpong.host/) 
-[![Dependencies](https://img.shields.io/badge/dependencies-Up--to--date-brightgreen) 
+![Dependencies](https://img.shields.io/badge/dependencies-Up--to--date-brightgreen) 
 
 ---
 ## Table of Contents
