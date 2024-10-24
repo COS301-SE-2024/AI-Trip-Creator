@@ -20,6 +20,10 @@ jobs:
           cd ai-trip-creator
           npm install
 
+      - name: Install Dependencies
+        run: |
+          npm install
+
       - name: Build
         env:
           CI: false
