@@ -12,6 +12,8 @@
     "class-variance-authority": "^0.7.0",
     "firebase": "^10.12.3",
     "framer-motion": "^11.11.9",
+    "jspdf": "^2.5.2",
+    "jspdf-autotable": "^3.8.4",
     "lucide-react": "^0.453.0",
     "react-chatbot-kit": "^2.2.2",
     "react-icons": "^5.3.0",
