@@ -2041,7 +2041,7 @@ export default function Component() {
       </Drawer>
 
       <Box className="flex-grow p-6 sm:p-8 md:p-12" sx={{ ml: isSmUp ? "256px" : 0 }}>
-        <h1 style={{ marginLeft: "25px", marginTop: "30px" }}>Saved Itineraries</h1>
+        <h1 style={{ marginLeft: "25px", marginTop: "30px" }}>Saved Itineraries For Trips</h1>
         <Container maxWidth="lg">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
