@@ -1061,8 +1061,8 @@ export default function Component() {
                                 <GlassCard className="mb-4">
                                   <CardContent>
                                     <Typography variant="h6" className="font-semibold text-white mb-3 flex items-center">
-                                      <Avatar className="bg-purple-500 mr-2">
-                                        <ExploreIcon />
+                                      <Avatar className="bg-purple-500 mr-2" sx={{backgroundColor:"#004ba8"}}>
+                                        <ExploreIcon sx={{backgroundColor:"#004ba8"}}/>
                                       </Avatar>
                                       Day {day.dayNumber}
                                     </Typography>
