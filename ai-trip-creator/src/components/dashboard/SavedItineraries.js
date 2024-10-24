@@ -1082,7 +1082,7 @@ export default function Component() {
                             <Typography className="text-white text-opacity-70">No days available</Typography>
                           )}
                           <Button
-                          sx={{marginTop:"20px"}}
+                            sx={{marginTop:"20px"}}
                             variant="contained"
                             color="primary"
                             startIcon={<DownloadIcon />}
