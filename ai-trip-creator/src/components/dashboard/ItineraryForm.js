@@ -142,7 +142,7 @@ function ItineraryForm() {
   const [aiResponse, setAiResponse] = useState("");
   const [addMoreFlights, setAddMoreFlights] = useState(false); //  To handle adding more flights
   const [tripDays, setTripDays] = useState(1);
-  const [budgetRange, setBudgetRange] = useState([1000, 10000]);
+  const [budgetRange, setBudgetRange] = useState([1000, 100000]);
   const [Locations, setLocations] = useState([]);
   const [Lengths, setLengths] = useState([]);
   const [selectedDepartureFlights, setSelectedDepartureFlights] = useState([]);
@@ -989,12 +989,12 @@ function ItineraryForm() {
                   onChange={(e, newValue) => setBudgetRange(newValue)}
                   valueLabelDisplay="auto"
                   min={1000}
-                  max={10000}
-                  step={500}
+                  max={100000}
+                  step={5000}
                   marks={[
                     { value: 1000, label: "R1000" },
-                    { value: 5000, label: "R5000" },
-                    { value: 10000, label: "R10000" },
+                    { value: 50000, label: "R50000" },
+                    { value: 100000, label: "R100000" },
                   ]}
                 />
                 <Button
