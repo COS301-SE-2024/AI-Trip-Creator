@@ -82,7 +82,7 @@ const ColorfulChip = styled(Box)(({ color }) => ({
   margin: "4px",
 }))
 
-export default function Component() {
+const SavedItineraries = () => {
   const theme = useTheme()
   const isSmUp = useMediaQuery(theme.breakpoints.up("sm"))
   const [userId, setUserId] = useState(null)
@@ -502,3 +502,5 @@ export default function Component() {
     </Box>
   )
 }
+
+export default SavedItineraries;
