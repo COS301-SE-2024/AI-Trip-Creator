@@ -1030,6 +1030,7 @@ export default function Component() {
                               onClick={() => deleteItinerary(itinerary.id)}
                               size="small"
                               className="bg-red-500 hover:bg-red-600 transition-all duration-300"
+                              color="error"
                             >
                               <DeleteIcon className="text-white" />
                             </IconButton>
