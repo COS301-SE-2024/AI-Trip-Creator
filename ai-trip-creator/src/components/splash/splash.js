@@ -806,7 +806,7 @@ const SplashPage = React.memo(({ setIsLoggedIn }) => {
 
   // Memoize heavy calculations and callbacks
   const memoizedHeroContent = useMemo(() => (
-    <Box id="hero" sx={heroStyles}>  // Add id="hero" here
+    <Box id="hero" sx={heroStyles}>  
       <Container maxWidth="lg">
         <Grid container spacing={4} alignItems="center">
           {/* Left Content */}
