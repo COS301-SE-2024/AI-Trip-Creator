@@ -138,12 +138,73 @@ const TypingIndicator = () => (
   </Box>
 );
 
+// Add this helper function near the top of your file
+const formatTimestamp = () => {
+  const now = new Date();
+  return now.toLocaleTimeString('en-US', { 
+    hour: 'numeric', 
+    minute: '2-digit',
+    hour12: true 
+  });
+};
+
+const formatItineraryMarkdown = (data) => {
+  return `
+# **Itinerary: ${data.itineraryName}**
+
+**Destination**: ${data.destination}  
+**Budget**: $${data.budget}  
+**Total Days**: ${data.numDays} days
+
+## Detailed Itinerary:
+
+${data.listDays.map(day => `
+### **Day ${day.dayNumber}**
+
+**Flights**:  
+${day.flights.length > 0 ? day.flights.map(flight => `
+- **Flight**: ${flight.carrierCode}  
+  - Departure: ${flight.departureTime} from ${flight.sourceLocation}  
+  - Arrival: ${flight.arrivalTime} at ${flight.destinationLocation}  
+  - Class: ${flight.class}  
+  - Cost: $${flight.cost}
+`).join("\n") : "- No flights planned.\n"}
+
+**Accommodation**:  
+${day.accommodation.length > 0 ? day.accommodation.map(acc => `
+- **Hotel**: ${acc.hotel}  
+  - Check-in: ${acc.checkin}  
+  - Check-out: ${acc.checkout}
+`).join("\n") : "- No accommodation planned.\n"}
+
+**Activities**:  
+${day.activities.length > 0 ? day.activities.map(activity => `
+- **Activity**: ${activity.name}  
+  - Time: ${activity.time}  
+  - Description: ${activity.description}
+`).join("\n") : "- No activities planned.\n"}
+`).join("\n")}
+`;
+};
+
 const Dashboard = () => {
   const [userInput, setUserInput] = useState("");
   const [responses, setResponses] = useState([]);
   const [showCards, setShowCards] = useState(true);
   const [user, setUser] = useState(null);
   const [isAiThinking, setIsAiThinking] = useState(false); // Make sure this line is present
+  const messagesEndRef = React.useRef(null); // Add this ref
+  const [showScrollButton, setShowScrollButton] = useState(false);
+  const chatContainerRef = React.useRef(null);
+
+  const scrollToBottom = () => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: "smooth"
+      });
+    }
+  };
 
   useEffect(() => {
     const auth = getAuth();
@@ -462,8 +523,12 @@ async function updateItinerary(originalItineraryName, updatedItinerary) {
   const handleSubmit = async () => {
     if (userInput.trim() === "") return;
   
-    // Add user's input to the responses state
-    const newMessage = { type: "user", text: userInput };
+    // Add timestamp to the message
+    const newMessage = { 
+      type: "user", 
+      text: userInput,
+      timestamp: formatTimestamp()
+    };
     setResponses([...responses, newMessage]);
   
     setUserInput(""); // Clear the input
@@ -661,48 +726,18 @@ async function updateItinerary(originalItineraryName, updatedItinerary) {
         // Execute the function locally
         if (functionName === "createItinerary") {
           const functionArguments = JSON.parse(response.choices[0].message.function_call.arguments);
-          createItinerary(
+          await createItinerary(
             functionArguments.itineraryName,
             functionArguments.destination,
             functionArguments.budget,
             functionArguments.numDays,
             functionArguments.listDays
           );
-  
-          // Fix the createItinerary markdown template
-          const itineraryText = `# **Itinerary: ${functionArguments.itineraryName}**
 
-**Destination**: ${functionArguments.destination}  
-**Budget**: $${functionArguments.budget}  
-**Total Days**: ${functionArguments.numDays} days
-
-## Detailed Itinerary:
-
-${functionArguments.listDays.map(day => `### **Day ${day.dayNumber}**
-
-**Flights**:  
-${day.flights.length > 0 ? day.flights.map(flight => `- **Flight**: ${flight.carrierCode}  
-  - Departure: ${flight.departureTime} from ${flight.sourceLocation}  
-  - Arrival: ${flight.arrivalTime} at ${flight.destinationLocation}  
-  - Class: ${flight.class}  
-  - Cost: $${flight.cost}
-`).join('\n') : '- No flights planned.\n'}
-
-**Accommodation**:  
-${day.accommodation.length > 0 ? day.accommodation.map(acc => `- **Hotel**: ${acc.hotel}  
-  - Check-in: ${acc.checkin}  
-  - Check-out: ${acc.checkout}
-`).join('\n') : '- No accommodation planned.\n'}
-
-**Activities**:  
-${day.activities.length > 0 ? day.activities.map(activity => `- **Activity**: ${activity.name}  
-  - Time: ${activity.time}  
-  - Description: ${activity.description}
-`).join('\n') : '- No activities planned.\n'}`).join('\n')}`;
-  
+          const itineraryText = formatItineraryMarkdown(functionArguments);
           setResponses((prevResponses) => [
             ...prevResponses,
-            { type: "bot", text: itineraryText }, // Display itinerary as markdown
+            { type: "bot", text: itineraryText },
           ]);
         }
   
@@ -841,6 +876,35 @@ ${day.activities.length > 0 ? day.activities.map(activity => `- **Activity**: ${
     }
   };
   
+  const handleScroll = () => {
+    if (chatContainerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
+      const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+      setShowScrollButton(distanceFromBottom > 50);
+    }
+  };
+
+  // Add scroll event listener
+  useEffect(() => {
+    const chatContainer = chatContainerRef.current;
+    if (chatContainer) {
+      chatContainer.addEventListener('scroll', handleScroll);
+      return () => chatContainer.removeEventListener('scroll', handleScroll);
+    }
+  }, []);
+
+  // Add a useEffect to scroll when responses change or AI thinking status changes
+  useEffect(() => {
+    scrollToBottom();
+  }, [responses, isAiThinking]);
+
+  // Add a useEffect to handle initial scroll position
+  useEffect(() => {
+    const chatContainer = chatContainerRef.current;
+    if (chatContainer) {
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+  }, []);
 
   return (
     <div style={{ display: "flex", height: "100vh", flexDirection: "column" }}>
@@ -859,204 +923,246 @@ ${day.activities.length > 0 ? day.activities.map(activity => `- **Activity**: ${
           flex: "1",
           display: "flex",
           flexDirection: "column",
+          height: "100vh", // Ensure full height
+          position: "relative", // Add relative positioning
         }}
       >
         <h1 style={{ marginLeft: "28px", marginTop: "30px" }}>
           AI Trip Planning
         </h1>
         {showCards && (
-          <Box sx={{ display: "flex", gap: 2, padding: 2 }}>
-            <Card sx={{ width: "48%" }}>
-              <CardContent>
-                <Typography variant="h6">
-                  Step 1: Start by Telling Us About Your Trip
+          <Box sx={{ 
+            display: "flex", 
+            gap: 4,
+            padding: "40px",
+            width: "100%",
+            maxWidth: "1400px",
+            margin: "0 auto"
+          }}>
+            <Card 
+              className="intro-card" 
+              sx={{ 
+                flex: 1,
+                boxShadow: 'none',
+                minWidth: '300px'
+              }}
+            >
+              <CardContent sx={{ padding: 0 }}>
+                <Typography className="intro-card-title">
+                  <span className="step-number">1</span>
+                  Start Your Journey
                 </Typography>
-                <Typography>
-                  Provide details like your destination, travel dates, and
-                  preferences to create a personalized itinerary.
+                <Typography className="intro-card-content">
+                  Tell us about your dream destination, travel dates, and preferences. We'll create your perfect itinerary.
                 </Typography>
               </CardContent>
             </Card>
-            <Card sx={{ width: "48%" }}>
-              <CardContent>
-                <Typography variant="h6">
-                  Step 2: Customize Your Itinerary
+            <Card 
+              className="intro-card"
+              sx={{ 
+                flex: 1,
+                boxShadow: 'none',
+                minWidth: '300px'
+              }}
+            >
+              <CardContent sx={{ padding: 0 }}>
+                <Typography className="intro-card-title">
+                  <span className="step-number">2</span>
+                  Instant Planning
                 </Typography>
-                <Typography>
-                  Once your itinerary is generated, it will automatically be
-                  saved to the database.
+                <Typography className="intro-card-content">
+                  Your personalized itinerary will be automatically generated and saved, ready for your adventure.
                 </Typography>
               </CardContent>
             </Card>
           </Box>
         )}
 
-        <Box sx={{ flex: 1, overflowY: "auto", padding: 2 }}>
+        <Box 
+          ref={chatContainerRef}
+          sx={{ 
+            flex: 1, 
+            overflowY: "auto", 
+            padding: 2,
+            paddingBottom: "100px",
+            marginBottom: "80px",
+            backgroundColor: 'var(--background-color)',
+            scrollBehavior: "smooth",
+            position: "relative",
+            height: "calc(100vh - 250px)", // Add explicit height
+            '&::-webkit-scrollbar': {
+              width: '8px',
+            },
+            '&::-webkit-scrollbar-track': {
+              background: 'transparent',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: 'rgba(0,0,0,0.2)',
+              borderRadius: '4px',
+            },
+          }}
+        >
           {responses.map((response, index) => (
-            <Box
+            <div
               key={index}
-              sx={{
-                display: "flex",
+              className="chat-container"
+              style={{
                 justifyContent: response.type === "user" ? "flex-end" : "flex-start",
-                margin: "16px 0",
-                gap: "12px",
               }}
             >
               {response.type === "bot" && (
-                <Box
-                  sx={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: "50%",
-                    backgroundColor: "#376B7E",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "white",
-                    fontWeight: "bold",
-                    flexShrink: 0,
-                  }}
+                <div
+                  className="chat-avatar"
+                  style={{ backgroundColor: "#376B7E" }}
                 >
                   AI
-                </Box>
+                </div>
               )}
               
-              <Box
-                sx={{
-                  maxWidth: "70%",
-                  minWidth: "100px",
-                  backgroundColor: response.type === "user" ? "#2196f3" : "#f5f5f5",
-                  color: response.type === "user" ? "white" : "black",
-                  borderRadius: "18px",
-                  padding: "12px 16px",
-                  position: "relative",
-                  boxShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
-                  "&::before": {
-                    content: '""',
-                    position: "absolute",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    width: 0,
-                    height: 0,
-                    borderStyle: "solid",
-                    ...(response.type === "user"
-                      ? {
-                          right: "-8px",
-                          borderWidth: "8px 0 8px 8px",
-                          borderColor: `transparent transparent transparent #2196f3`,
-                        }
-                      : {
-                          left: "-8px",
-                          borderWidth: "8px 8px 8px 0",
-                          borderColor: `transparent #f5f5f5 transparent transparent`,
-                        }),
-                  },
-                  "& p": { // Style for paragraphs within markdown
-                    margin: "0 0 8px 0",
-                    "&:last-child": {
-                      marginBottom: 0,
-                    }
-                  },
-                  "& h1, & h2, & h3": { // Style for headings within markdown
-                    margin: "12px 0 8px 0",
-                    "&:first-child": {
-                      marginTop: 0,
-                    }
-                  },
-                  "& ul, & ol": { // Style for lists within markdown
-                    margin: "8px 0",
-                    paddingLeft: "20px",
-                  },
-                  "& code": { // Style for code blocks within markdown
-                    backgroundColor: response.type === "user" ? "#1976d2" : "#e0e0e0",
-                    padding: "2px 4px",
-                    borderRadius: "4px",
-                  },
-                }}
-              >
+              <div className={`chat-bubble ${response.type === "user" ? "chat-bubble-user" : "chat-bubble-bot"}`}>
                 {response.type === "user" ? (
-                  <Typography>{response.text}</Typography>
+                  <Typography sx={{ fontSize: '14px' }}>
+                    {response.text}
+                  </Typography>
                 ) : (
                   <ReactMarkdown 
                     remarkPlugins={[remarkGfm]}
                     components={{
-                      // Custom components for markdown elements
-                      h1: ({node, ...props}) => <Typography variant="h5" sx={{fontWeight: 'bold'}} {...props} />,
-                      h2: ({node, ...props}) => <Typography variant="h6" sx={{fontWeight: 'bold'}} {...props} />,
-                      h3: ({node, ...props}) => <Typography variant="subtitle1" sx={{fontWeight: 'bold'}} {...props} />,
-                      p: ({node, ...props}) => <Typography {...props} />,
-                      li: ({node, ...props}) => <Typography component="li" {...props} />,
+                      h1: ({node, ...props}) => <Typography variant="h6" sx={{fontWeight: 'bold', mb: 1}} {...props} />,
+                      h2: ({node, ...props}) => <Typography variant="subtitle1" sx={{fontWeight: 'bold', mb: 1}} {...props} />,
+                      h3: ({node, ...props}) => <Typography variant="subtitle2" sx={{fontWeight: 'bold', mb: 0.5}} {...props} />,
+                      p: ({node, ...props}) => <Typography sx={{ fontSize: '14px', mb: 1 }} {...props} />,
+                      li: ({node, ...props}) => <Typography component="li" sx={{ fontSize: '14px', mb: 0.5 }} {...props} />,
+                      ul: ({node, ...props}) => <Box component="ul" sx={{ mb: 1 }} {...props} />,
                     }}
                   >
                     {response.text}
                   </ReactMarkdown>
                 )}
-              </Box>
+                <div className="chat-timestamp">
+                  {response.timestamp || formatTimestamp()}
+                </div>
+              </div>
 
               {response.type === "user" && (
-                <Box
-                  sx={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: "50%",
-                    backgroundColor: "#1976d2",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "white",
-                    fontWeight: "bold",
-                    flexShrink: 0,
-                  }}
+                <div
+                  className="chat-avatar"
+                  style={{ backgroundColor: "#1976d2" }}
                 >
                   {user?.email?.[0].toUpperCase() || "U"}
-                </Box>
+                </div>
               )}
-            </Box>
+            </div>
           ))}
           {isAiThinking && <TypingIndicator />} {/* Make sure this line is present */}
+          <div ref={messagesEndRef} /> {/* Add this invisible element at the bottom */}
         </Box>
+
+        <div className="content-separator" />
+        
+        {showScrollButton && (
+          <button
+            className={`scroll-to-bottom-button ${showScrollButton ? 'visible' : ''}`}
+            onClick={scrollToBottom}
+            aria-label="Scroll to bottom"
+          >
+            <svg 
+              width="24" 
+              height="24" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+            >
+              <path d="M12 5v14M19 12l-7 7-7-7"/>
+            </svg>
+          </button>
+        )}
 
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
-            borderTop: "1px solid #ddd",
-            padding: 1,
-            position: "relative",
+            padding: "20px",
+            position: "fixed",
+            bottom: 0,
+            right: 0,
+            left: "250px",
+            zIndex: 1000,
+            backgroundColor: 'var(--background-color)',
+            borderTop: '1px solid var(--text-color)',
           }}
         >
-          <input
-            type="text"
-            value={userInput}
-            onChange={handleInputChange}
-            onKeyPress={handleKeyPress}  
-            placeholder="Ask me about your trip..."
-            disabled={isAiThinking}
-            style={{
-              flex: "1",
-              padding: "10px",
-              marginRight: "10px",
-              borderRadius: "5px",
-              border: "1px solid #ddd",
-              maxWidth: "calc(100% - 60px)",
-              opacity: isAiThinking ? 0.7 : 1,
-            }}
-          />
-          <Button
-            onClick={handleSubmit}
-            disabled={isAiThinking}
+          <Box
             sx={{
-              backgroundColor: isAiThinking ? "#cccccc" : "#5ccc9d",
-              color: "white",
-              borderRadius: "5px",
-              padding: "10px",
-              minWidth: "40px",
-              "&:hover": { backgroundColor: isAiThinking ? "#cccccc" : "#5ddd9e" },
-              opacity: isAiThinking ? 0.7 : 1,
+              display: "flex",
+              alignItems: "center",
+              flex: 1,
+              backgroundColor: (theme) => 
+                theme.palette.mode === 'dark' 
+                  ? '#ffffff' 
+                  : 'var(--card-background)', // Use card background for light mode, white for dark mode
+              borderRadius: "24px",
+              padding: "8px 16px",
+              boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
+              transition: "box-shadow 0.3s ease",
+              "&:hover": {
+                boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
+              },
             }}
           >
-            <FaPaperPlane />
-          </Button>
+            <input
+              type="text"
+              value={userInput}
+              onChange={handleInputChange}
+              onKeyPress={handleKeyPress}
+              placeholder="Ask me about your trip..."
+              disabled={isAiThinking}
+              style={{
+                flex: 1,
+                border: "none",
+                outline: "none",
+                fontSize: "16px",
+                backgroundColor: "transparent",
+                opacity: isAiThinking ? 0.7 : 1,
+                color: (theme) => 
+                  theme.palette.mode === 'dark' 
+                    ? '#333333' 
+                    : 'var(--text-color)', // Dark text in dark mode, theme text color in light mode
+              }}
+            />
+            <div className="tooltip-container">
+              <Button
+                onClick={handleSubmit}
+                disabled={isAiThinking}
+                sx={{
+                  minWidth: "40px",
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
+                  backgroundColor: isAiThinking ? "#cccccc" : "#5ccc9d",
+                  color: "white",
+                  padding: 0,
+                  "&:hover": {
+                    backgroundColor: isAiThinking ? "#cccccc" : "#4bb589",
+                    transform: "scale(1.05)",
+                  },
+                  transition: "all 0.2s ease",
+                  opacity: isAiThinking ? 0.7 : 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <FaPaperPlane size={16} />
+              </Button>
+              <div className="custom-tooltip">
+                Send message
+              </div>
+            </div>
+          </Box>
         </Box>
       </div>
     </div>
