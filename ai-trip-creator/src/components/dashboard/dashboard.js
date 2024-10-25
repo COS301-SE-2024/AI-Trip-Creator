@@ -893,12 +893,10 @@ ${day.activities.length > 0 ? day.activities.map(activity => `- **Activity**: ${
     }
   }, []);
 
-  // Add a useEffect to scroll when responses change or AI thinking status changes
   useEffect(() => {
     scrollToBottom();
   }, [responses, isAiThinking]);
 
-  // Add a useEffect to handle initial scroll position
   useEffect(() => {
     const chatContainer = chatContainerRef.current;
     if (chatContainer) {
