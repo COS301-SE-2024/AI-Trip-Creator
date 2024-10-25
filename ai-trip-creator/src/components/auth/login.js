@@ -86,17 +86,26 @@ const Login = ({ setIsLoggedIn, closeLogin, openSignup }) => {
     <Box
       component="form"
       onSubmit={handleLogin}
+      className="login-container"
       sx={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 2,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 3,
         maxWidth: 400,
-        margin: "0 auto",
+        width: '100%',
+        padding: '2rem',
+        backgroundColor: 'white',
+        borderRadius: '16px',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
       }}
     >
-      {error && <Alert severity="error">{error}</Alert>}
-      {resetError && <Alert severity="error">{resetError}</Alert>}
-      {resetSuccess && <Alert severity="success">{resetSuccess}</Alert>}
+      <Typography variant="h4" sx={{ textAlign: 'center', fontWeight: 600, mb: 2 }}>
+        Welcome Back
+      </Typography>
+
+      {error && <Alert severity="error" sx={{ borderRadius: '8px' }}>{error}</Alert>}
+      {resetError && <Alert severity="error" sx={{ borderRadius: '8px' }}>{resetError}</Alert>}
+      {resetSuccess && <Alert severity="success" sx={{ borderRadius: '8px' }}>{resetSuccess}</Alert>}
 
       <TextField
         label="Email"
@@ -106,6 +115,7 @@ const Login = ({ setIsLoggedIn, closeLogin, openSignup }) => {
         fullWidth
         required
         autoComplete="email"
+        sx={{ '& .MuiOutlinedInput-root': { borderRadius: '8px' } }}
       />
       <TextField
         label="Password"
@@ -115,38 +125,65 @@ const Login = ({ setIsLoggedIn, closeLogin, openSignup }) => {
         fullWidth
         required
         autoComplete="current-password"
+        sx={{ '& .MuiOutlinedInput-root': { borderRadius: '8px' } }}
       />
 
-      <Box sx={{ position: "relative" }}>
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          fullWidth
-          disabled={loading} // Disable button when loading
-        >
-          {loading ? <CircularProgress size={24} /> : "Login"}
-        </Button>
-      </Box>
+      <Button
+        type="submit"
+        variant="contained"
+        fullWidth
+        disabled={loading}
+        sx={{
+          py: 1.5,
+          borderRadius: '8px',
+          textTransform: 'none',
+          fontSize: '1rem',
+          fontWeight: 600,
+          backgroundColor: '#2563eb',
+          '&:hover': {
+            backgroundColor: '#1d4ed8',
+          },
+        }}
+      >
+        {loading ? <CircularProgress size={24} color="inherit" /> : "Sign In"}
+      </Button>
 
-      <Typography variant="body2" sx={{ textAlign: "center" }}>
-        Don't have an account?{" "}
-        <Link
-          component="button"
-          variant="body2"
-          onClick={() => {
-            closeLogin();
-            openSignup();
-          }}
-        >
-          Signup
-        </Link>
-        <br />
-        Forgot your password?{" "}
-        <Link component="button" variant="body2" onClick={handlePasswordReset}>
-          Reset Password
-        </Link>
-      </Typography>
+      <Box sx={{ textAlign: 'center', mt: 2 }}>
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+          Don't have an account?{' '}
+          <Link
+            component="button"
+            variant="body2"
+            onClick={() => {
+              closeLogin();
+              openSignup();
+            }}
+            sx={{ 
+              fontWeight: 600, 
+              color: '#2563eb',
+              textDecoration: 'none',
+              '&:hover': { textDecoration: 'underline' } 
+            }}
+          >
+            Sign up
+          </Link>
+        </Typography>
+        <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
+          <Link
+            component="button"
+            variant="body2"
+            onClick={handlePasswordReset}
+            sx={{ 
+              fontWeight: 600, 
+              color: '#2563eb',
+              textDecoration: 'none',
+              '&:hover': { textDecoration: 'underline' } 
+            }}
+          >
+            Forgot password?
+          </Link>
+        </Typography>
+      </Box>
     </Box>
   );
 };
