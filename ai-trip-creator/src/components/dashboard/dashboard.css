@@ -559,3 +559,207 @@ h1 {
 .chatbot-container.visible {
   display: block;
 }
+
+.tooltip-container {
+  position: relative;
+}
+
+.custom-tooltip {
+  position: absolute;
+  bottom: 100%;
+  right: 50%;
+  transform: translateX(50%);
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background-color: var(--card-background);
+  color: var(--text-color);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.custom-tooltip::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  right: 50%;
+  transform: translateX(50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid var(--card-background);
+}
+
+.tooltip-container:hover .custom-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(50%) translateY(-4px);
+}
+
+[data-theme="dark"] .custom-tooltip {
+  background-color: #ffffff;
+  color: #333333;
+}
+
+[data-theme="dark"] .custom-tooltip::after {
+  border-top-color: #ffffff;
+}
+
+/* Add these new card styles */
+.intro-card {
+  background: var(--background-color);
+  border-radius: 24px;
+  padding: 32px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(62, 120, 178, 0.1);
+  backdrop-filter: blur(8px);
+}
+
+.intro-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-color) 0%, var(--heading1-color) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.intro-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.08),
+    0 0 20px rgba(62, 120, 178, 0.1);
+  border-color: rgba(62, 120, 178, 0.2);
+}
+
+.intro-card:hover::before {
+  opacity: 1;
+}
+
+[data-theme="dark"] .intro-card {
+  background: rgba(30, 30, 30, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.intro-card-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--heading1-color);
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--primary-color);
+  background: none;
+  position: relative;
+}
+
+.step-number::before {
+  content: '';
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--primary-color);
+  border-radius: 12px;
+  transform: rotate(45deg);
+  transition: transform 0.3s ease;
+}
+
+.intro-card:hover .step-number::before {
+  transform: rotate(135deg);
+}
+
+.intro-card-content {
+  color: var(--text-color);
+  font-size: 16px;
+  line-height: 1.6;
+  opacity: 0.85;
+  position: relative;
+  padding-left: 56px;
+}
+
+.intro-card-content::before {
+  content: '';
+  position: absolute;
+  left: 20px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--primary-color) 0%, transparent 100%);
+  opacity: 0.3;
+}
+
+/* Add these new styles at the bottom of your CSS file */
+.chat-bubble {
+  max-width: 85%;
+  min-width: auto;
+  width: fit-content;
+  padding: 10px 14px;
+  margin: 4px 0;
+  border-radius: 16px;
+  position: relative;
+  word-break: break-word;
+  white-space: pre-wrap;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.chat-bubble-user {
+  background-color: #2196f3;
+  color: #ffffff;
+  border-top-right-radius: 4px;
+  margin-left: auto;
+}
+
+.chat-bubble-bot {
+  background-color: var(--card-background);
+  color: var(--text-color);
+  border-top-left-radius: 4px;
+  margin-right: auto;
+}
+
+.chat-timestamp {
+  font-size: 10px;
+  opacity: 0.7;
+  margin-top: 4px;
+  text-align: right;
+}
+
+.chat-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 4px 12px;
+}
+
+.chat-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  flex-shrink: 0;
+}

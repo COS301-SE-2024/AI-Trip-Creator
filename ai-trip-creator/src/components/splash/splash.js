@@ -965,16 +965,16 @@ const SplashPage = React.memo(({ setIsLoggedIn }) => {
           <Container 
             maxWidth="lg" 
             sx={{ 
-              padding: '0 !important',  // Remove ALL padding
-              margin: '0 !important',   // Remove margin
-              maxWidth: '100% !important' // Allow full width
+              padding: '0 !important',  
+              margin: '0 !important',   
+              maxWidth: '100% !important' 
             }}
           >
             <Toolbar 
-              disableGutters  // Remove default gutters
+              disableGutters 
               sx={{ 
                 position: 'relative',
-                padding: '0 16px',  // Minimal padding
+                padding: '0 16px',  
                 minHeight: '64px'
               }}
             > 
@@ -989,7 +989,7 @@ const SplashPage = React.memo(({ setIsLoggedIn }) => {
                   display: 'flex',
                   alignItems: 'center',
                   gap: 1,
-                  marginLeft: '16px'  // Small margin from the very edge
+                  marginLeft: '16px'  
                 }}
               >
                 <FlightTakeoffIcon sx={{ fontSize: 28 }} />
