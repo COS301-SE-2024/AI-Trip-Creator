@@ -1,108 +1,108 @@
 /* auth.css */
 form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-form div {
-  width: 100%;
-  margin-bottom: 1rem;
-}
-
-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #000;
-}
-
-input {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-button {
-  background-color: #0070f3;
-  color: white;
-  border: none;
-  padding: 0.75rem;
-  border-radius: 4px;
-  transition: background-color 0.3s;
-}
-
-button:hover {
-  background-color: #005bb5;
-}
-
-p {
-  padding: 25px;
-  margin-top: 0;
-  color: #000;
-}
-
-p a {
-  padding: 5px;
-  color: #0070f3;
-}
-
-.splash-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background-color: #f0f2f5;
-}
-
-.splash-container h1 {
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-}
-
-.modal {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1000;
-  background-color: white;
-  padding: 2rem;
-  border-radius: 16px;
-  width: 100%;
-  max-width: 400px;
-  animation: modalFadeIn 0.3s ease-in-out;
-}
-
-@keyframes modalFadeIn {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -48%);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
-  to {
-    opacity: 1;
+  
+  form div {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #000;
+  }
+  
+  input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  button {
+    background-color: #0070f3;
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+  
+  button:hover {
+    background-color: #005bb5;
+  }
+  
+  p {
+    padding: 25px;
+    margin-top: 0;
+    color: #000;
+  }
+  
+  p a {
+    padding: 5px;
+    color: #0070f3;
+  }
+  
+  .splash-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f0f2f5;
+  }
+  
+  .splash-container h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
+    z-index: 1000;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 400px;
+    animation: modalFadeIn 0.3s ease-in-out;
   }
-}
-
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(4px);
-  z-index: 500;
-  animation: overlayFadeIn 0.3s ease-in-out;
-}
-
-@keyframes overlayFadeIn {
-  from {
-    opacity: 0;
+  
+  @keyframes modalFadeIn {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -48%);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%);
+    }
   }
-  to {
-    opacity: 1;
+  
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 500;
+    animation: overlayFadeIn 0.3s ease-in-out;
   }
-}
+  
+  @keyframes overlayFadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
