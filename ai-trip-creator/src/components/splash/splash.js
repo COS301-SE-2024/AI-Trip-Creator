@@ -806,7 +806,7 @@ const SplashPage = React.memo(({ setIsLoggedIn }) => {
 
   // Memoize heavy calculations and callbacks
   const memoizedHeroContent = useMemo(() => (
-    <Box id="hero" sx={heroStyles}>  // Add id="hero" here
+    <Box id="hero" sx={heroStyles}>
       <Container maxWidth="lg">
         <Grid container spacing={4} alignItems="center">
           {/* Left Content */}
@@ -962,38 +962,81 @@ const SplashPage = React.memo(({ setIsLoggedIn }) => {
       <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
         {/* Critical content loads immediately */}
         <AppBar position="sticky" sx={appBarStyles}>
-          <Container maxWidth="lg">
-            <Toolbar sx={{ justifyContent: "center" }}>
-              <Link
-                activeClass="active"
-                to="hero"
-                spy={true}
-                smooth={true}
-                offset={-70}
-                duration={500}
+          <Container 
+            maxWidth="lg" 
+            sx={{ 
+              padding: '0 !important',  // Remove ALL padding
+              margin: '0 !important',   // Remove margin
+              maxWidth: '100% !important' // Allow full width
+            }}
+          >
+            <Toolbar 
+              disableGutters  // Remove default gutters
+              sx={{ 
+                position: 'relative',
+                padding: '0 16px',  // Minimal padding
+                minHeight: '64px'
+              }}
+            > 
+              {/* Title - Far Left */}
+              <Typography
+                variant="h6"
+                sx={{
+                  fontFamily: 'Poppins, sans-serif',
+                  fontWeight: 700,
+                  fontSize: '1.5rem',
+                  color: theme.palette.primary.main,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  marginLeft: '16px'  // Small margin from the very edge
+                }}
               >
-                <Button sx={improvedButtonStyles}>Home</Button>
-              </Link>
-              <Link
-                activeClass="active"
-                to="howItWorks"
-                spy={true}
-                smooth={true}
-                offset={-70}
-                duration={500}
+                <FlightTakeoffIcon sx={{ fontSize: 28 }} />
+                AI Trip Creator
+              </Typography>
+
+              {/* Navigation Links - Centered */}
+              <Box 
+                sx={{ 
+                  position: 'absolute',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  display: 'flex',
+                  justifyContent: 'center',
+                }}
               >
-                <Button sx={improvedButtonStyles}>How It Works</Button>
-              </Link>
-              <Link
-                activeClass="active"
-                to="gallery"
-                spy={true}
-                smooth={true}
-                offset={-70}
-                duration={500}
-              >
-                <Button sx={improvedButtonStyles}>Gallery</Button>
-              </Link>
+                <Link
+                  activeClass="active"
+                  to="hero"
+                  spy={true}
+                  smooth={true}
+                  offset={-70}
+                  duration={500}
+                >
+                  <Button sx={improvedButtonStyles}>Home</Button>
+                </Link>
+                <Link
+                  activeClass="active"
+                  to="howItWorks"
+                  spy={true}
+                  smooth={true}
+                  offset={-70}
+                  duration={500}
+                >
+                  <Button sx={improvedButtonStyles}>How It Works</Button>
+                </Link>
+                <Link
+                  activeClass="active"
+                  to="gallery"
+                  spy={true}
+                  smooth={true}
+                  offset={-70}
+                  duration={500}
+                >
+                  <Button sx={improvedButtonStyles}>Gallery</Button>
+                </Link>
+              </Box>
             </Toolbar>
           </Container>
         </AppBar>
