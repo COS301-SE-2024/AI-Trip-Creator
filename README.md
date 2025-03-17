@@ -14,7 +14,6 @@
 - [Repository Information](#repository-information)
     - [Git Flow](#git-flow)
     - [Branch Naming Conventions](#naming-conventions)
-    - ufujefje
 
 ---
 
